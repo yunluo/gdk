@@ -2,6 +2,7 @@
 
 
 //SMTP邮箱设置
+/*
 if (git_get_option('git_mailsmtp_b')) {
     function googlo_mail_smtp($phpmailer) {
         $phpmailer->From = git_get_option('git_maildizhi_b'); //发件人地址
@@ -21,7 +22,7 @@ if (git_get_option('git_mailsmtp_b')) {
     }
     add_action('phpmailer_init', 'googlo_mail_smtp');
 }
-
+*/
 //修改默认发信地址
 function deel_res_from_email($email) {
     $wp_from_email = get_option('admin_email');
@@ -68,11 +69,11 @@ function git_notify_postauthor($notify_message,$comment_ID) {
 add_filter('comment_notification_text', 'git_notify_postauthor', 10, 2);
 add_filter('wp_password_change_notification_email', '__return_false'); //关闭密码修改站长邮件
 add_filter('password_change_email', '__return_false'); //关闭密码修改用户邮件
-if (git_get_option('git_user_notification_to_admin')) {
+
     add_filter('wp_new_user_notification_email_admin', '__return_false');
-} //关闭新用户注册站长邮件
+ //关闭新用户注册站长邮件
 //欢迎新用户邮件
-if (git_get_option('git_user_notification_to_user')) {
+
     function git_register_mail($user_id) {
         $user = get_user_by('id', $user_id);
         $user_pass = $_POST['password'];
@@ -83,10 +84,10 @@ if (git_get_option('git_user_notification_to_user')) {
     }
     add_action('user_register', 'git_register_mail');
     add_filter('wp_new_user_notification_email', '__return_false'); //关闭新用户注册用户邮件
-}
+
 
 //登录失败提醒
-if (git_get_option('git_login_tx')) {
+
     function git_login_failed_notify() {
         date_default_timezone_set('PRC');
         $admin_email = get_bloginfo('admin_email');
@@ -99,4 +100,3 @@ if (git_get_option('git_login_tx')) {
         wp_mail($to, $subject, $message, $headers);
     }
     add_action('wp_login_failed', 'git_login_failed_notify');
-}

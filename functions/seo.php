@@ -1,7 +1,7 @@
 <?php
 
 //给外部链接加上跳转
-if (git_get_option('git_go')) {
+
     function git_go_url($content){
         preg_match_all('/<a(.*?)href="(.*?)"(.*?)>/', $content, $matches);
         if ($matches && !is_page('about')) {
@@ -14,7 +14,7 @@ if (git_get_option('git_go')) {
         return $content;
     }
     add_filter('the_content', 'git_go_url', 999);
-}
+
 
 //关键字
 function deel_keywords() {
@@ -27,7 +27,7 @@ function deel_keywords() {
         foreach (get_the_category($post->ID) as $category) $keywords.= $category->cat_name . ', ';
         $keywords = substr_replace($keywords, '', -2);
     } elseif (is_home()) {
-        $keywords = git_get_option('git_keywords');
+        //$keywords = git_get_option('git_keywords');
     } elseif (is_tag()) {
         $keywords = single_tag_title('', false);
     } elseif (is_category()) {
@@ -42,9 +42,9 @@ function deel_keywords() {
     }
 }
 
-if (git_get_option('git_keywords')){
+
     add_action('wp_head', 'deel_keywords');
-} 
+
 //网站描述
 function deel_description() {
     global $s, $post;
@@ -66,7 +66,7 @@ function deel_description() {
         ) , " ", str_replace("\"", "'", strip_tags($text))));
         if (!($description)) $description = $blog_name . "-" . trim(wp_title('', false));
     } elseif (is_home()) {
-        $description = git_get_option('git_description'); // 首頁要自己加
+        //$description = git_get_option('git_description'); // 首頁要自己加
     } elseif (is_tag()) {
         $description = $blog_name . "'" . single_tag_title('', false) . "'";
     } elseif (is_category()) {
@@ -81,12 +81,12 @@ function deel_description() {
     $description = mb_substr($description, 0, 220, 'utf-8');
     echo "<meta name=\"description\" content=\"$description\">\n";
 }
-//页面描述 d_description
-if (git_get_option('git_description')){
+
     add_action('wp_head', 'deel_description');
-}
+
 
 //WordPress文字标签关键词自动内链
+/*
 $match_num_min = git_get_option('git_autolink_1'); //一篇文章中同一個標籤少於幾次不自動鏈接
 $match_num_max = git_get_option('git_autolink_2'); //一篇文章中同一個標籤最多自動鏈接幾次
 function tag_sort($a, $b) {
@@ -117,10 +117,11 @@ function tag_link($content) {
     }
     return $content;
 }
-if (git_get_option('git_autolink_b')) {
+
     add_filter('the_content', 'tag_link', 1);
-}
-if (git_get_option('git_imgalt_b')) {
+
+*/
+
     //图片img标签添加alt，title属性
     function imagesalt($content){
         global $post;
@@ -139,9 +140,9 @@ if (git_get_option('git_imgalt_b')) {
         return $content;
     }
     add_filter('the_content', 'aimagesalt');
-}
+
 //自动给文章以及评论添加nofollow属性
-if (git_get_option('git_nofollow')) {
+
     function git_auto_nofollow($content)
     {
         $regexp = "<a\\s[^>]*href=(\"??)([^\" >]*?)\\1[^>]*>";
@@ -171,7 +172,7 @@ if (git_get_option('git_nofollow')) {
         return $content;
     }
     add_filter('the_content', 'git_auto_nofollow');
-}
+
 
 //评论分页的seo处理
 function canonical_for_git(){

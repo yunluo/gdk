@@ -29,7 +29,7 @@ if (git_get_option('git_pingback_b')){
 }
 
 //移除自动保存和修订版本
-if (git_get_option('git_autosave_b')) {
+
     add_action('wp_print_scripts', 'disable_autosave');
     function disable_autosave() {
         wp_deregister_script('autosave');
@@ -38,17 +38,17 @@ if (git_get_option('git_autosave_b')) {
     function specs_wp_revisions_to_keep($num, $post) {
         return 0;
     }
-}
+
 
 // 屏蔽 REST API
-if (git_get_option('git_restapi_b')) {
+
 function git_disable_rest_api($access){
     return new WP_Error('rest_cannot_acess', '无访问权限', array('status' => 403));
 }
 add_filter('rest_authentication_errors', 'git_disable_rest_api');
 remove_action('wp_head', 'rest_output_link_wp_head', 10);
 remove_action('template_redirect', 'rest_output_link_header', 11);
-}
+
 //禁止 s.w.org
 function git_remove_dns_prefetch($hints, $relation_type) {
     if ('dns-prefetch' === $relation_type) {
@@ -75,7 +75,7 @@ function git_remove_open_sans() {
 add_action('init', 'git_remove_open_sans');
 
 //免插件去除Category
-if (git_get_option('git_categroy_b')):
+
     add_action('load-themes.php', 'no_category_base_refresh_rules');
     add_action('created_category', 'no_category_base_refresh_rules');
     add_action('edited_category', 'no_category_base_refresh_rules');
@@ -125,7 +125,7 @@ if (git_get_option('git_categroy_b')):
         }
         return $query_vars;
     }
-endif;
+
 
 //禁用响应式图片
 function msiw(){
@@ -148,14 +148,14 @@ function git_wps_login_error() {
 add_action('login_head', 'git_wps_login_error');
 
 //取消静态资源的版本查询
-if (git_get_option('git_query')) {
+
     function _remove_script_version($src){
         $parts = explode('?ver', $src);
         return $parts[0];
     }
     add_filter('script_loader_src', '_remove_script_version', 15, 1);
     add_filter('style_loader_src', '_remove_script_version', 15, 1);
-}
+
 
 //禁用新版编辑器
 add_filter('use_block_editor_for_post', '__return_false');
@@ -223,14 +223,14 @@ function git_rips_unlink_tempfix( $data ) {
 add_filter( 'wp_update_attachment_metadata', 'git_rips_unlink_tempfix' );
 
 //自动中英文空格
-if (git_get_option('git_auto_kg')) {
+
     function content_autospace($data){
         $data = preg_replace('/([\\x{4e00}-\\x{9fa5}]+)([A-Za-z0-9_]+)/u', '${1} ${2}', $data);
         $data = preg_replace('/([A-Za-z0-9_]+)([\\x{4e00}-\\x{9fa5}]+)/u', '${1} ${2}', $data);
         return $data;
     }
     add_filter('the_content', 'content_autospace');
-}
+
 
 //小工具缓存
 class GIT_Widget_cache {

@@ -6,9 +6,9 @@ function get_ssl_avatar($avatar) {
    $avatar = preg_replace('/.*\/avatar\/(.*)\?s=([\d]+)&.*/','<img src="https://cdn.v2ex.com/gravatar/$1?s=50" class="avatar avatar-$2">',$avatar);
    return $avatar;
 }
-if (git_get_option('git_avater') == 'git_avatar_qn') {
+
 add_filter('get_avatar', 'get_ssl_avatar', 10, 3);
-}
+
 
 //随机头像
 function local_random_avatar($avatar) {
@@ -16,9 +16,9 @@ function local_random_avatar($avatar) {
     $avatar = "<img src=$avatarsrc class='avatar rand_avatar photo' />";
     return $avatar;
 }
-if (git_get_option('git_avater') == 'git_avatar_rand') {
+
     add_filter('get_avatar', 'local_random_avatar', 1, 5);
-}
+
 
 //本地头像
 class simple_local_avatars {
