@@ -39,6 +39,7 @@ if (version_compare(PHP_VERSION, '7.2.26', '>=')) {
 include('modules/base/main.php');
 
 include('functions/func_load.php');
+include('framework/load.php');
 
 function nc_store_pluggable_include() {
 	include( 'modules/pluggable/load.php' );

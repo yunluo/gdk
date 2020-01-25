@@ -3,7 +3,7 @@
  * 主题选项配置文件
  */
 
-$theme_options = array(
+$gdk_options = array(
 	'常规选项' => array(
 			array(
 			'name'  => '滚动内容来源',
@@ -838,7 +838,7 @@ $theme_options = array(
 			'desc'  => '如果您想使用自定义的RSS地址，请在这里输入您期望的地址。',
 			'id'    => 'git_rss',
 			'type'  => 'text',
-			'std'   => get_bloginfo('rss2_url')
+			'std'   => '',
 		),
 		array(
 			'name'  => '新浪微博',
@@ -1503,7 +1503,7 @@ $theme_options = array(
 			'desc'  => '填写一个正方形的图片，显示在推送信息左侧，默认为默认头像',
 			'id'    => 'git_notification_icon',
 			'type'  => 'text',
-			'std'   => deel_avatar_default()
+			'std'   => '',
 		),
 		array(
 			'name'  => 'HTML5推送链接【可选】',

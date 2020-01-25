@@ -8,43 +8,40 @@
  }
 
 $current_theme = wp_get_theme();
-$default_options = array();
-$theme_options = array();
-require('options-config.php');
-$current_options = get_option('git_options_setup', array());
+$gdk_default_options = [];
+$gdk_options = [];
+include('options-config.php');
+$gdk_current_options = get_option('gdk_options_setup', []);
 
-function git_update_options() {
-	global $default_options, $theme_options, $current_options;
-	$default_options = array();
-	$current_options = get_option('git_options_setup', array());
-	foreach ($theme_options as $panel) {
+function gdk_update_options() {
+	global $gdk_default_options, $gdk_options, $gdk_current_options;
+	foreach ($gdk_options as $panel) {
 		foreach ($panel as $option) {
 			$id = $option['id'];
 			$type = $option['type'];
 			if ( !$id ) continue;
-			$default_options[$id] = $option['std'];
-			if ( isset($current_options[$id]) ) continue;
-			$current_options[$id] = isset( $option['std'] ) ? $option['std'] : '';
+			$gdk_default_options[$id] = $option['std'];
+			if ( isset($gdk_current_options[$id]) ) continue;
+			$gdk_current_options[$id] = isset( $option['std'] ) ? $option['std'] : '';
 		}
 	}
 }
-git_update_options();
+gdk_update_options();
 
 //获取设置选项
-function git_get_option($id, $returnDefault = false) {
-	global $default_options, $current_options;
-	return stripslashes( $returnDefault ? $default_options[$id] : $current_options[$id] );
+function gdk_get_option($id, $returnDefault = false) {
+	global $gdk_default_options, $gdk_current_options;
+	return stripslashes( $returnDefault ? $gdk_default_options[$id] : $gdk_current_options[$id] );
 }
 
 //设置页面模板
-function git_theme_options_page() {
-	global $theme_options, $current_theme;
+function gdk_options_page() {
+	global $gdk_options;
 ?>
 
 <div class="wrap">
-	<h2>Git 主题选项 <a href="https://support.qq.com/products/51158" class="feedback add-new-h2" target="_blank">问题反馈</a></h2>
+	<h2>GDK选项</h2>
 	<div class="wp-filter">
-	<p>您的网站分类列表：<?php echo Bing_category(); ?></p>
 	</div>
 <?php
 	if ($_GET['update']) echo '<div class="updated"><p><strong>设置已保存。</strong></p></div>';
@@ -56,7 +53,7 @@ function git_theme_options_page() {
 		<ul class="filter-links">
 <?php
 $activePanelIdx = empty($_GET['panel']) ? 0 : $_GET['panel'];
-foreach ( array_keys($theme_options) as $i => $name ) {
+foreach ( array_keys($gdk_options) as $i => $name ) {
 	echo '<li><a href="#panel_' . $i . '" data-panel="' . $i . '" ' . ( $i == $activePanelIdx ? 'class="current"' : '' ) . '>' . $name . '</a></li>';
 }
 ?>
@@ -68,7 +65,7 @@ foreach ( array_keys($theme_options) as $i => $name ) {
 <form method="post">
 <?php
 $index = 0;
-foreach ( $theme_options as $panel ) {
+foreach ( $gdk_options as $panel ) {
 	echo '<div class="panel" id="panel_' . $index . '" ' . ( $index == $activePanelIdx ? ' style="display:block"' : '' ) . '><table class="form-table">';
 	foreach ( $panel as $option ) {
 		$type = $option['type'];
@@ -93,7 +90,7 @@ switch ( $type ) {
 	case 'text':
 ?>
 		<label>
-		<input name="<?php echo $id; ?>" class="regular-text" id="<?php echo $id; ?>" type="text" value="<?php echo esc_attr(git_get_option( $id )) ?>" />
+		<input name="<?php echo $id; ?>" class="regular-text" id="<?php echo $id; ?>" type="text" value="<?php echo esc_attr(gdk_get_option( $id )) ?>" />
 		</label>
 		<p class="description"><?php echo $option['desc']; ?></p>
 <?php
@@ -102,7 +99,7 @@ switch ( $type ) {
 ?>
 		<label>
 		<span class="description"><?php echo $option['before']; ?></span>
-		<input name="<?php echo $id; ?>" class="small-text" id="<?php echo $id; ?>" type="number" value="<?php echo esc_attr(git_get_option( $id )) ?>" />
+		<input name="<?php echo $id; ?>" class="small-text" id="<?php echo $id; ?>" type="number" value="<?php echo esc_attr(gdk_get_option( $id )) ?>" />
 		<span class="description"><?php echo $option['desc']; ?></span>
 		</label>
 <?php
@@ -110,7 +107,7 @@ switch ( $type ) {
 	case 'textarea':
 ?>
 		<p><label for="<?php echo $id; ?>"><?php echo $option['desc']; ?></label></p>
-		<p><textarea name="<?php echo $id; ?>" id="<?php echo $id; ?>" rows="10" cols="50" class="large-text code"><?php echo esc_textarea(git_get_option( $id )) ?></textarea></p>
+		<p><textarea name="<?php echo $id; ?>" id="<?php echo $id; ?>" rows="10" cols="50" class="large-text code"><?php echo esc_textarea(gdk_get_option( $id )) ?></textarea></p>
 <?php
 	break;
 	case 'radio':
@@ -118,7 +115,7 @@ switch ( $type ) {
 		<fieldset>
 		<?php foreach ($option['options'] as $val => $name) : ?>
 		<label>
-			<input type="radio" name="<?php echo $id; ?>" id="<?php echo $id . '_' . $val; ?>" value="<?php echo $val; ?>" <?php checked( git_get_option( $id ), $val); ?>>
+			<input type="radio" name="<?php echo $id; ?>" id="<?php echo $id . '_' . $val; ?>" value="<?php echo $val; ?>" <?php checked( gdk_get_option( $id ), $val); ?>>
 			<?php echo $name; ?>
 		</label>
 		<?php endforeach; ?>
@@ -129,7 +126,7 @@ switch ( $type ) {
 	case 'checkbox':
 ?>
 		<label>
-			<input type='checkbox' name="<?php echo $id; ?>" id="<?php echo $id; ?>" value="1" <?php echo checked(git_get_option($id)); ?> />
+			<input type='checkbox' name="<?php echo $id; ?>" id="<?php echo $id; ?>" value="1" <?php echo checked(gdk_get_option($id)); ?> />
 			<span><?php echo $option['desc']; ?></span>
 		</label>
 <?php
@@ -137,8 +134,8 @@ switch ( $type ) {
 	case 'checkboxs':
 ?>
 		<fieldset>
-		<?php $checkboxValues = git_get_option( $id );
-		if ( !is_array($checkboxValues) ) $checkboxValues = array();
+		<?php $checkboxValues = gdk_get_option( $id );
+		if ( !is_array($checkboxValues) ) $checkboxValues = [];
 		foreach ( $option['options'] as $id => $name ) : ?>
 		<label>
 			<input type="checkbox" name="<?php echo $id; ?>[]" id="<?php echo $id; ?>[]" value="<?php echo $id; ?>" <?php checked( in_array($id, $checkboxValues), true); ?>>
@@ -152,7 +149,7 @@ switch ( $type ) {
 	default:
 ?>
 		<label>
-		<input name="<?php echo $id; ?>" class="regular-text" id="<?php echo $id; ?>" type="<?php echo $type; ?>" value="<?php echo esc_attr(git_get_option( $id )) ?>" />
+		<input name="<?php echo $id; ?>" class="regular-text" id="<?php echo $id; ?>" type="<?php echo $type; ?>" value="<?php echo esc_attr(gdk_get_option( $id )) ?>" />
 		</label>
 		<p class="description"><?php echo $option['desc']; ?></p>
 <?php
@@ -170,7 +167,7 @@ switch ( $type ) {
 			<tr>
 				<th><h4>云落小贴士</h4></th>
 				<td>
-					<p><?php echo get_Yunluo_Notice(); ?></p>
+					<p>哈哈</p>
 				</td>
 			</tr>
 			<tr>
@@ -221,7 +218,7 @@ switch ( $type ) {
 </form>
 <form method="post">
 	<p class="submit">
-		<input name="reset" type="submit" class="button button-secondary" value="重置选项" onclick="return confirm('你确定要重置主题选项吗？');"/>
+		<input name="reset" type="submit" class="button button-secondary" value="重置选项" onclick="return confirm('你确定要重置选项吗？');"/>
 		<input type="hidden" name="action" value="reset" />
 	</p>
 </form>
@@ -245,6 +242,10 @@ switch ( $type ) {
 .wp-filter {
 	padding: 0 20px;
 	margin-bottom: 0;
+}
+
+.filter-links .current {
+    border-bottom: 4px solid #6b48ff;
 }
 
 .wp-filter .drawer-toggle:before {
@@ -319,36 +320,31 @@ jQuery(function ($) {
 <?php
 }
 
-//主题激活提示
-function git_theme_activated_tip() {
-	if ( !get_option('git_options_setup') ) echo '<div class="error"><p><b>新主题已启用。该主题支持选项，请访问<a href="admin.php?page=git-theme-options">主题选项</a>页面进行配置。<a href="admin.php?page=git-theme-options">立即配置</a></b></p></div>';
-}
-add_action('admin_footer', 'git_theme_activated_tip');
 
 
-function git_add_theme_options_page() {
-	global $theme_options;
-	if ( isset($_POST['action']) && isset($_GET['page']) && $_GET['page'] == 'git-theme-options' ) {
+function gdk_add_options_page() {
+	global $gdk_options;
+	if ( isset($_POST['action']) && isset($_GET['page']) && $_GET['page'] == 'gdk-options' ) {
 		$action = $_POST['action'];
 		switch ( $action ) {
 			case 'update':
 				$_POST['uid'] = uniqid();
-				update_option('git_options_setup', $_POST);
-				git_update_options();
-				header('Location: admin.php?page=git-theme-options&update=true&panel=' . $_POST['panel']);
+				update_option('gdk_options_setup', $_POST);
+				gdk_update_options();
+				header('Location: admin.php?page=gdk-options&update=true&panel=' . $_POST['panel']);
 				break;
 			case 'reset':
-				delete_option('git_options_setup');
-				git_update_options();
-				header('Location: admin.php?page=git-theme-options&reset=true&panel=' . $_POST['panel']);
+				delete_option('gdk_options_setup');
+				gdk_update_options();
+				header('Location: admin.php?page=gdk-options&reset=true&panel=' . $_POST['panel']);
 				break;
 			case 'test':
 				wp_mail( get_bloginfo( 'admin_email' ) ,'[TEST]SMTP测试邮件','SMTP测试内容，当您收到这封邮件的时候，证明您的网站SMTP配置已成功！');
-				header('Location: admin.php?page=git-theme-options&test=true&panel=' . $_POST['panel']);
+				header('Location: admin.php?page=gdk-options&test=true&panel=' . $_POST['panel']);
 				break;
 		}
 		exit;
 	}
-	add_menu_page( 'Git 主题选项', '主题选项', 'manage_options', 'git-theme-options', 'git_theme_options_page','dashicons-universal-access-alt' );
+	add_menu_page( 'GDK选项', 'GDK选项', 'manage_options', 'gdk-options', 'gdk_options_page','dashicons-buddicons-replies' );
 }
-add_action( 'admin_menu', 'git_add_theme_options_page' );
+add_action( 'admin_menu', 'gdk_add_options_page' );
