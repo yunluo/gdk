@@ -22,7 +22,6 @@
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 
 define('NICETHEME_STORE_API_DOMAIN', 'https://www.nicetheme.cn');
-// define('NICETHEME_STORE_API_DOMAIN', 'http://dev.wp');
 
 define('NICETHEME_STORE_API_URL', NICETHEME_STORE_API_DOMAIN . '/wp-json/nicetheme-store/');
 

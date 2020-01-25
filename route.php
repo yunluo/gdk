@@ -1,23 +1,8 @@
 <?php
 
 /*
-            /$$
-    /$$    /$$$$
-   | $$   |_  $$    /$$$$$$$
- /$$$$$$$$  | $$   /$$_____/
-|__  $$__/  | $$  |  $$$$$$
-   | $$     | $$   \____  $$
-   |__/    /$$$$$$ /$$$$$$$/
-          |______/|_______/
-================================
-        Keep calm and get rich.
-                    Is the best.
 
-  	@Author: nicetheme
-  	@Date:   2018-10-08 14:21:45
-  	@Last Modified by:   Dami
-  	@Last Modified time: 2019-10-01 16:12:32
-  	Plugin Name: 积木箱子
+  	Plugin Name: GitCafe Development Kit 极客公园开发套件
 	Plugin URI: https://www.nicetheme.cn/nicetheme-plugins-store.html
 	Description: nicetheme 的一些基本操作
 	Version: 0.3.5
@@ -31,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 
 function deactivate_myself() {
 	deactivate_plugins( plugin_basename( __FILE__ ) );
-	wp_die('启动失败，积木插件需要运行在 PHP 7.0 版本及更高的环境下。');
+	wp_die('启动失败，积木插件需要运行在 PHP 7.2 版本及更高的环境下。');
 }
 if (!version_compare(PHP_VERSION, '7.2.26', '>=')) {
   add_action('update_option_active_plugins', 'deactivate_myself');
