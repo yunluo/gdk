@@ -1,0 +1,59 @@
+{
+    "key": "group_5c4dc918e5ca5",
+    "title": "关于  WP积木 插件",
+    "fields": [
+        {
+            "key": "field_5c4dcb364bf8d",
+            "label": "介绍",
+            "name": "",
+            "type": "message",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "message": "WP 积木插件 2019年3月20日 更名为：WP 积木 。\r\n\r\n目前来说，WordPress的使用覆盖全世界，使用范围从个人博客到企业网站等等，通过WordPress主题+WordPress插件，绝大多数的WordPress使用者可以搭建出自己的网站。但往往都遇到一个情况，便是：主题和插件的样式不统一，或者设计过于规范统一，不尽完美和匹配。要么忍受，要么有能力的，进行二次开发。\r\n\r\n而，nicetheme 是一个不将就的设计开发团队。\r\n\r\n因此，我们希望把一些功能模块化，做成小而美的、匹配主题设计风格的积木——积木，从而搭建属于自己style的小窝（网站）。",
+            "new_lines": "wpautop",
+            "esc_html": 0
+        },
+        {
+            "key": "field_5c4dcdb2f8c07",
+            "label": "插件详细介绍&更新日志",
+            "name": "",
+            "type": "message",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "message": "请详看官网：https:\/\/www.nicetheme.cn\/jimu",
+            "new_lines": "wpautop",
+            "esc_html": 0
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "options_page",
+                "operator": "==",
+                "value": "nc-intro"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": 1,
+    "description": "",
+    "config_save_path": "plugins\/nc-plugins\/modules\/base\/conf",
+    "modified": 1553093834
+}

@@ -1,0 +1,1851 @@
+{
+    "key": "group_5beacfbc334a4",
+    "title": "网站优化设置",
+    "fields": [
+        {
+            "key": "field_5bead261dabb4",
+            "label": "基础设置",
+            "name": "",
+            "type": "tab",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placement": "top",
+            "endpoint": 0
+        },
+        {
+            "key": "field_5c403df6a1e09",
+            "label": "设置后台登录 Logo",
+            "name": "admin_login_logo",
+            "type": "image",
+            "instructions": "建议图片高度在 <code>85px<\/code>以内",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "return_format": "url",
+            "preview_size": "full",
+            "library": "all",
+            "min_width": "",
+            "min_height": "",
+            "min_size": "",
+            "max_width": "",
+            "max_height": "",
+            "max_size": 2,
+            "mime_types": ""
+        },
+        {
+            "key": "field_5c6b6a64e00b2",
+            "label": "优化设置",
+            "name": "",
+            "type": "tab",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placement": "top",
+            "endpoint": 0
+        },
+        {
+            "key": "field_5beacff12bdb3",
+            "label": "基础优化",
+            "name": "general",
+            "type": "group",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "layout": "block",
+            "sub_fields": [
+                {
+                    "key": "field_5bead00f2bdb4",
+                    "label": "LOLI.NET Gravatar 镜像加速",
+                    "name": "gravatar_speedup",
+                    "type": "true_false",
+                    "instructions": "使用 <code>gravatar.loli.net<\/code> 镜像加载 <code>Gravatar<\/code>，大幅提升网站速度",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "message": "",
+                    "default_value": 0,
+                    "ui": 0,
+                    "ui_on_text": "",
+                    "ui_off_text": ""
+                },
+                {
+                    "key": "field_5bead0232bdb5",
+                    "label": "屏蔽文章修订",
+                    "name": "post_revision",
+                    "type": "true_false",
+                    "instructions": "禁止 WordPress 自动生成文章版本，减小数据库体积",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "message": "",
+                    "default_value": 0,
+                    "ui": 0,
+                    "ui_on_text": "",
+                    "ui_off_text": ""
+                },
+                {
+                    "key": "field_5bead04d2bdb6",
+                    "label": "屏蔽 Trackbacks",
+                    "name": "disable_trackbacks",
+                    "type": "true_false",
+                    "instructions": "建议彻底关闭 Trackbacks 以防止出现大量垃圾留言",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "message": "",
+                    "default_value": 0,
+                    "ui": 0,
+                    "ui_on_text": "",
+                    "ui_off_text": ""
+                },
+                {
+                    "key": "field_5bead0612bdb7",
+                    "label": "屏蔽 XML-RPC",
+                    "name": "disable_xmlrpc",
+                    "type": "true_false",
+                    "instructions": "若不使用本地客户端发布文章，建议屏蔽 XML-RPC 协议以防止博客遭受攻击",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "message": "",
+                    "default_value": 0,
+                    "ui": 0,
+                    "ui_on_text": "",
+                    "ui_off_text": ""
+                },
+                {
+                    "key": "field_5bead0802bdb9",
+                    "label": "取消 Emoji 加载",
+                    "name": "disable_emoji",
+                    "type": "true_false",
+                    "instructions": "用于支持 WordPress 显示 Emoji 表情图片，但由于国内网络原因——建议取消加载",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "message": "",
+                    "default_value": 0,
+                    "ui": 0,
+                    "ui_on_text": "",
+                    "ui_off_text": ""
+                },
+                {
+                    "key": "field_5ceb74f8f87ff",
+                    "label": "开启 Emoji CDN 支持",
+                    "name": "emoji_cdn",
+                    "type": "true_false",
+                    "instructions": "用于支持 WordPress 显示 Emoji 表情图片（将 <code>s.w.org<\/code> 修改为国内可访问的 MaxCDN）",
+                    "required": 0,
+                    "conditional_logic": [
+                        [
+                            {
+                                "field": "field_5bead0802bdb9",
+                                "operator": "!=",
+                                "value": "1"
+                            }
+                        ]
+                    ],
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "message": "",
+                    "default_value": 0,
+                    "ui": 0,
+                    "ui_on_text": "",
+                    "ui_off_text": ""
+                },
+                {
+                    "key": "field_5bead0992bdba",
+                    "label": "屏蔽 WordPress 默认小工具",
+                    "name": "disable_wp_widgets",
+                    "type": "true_false",
+                    "instructions": "多数主题均没有对 WordPress 自带的小工具做样式适配，建议屏蔽",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "message": "",
+                    "default_value": 0,
+                    "ui": 0,
+                    "ui_on_text": "",
+                    "ui_off_text": ""
+                },
+                {
+                    "key": "field_5bead1d886236",
+                    "label": "删除 wp_head() 输出的 WordPress 核心相关信息",
+                    "name": "remove_wp_head_useless",
+                    "type": "true_false",
+                    "instructions": "移除 WordPress 版本号等相关信息以提高站点安全性",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "message": "",
+                    "default_value": 0,
+                    "ui": 0,
+                    "ui_on_text": "",
+                    "ui_off_text": ""
+                },
+                {
+                    "key": "field_5e022a4c488e7",
+                    "label": "WordPress 核心更新加速",
+                    "name": "core_update",
+                    "type": "true_false",
+                    "instructions": "使用 nicetheme 自建加速镜像更新 WordPress 核心",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "message": "",
+                    "default_value": 0,
+                    "ui": 0,
+                    "ui_on_text": "",
+                    "ui_off_text": ""
+                },
+                {
+                    "key": "field_5c025fdefd935",
+                    "label": "彻底关闭 WordPress 核心自动更新功能",
+                    "name": "disable_core_update",
+                    "type": "true_false",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "message": "",
+                    "default_value": 0,
+                    "ui": 0,
+                    "ui_on_text": "",
+                    "ui_off_text": ""
+                },
+                {
+                    "key": "field_5c025ff0fd936",
+                    "label": "彻底关闭主题自动更新功能",
+                    "name": "disable_theme_update",
+                    "type": "true_false",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "message": "",
+                    "default_value": 0,
+                    "ui": 0,
+                    "ui_on_text": "",
+                    "ui_off_text": ""
+                },
+                {
+                    "key": "field_5c025ffffd937",
+                    "label": "彻底关闭插件自动更新功能",
+                    "name": "disable_plugin_update",
+                    "type": "true_false",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "message": "",
+                    "default_value": 0,
+                    "ui": 0,
+                    "ui_on_text": "",
+                    "ui_off_text": ""
+                },
+                {
+                    "key": "field_5c0260ecf3739",
+                    "label": "robots.txt 优化",
+                    "name": "improve_robots_txt",
+                    "type": "true_false",
+                    "instructions": "阻止搜索引擎抓取后台页面、Feed 等内容，该功能需要结合 服务器<code>rewrite<\/code> 实现。",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "message": "",
+                    "default_value": 0,
+                    "ui": 0,
+                    "ui_on_text": "",
+                    "ui_off_text": ""
+                },
+                {
+                    "key": "field_5c027ce1c43fd",
+                    "label": "垃圾评论拦截",
+                    "name": "anti_spam_switcher",
+                    "type": "true_false",
+                    "instructions": "<font color=\"red\">面向海外用户站点请勿开启<\/font>",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "message": "",
+                    "default_value": 0,
+                    "ui": 0,
+                    "ui_on_text": "",
+                    "ui_off_text": ""
+                }
+            ]
+        },
+        {
+            "key": "field_5bead2d97cc95",
+            "label": "SEO",
+            "name": "",
+            "type": "tab",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placement": "left",
+            "endpoint": 0
+        },
+        {
+            "key": "field_5c00e594ac0f0",
+            "label": "开启全局 SEO 功能",
+            "name": "seo_switcher",
+            "type": "button_group",
+            "instructions": "启用前请关闭其它 SEO 相关插件 \/ 主题功能，以保证积木正常运行",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "choices": [
+                "关闭",
+                "开启"
+            ],
+            "allow_null": 0,
+            "default_value": "",
+            "layout": "horizontal",
+            "return_format": "value"
+        },
+        {
+            "key": "field_5bead8a48cd53",
+            "label": "分隔符",
+            "name": "seo_divider",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_5c00e594ac0f0",
+                        "operator": "==",
+                        "value": "1"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "maxlength": ""
+        },
+        {
+            "key": "field_5bead2e57cc96",
+            "label": "开启首页 SEO 功能",
+            "name": "index_seo",
+            "type": "button_group",
+            "instructions": "开启后请确认所有选项均填写完整且正确，以防止影响站点收录！",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_5c00e594ac0f0",
+                        "operator": "==",
+                        "value": "1"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "choices": [
+                "关闭",
+                "开启"
+            ],
+            "allow_null": 0,
+            "default_value": "",
+            "layout": "horizontal",
+            "return_format": "value"
+        },
+        {
+            "key": "field_5ce662e088cdf",
+            "label": "首页 SEO 功能",
+            "name": "seo_index_inner",
+            "type": "group",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_5bead2e57cc96",
+                        "operator": "==",
+                        "value": "1"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "layout": "block",
+            "sub_fields": [
+                {
+                    "key": "field_5bead3237cc98",
+                    "label": "首页标题",
+                    "name": "seo_index_title",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": [
+                        [
+                            {
+                                "field": "field_5bead2e57cc96",
+                                "operator": "==",
+                                "value": "1"
+                            }
+                        ]
+                    ],
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": ""
+                },
+                {
+                    "key": "field_5bead33a7cc99",
+                    "label": "首页关键词",
+                    "name": "seo_index_keywords",
+                    "type": "textarea",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": [
+                        [
+                            {
+                                "field": "field_5bead2e57cc96",
+                                "operator": "==",
+                                "value": "1"
+                            }
+                        ]
+                    ],
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "",
+                    "maxlength": "",
+                    "rows": "",
+                    "new_lines": ""
+                },
+                {
+                    "key": "field_5bead8cc8cd54",
+                    "label": "首页描述",
+                    "name": "seo_index_description",
+                    "type": "textarea",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": [
+                        [
+                            {
+                                "field": "field_5bead2e57cc96",
+                                "operator": "==",
+                                "value": "1"
+                            }
+                        ]
+                    ],
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "",
+                    "maxlength": "",
+                    "rows": "",
+                    "new_lines": ""
+                }
+            ]
+        },
+        {
+            "key": "field_5c00ebfbc20a7",
+            "label": "开启其他页面 SEO 功能",
+            "name": "taxonomy_seo",
+            "type": "button_group",
+            "instructions": "开启后可手动设置分类目录 \/ 标签页面 TDK",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_5c00e594ac0f0",
+                        "operator": "==",
+                        "value": "1"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "choices": [
+                "关闭",
+                "开启"
+            ],
+            "allow_null": 0,
+            "default_value": "",
+            "layout": "horizontal",
+            "return_format": "value"
+        },
+        {
+            "key": "field_5bee19886e49a",
+            "label": "文章页描述自动截取字数",
+            "name": "single_description_range",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_5c00ebfbc20a7",
+                        "operator": "==",
+                        "value": "1"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": 140,
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "maxlength": ""
+        },
+        {
+            "key": "field_5ce663c500869",
+            "label": "其他 SEO 优化",
+            "name": "others_seo",
+            "type": "group",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "layout": "block",
+            "sub_fields": [
+                {
+                    "key": "field_5d74a2c5d9580",
+                    "label": "百度自动推送",
+                    "name": "baidu_submit",
+                    "type": "button_group",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "choices": [
+                        "关闭",
+                        "开启"
+                    ],
+                    "allow_null": 0,
+                    "default_value": "",
+                    "layout": "horizontal",
+                    "return_format": "value"
+                },
+                {
+                    "key": "field_5d74a2d9d9581",
+                    "label": "百度推送准入密钥",
+                    "name": "baidu_submit_key",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": [
+                        [
+                            {
+                                "field": "field_5d74a2c5d9580",
+                                "operator": "==",
+                                "value": "1"
+                            }
+                        ]
+                    ],
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": ""
+                },
+                {
+                    "key": "field_5bfaa45a71cd9",
+                    "label": "不抓取作者页面（Noindex）",
+                    "name": "noindex_author_page",
+                    "type": "button_group",
+                    "instructions": "对于单用户网站作者页面显得有些冗余，建议屏蔽搜索引擎对该页面的抓取",
+                    "required": 0,
+                    "conditional_logic": [
+                        [
+                            {
+                                "field": "field_5c00e594ac0f0",
+                                "operator": "==",
+                                "value": "1"
+                            }
+                        ]
+                    ],
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "choices": [
+                        "关闭",
+                        "开启"
+                    ],
+                    "allow_null": 0,
+                    "default_value": "",
+                    "layout": "horizontal",
+                    "return_format": "value"
+                },
+                {
+                    "key": "field_5c025ce7a7b16",
+                    "label": "文章中外链自动添加 <code>rel=\"nofollow\"<\/code> 属性",
+                    "name": "auto_nofollow",
+                    "type": "button_group",
+                    "instructions": "阻止外站链接分散权重，慎用，慎用",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "choices": [
+                        "关闭",
+                        "开启"
+                    ],
+                    "allow_null": 0,
+                    "default_value": "",
+                    "layout": "horizontal",
+                    "return_format": "value"
+                },
+                {
+                    "key": "field_5c037521256b5",
+                    "label": "文章内页自动链接标签",
+                    "name": "auto_tag_link_switcher",
+                    "type": "button_group",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "choices": [
+                        "关闭",
+                        "开启"
+                    ],
+                    "allow_null": 0,
+                    "default_value": "",
+                    "layout": "horizontal",
+                    "return_format": "value"
+                },
+                {
+                    "key": "field_5e2651545831c",
+                    "label": "单页面最大链接次数",
+                    "name": "auto_tag_link_switcher_limit",
+                    "type": "range",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": [
+                        [
+                            {
+                                "field": "field_5c037521256b5",
+                                "operator": "==",
+                                "value": "1"
+                            }
+                        ]
+                    ],
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": 5,
+                    "min": "",
+                    "max": "",
+                    "step": "",
+                    "prepend": "",
+                    "append": ""
+                },
+                {
+                    "key": "field_5c0618f861a9c",
+                    "label": "网站地图 (Google Sitemap)",
+                    "name": "sitemap_xml",
+                    "type": "button_group",
+                    "instructions": "需开启服务器的伪静态功能支持",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "choices": [
+                        "关闭",
+                        "开启"
+                    ],
+                    "allow_null": 0,
+                    "default_value": "",
+                    "layout": "horizontal",
+                    "return_format": "value"
+                }
+            ]
+        },
+        {
+            "key": "field_5bee1a6e58110",
+            "label": "易用性设置",
+            "name": "",
+            "type": "tab",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placement": "left",
+            "endpoint": 0
+        },
+        {
+            "key": "field_5bee1ae6ab3fb",
+            "label": "易用性设置",
+            "name": "usability",
+            "type": "group",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "layout": "block",
+            "sub_fields": [
+                {
+                    "key": "field_5c7cdff08ec12",
+                    "label": "图片暗箱",
+                    "name": "nc_lightgallery",
+                    "type": "button_group",
+                    "instructions": "当你的主题不支持 图片暗箱 时可开启此功能。注意：此功能生效需要在插入图片时将图片链接到 媒体文件 ， 即图片本身。",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "choices": [
+                        "关闭",
+                        "开启"
+                    ],
+                    "allow_null": 0,
+                    "default_value": 0,
+                    "layout": "horizontal",
+                    "return_format": "value"
+                },
+                {
+                    "key": "field_5c7a9316fe459",
+                    "label": "图片延迟加载",
+                    "name": "nc_lazyload",
+                    "type": "button_group",
+                    "instructions": "当你的主题不支持 图片延迟加载 时可开启此功能。",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "choices": [
+                        "关闭",
+                        "开启"
+                    ],
+                    "allow_null": 0,
+                    "default_value": 0,
+                    "layout": "horizontal",
+                    "return_format": "value"
+                },
+                {
+                    "key": "field_5bee1a8458111",
+                    "label": "图片自动添加 Alt & Title",
+                    "name": "friendly_images",
+                    "type": "button_group",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "choices": [
+                        "关闭",
+                        "开启"
+                    ],
+                    "allow_null": 0,
+                    "default_value": "",
+                    "layout": "horizontal",
+                    "return_format": "value"
+                },
+                {
+                    "key": "field_5c2354e3837a5",
+                    "label": "上传媒体文件自动重命名",
+                    "name": "auto_rename_media_files",
+                    "type": "button_group",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "choices": [
+                        "关闭",
+                        "开启"
+                    ],
+                    "allow_null": 0,
+                    "default_value": "",
+                    "layout": "horizontal",
+                    "return_format": "value"
+                },
+                {
+                    "key": "field_5c4afa64650f5",
+                    "label": "前台不显示 WordPress 顶部工具条",
+                    "name": "disable_admin_bar",
+                    "type": "button_group",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "choices": [
+                        "关闭",
+                        "开启"
+                    ],
+                    "allow_null": 0,
+                    "default_value": "",
+                    "layout": "horizontal",
+                    "return_format": "value"
+                },
+                {
+                    "key": "field_5c7a9303fe458",
+                    "label": "代码高亮",
+                    "name": "nc_highlight",
+                    "type": "button_group",
+                    "instructions": "当你的主题不支持 代码高亮 时可开启此功能。",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "choices": [
+                        "关闭",
+                        "开启"
+                    ],
+                    "allow_null": 0,
+                    "default_value": 0,
+                    "layout": "horizontal",
+                    "return_format": "value"
+                },
+                {
+                    "key": "field_5bfa119e06b93",
+                    "label": "去除 \/category\/ URL 前缀",
+                    "name": "no_category_base",
+                    "type": "button_group",
+                    "instructions": "更改此项需要在后台「设置 -> 固定连接」页面点击「保存设置」方可生效。",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "choices": [
+                        "关闭",
+                        "开启"
+                    ],
+                    "allow_null": 0,
+                    "default_value": "",
+                    "layout": "horizontal",
+                    "return_format": "value"
+                },
+                {
+                    "key": "field_5d356a055db69",
+                    "label": "隐藏作者页URL里的用户名",
+                    "name": "hide_author_url_user_name",
+                    "type": "button_group",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "choices": [
+                        "关闭",
+                        "开启"
+                    ],
+                    "allow_null": 0,
+                    "default_value": "",
+                    "layout": "horizontal",
+                    "return_format": "value"
+                }
+            ]
+        },
+        {
+            "key": "field_5ce664ae0129c",
+            "label": "微信分享设置",
+            "name": "",
+            "type": "tab",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placement": "left",
+            "endpoint": 0
+        },
+        {
+            "key": "field_5c923bb58a47b",
+            "label": "微信、QQ内分享信息自定义",
+            "name": "wechat_qq_share_custom",
+            "type": "button_group",
+            "instructions": "开启后将在微信、QQ内显示自定义的分享内容。",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "choices": [
+                "关闭",
+                "开启"
+            ],
+            "allow_null": 0,
+            "default_value": 0,
+            "layout": "horizontal",
+            "return_format": "value"
+        },
+        {
+            "key": "field_5c923ca58a47c",
+            "label": "微信、QQ内分享信息设置",
+            "name": "wechat_qq_share_custom_conf",
+            "type": "group",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_5c923bb58a47b",
+                        "operator": "==",
+                        "value": "1"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "layout": "block",
+            "sub_fields": [
+                {
+                    "key": "field_5c923fc1150d7",
+                    "label": "微信自定义",
+                    "name": "",
+                    "type": "message",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "message": "如果你想要在微信中直接分享，请按以下步骤操作：\r\n  1、公众号通过微信认证 \r\n  2、添加你的 网站域名到 JS安全域名中 \r\n  3、添加你的 服务器IP到 IP白名单中 \r\n  4、填写 AppID 和 AppSecret \r\n否则你只能通过QQ分享链接到微信，或者直接在QQ中分享",
+                    "new_lines": "br",
+                    "esc_html": 0
+                },
+                {
+                    "key": "field_5c9240b5b6cf4",
+                    "label": "AppId",
+                    "name": "share_appid",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": ""
+                },
+                {
+                    "key": "field_5c9240cbb6cf5",
+                    "label": "share_appsecret",
+                    "name": "appsecret",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": ""
+                },
+                {
+                    "key": "field_5c923f97150d6",
+                    "label": "默认分享图片",
+                    "name": "share_img",
+                    "type": "image",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "return_format": "url",
+                    "preview_size": "thumbnail",
+                    "library": "all",
+                    "min_width": "",
+                    "min_height": "",
+                    "min_size": "",
+                    "max_width": "",
+                    "max_height": "",
+                    "max_size": "",
+                    "mime_types": ""
+                },
+                {
+                    "key": "field_5c923d26150d2",
+                    "label": "自定义标题",
+                    "name": "share_title",
+                    "type": "text",
+                    "instructions": "适用于非文章和页面类型的分享，或者开启在文章页中添加标题的分享。例如填写网站名。",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": ""
+                },
+                {
+                    "key": "field_5c923d69150d3",
+                    "label": "是否显示标题",
+                    "name": "share_title_in_single",
+                    "type": "button_group",
+                    "instructions": "开启后将在文章和页面类型的分享页添加上面填写的自定义标题内容",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "choices": [
+                        "关闭",
+                        "开启"
+                    ],
+                    "allow_null": 0,
+                    "default_value": 0,
+                    "layout": "horizontal",
+                    "return_format": "value"
+                },
+                {
+                    "key": "field_5c923f3c150d4",
+                    "label": "自定义分隔符",
+                    "name": "share_title_in_single_line",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": [
+                        [
+                            {
+                                "field": "field_5c923d69150d3",
+                                "operator": "==",
+                                "value": "1"
+                            }
+                        ]
+                    ],
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "|",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": ""
+                },
+                {
+                    "key": "field_5c923f74150d5",
+                    "label": "自定义描述",
+                    "name": "share_summary",
+                    "type": "text",
+                    "instructions": "适用于非文章和页面类型的页面分享",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": ""
+                }
+            ]
+        },
+        {
+            "key": "field_5c028317819c8",
+            "label": "SMTP",
+            "name": "",
+            "type": "tab",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placement": "left",
+            "endpoint": 0
+        },
+        {
+            "key": "field_5c0284ae94a43",
+            "label": "启用 SMTP 功能",
+            "name": "smtp_switcher",
+            "type": "button_group",
+            "instructions": "使用第三方邮箱服务替代 WordPress 自带发信功能",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "choices": [
+                "关闭",
+                "开启"
+            ],
+            "allow_null": 0,
+            "default_value": "",
+            "layout": "horizontal",
+            "return_format": "value"
+        },
+        {
+            "key": "field_5c028322819c9",
+            "label": "SMTP",
+            "name": "smtp",
+            "type": "group",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_5c0284ae94a43",
+                        "operator": "==",
+                        "value": "1"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "layout": "block",
+            "sub_fields": [
+                {
+                    "key": "field_5c028340819ca",
+                    "label": "发送邮件服务器",
+                    "name": "smtp_host",
+                    "type": "text",
+                    "instructions": "查阅相关文档后填写。QQ 邮箱应为 <code>smtp.qq.com<\/code>，腾讯企业邮箱应为 <code>smtp.exmail.qq.com<\/code>。",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": ""
+                },
+                {
+                    "key": "field_5c0283b9819cb",
+                    "label": "服务器端口（Port）",
+                    "name": "smtp_port",
+                    "type": "number",
+                    "instructions": "查阅相关文档后填写。使用 SSL 的邮件服务器应填写 <code>465<\/code>。",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "min": "",
+                    "max": "",
+                    "step": ""
+                },
+                {
+                    "key": "field_5c028523600ef",
+                    "label": "加密方式",
+                    "name": "smtp_secure",
+                    "type": "radio",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "choices": {
+                        "ssl": "SSL",
+                        "tls": "TLS",
+                        "none": "无"
+                    },
+                    "allow_null": 0,
+                    "other_choice": 0,
+                    "default_value": "ssl",
+                    "layout": "horizontal",
+                    "return_format": "value",
+                    "save_other_choice": 0
+                },
+                {
+                    "key": "field_5c02843d819cc",
+                    "label": "发信名",
+                    "name": "smtp_fromname",
+                    "type": "text",
+                    "instructions": "发信所显示的名字",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": ""
+                },
+                {
+                    "key": "field_5c02844e819cd",
+                    "label": "邮箱（Username）",
+                    "name": "smtp_username",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": ""
+                },
+                {
+                    "key": "field_5c02845e819ce",
+                    "label": "密码",
+                    "name": "smtp_password",
+                    "type": "password",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": ""
+                },
+                {
+                    "key": "field_5c02846a819cf",
+                    "label": "显示发信的邮箱",
+                    "name": "smtp_display_mail",
+                    "type": "text",
+                    "instructions": "此项可以与实际邮箱不同，根据需要填写",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": ""
+                }
+            ]
+        },
+        {
+            "key": "field_5c81056dbb2d4",
+            "label": "测试发信可用性",
+            "name": "smtp_test",
+            "type": "smart_button",
+            "instructions": "以上信息填写完毕后<strong>保存设置<\/strong>并点击此按钮可测试发信功能",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_5c0284ae94a43",
+                        "operator": "==",
+                        "value": "1"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "bind-action-name": "nc_test_email",
+            "button-name": "测试发信",
+            "message": ""
+        },
+        {
+            "key": "field_5c0287b1088f6",
+            "label": "数据库相关",
+            "name": "",
+            "type": "tab",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placement": "left",
+            "endpoint": 0
+        },
+        {
+            "key": "field_5c0612acc9568",
+            "label": "数据库优化",
+            "name": "database_optimize",
+            "type": "smart_button",
+            "instructions": "小幅减小数据库体积，非常实用。",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "bind-action-name": "nc_database_optimize",
+            "button-name": "一键优化所有数据表",
+            "message": ""
+        },
+        {
+            "key": "field_5c0638079f5b9",
+            "label": "数据库清理",
+            "name": "",
+            "type": "message",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "message": "<table class=\"acf-database-cleanup-form widefat\">\r\n\t<thead>\r\n\t\t<tr>\r\n\t\t\t<th scope=\"col\">类型<\/th>\r\n\t\t\t<th scope=\"col\">数量<\/th>\r\n\t\t\t<th scope=\"col\">操作<\/th>\r\n\t\t<\/tr>\r\n\t<\/thead>\r\n\t<tbody id=\"the-list\">\r\n\t\t<tr class=\"alternate\">\r\n\t\t\t<td class=\"column-name\">\r\n                修订版本\r\n            <\/td>\r\n\t\t\t<td class=\"revision column-name\">0<\/td>\r\n\t\t\t<td class=\"column-name\">\r\n\t\t\t\t<input type=\"button\" class=\"button-primary\" data-action=\"nc_database_cleanup\" data-action_type=\"revision\" value=\"删除\">\r\n\t\t\t<\/td>\r\n\t\t<\/tr>\r\n\t\t<tr>\r\n\t\t\t<td class=\"column-name\">草稿<\/td>\r\n\t\t\t<td class=\"draft column-name\">0<\/td>\r\n\t\t\t<td class=\"column-name\">\r\n                <input type=\"button\" class=\"button-primary\" data-action=\"nc_database_cleanup\" data-action_type=\"draft\" value=\"删除\">\r\n\t\t\t<\/td>\r\n\t\t<\/tr>\r\n\t\t<tr class=\"alternate\">\r\n\t\t\t<td class=\"column-name\">自动草稿<\/td>\r\n\t\t\t<td class=\"autodraft column-name\">0<\/td>\r\n\t\t\t<td class=\"column-name\">\r\n                <input type=\"button\" class=\"button-primary\" data-action=\"nc_database_cleanup\" data-action_type=\"autodraft\" value=\"删除\">\r\n\t\t\t<\/td>\r\n\t\t<\/tr>\r\n\t\t<tr>\r\n\t\t\t<td class=\"column-name\">待审评论<\/td>\r\n\t\t\t<td class=\"moderated column-name\">0<\/td>\r\n\t\t\t<td class=\"column-name\">\r\n                <input type=\"button\" class=\"button-primary\" data-action=\"nc_database_cleanup\" data-action_type=\"moderated\" value=\"删除\">\r\n            <\/td>\r\n\t\t<\/tr>\r\n\t\t<tr class=\"alternate\">\r\n\t\t\t<td class=\"column-name\">垃圾评论<\/td>\r\n\t\t\t<td class=\"spam column-name\">0<\/td>\r\n\t\t\t<td class=\"column-name\">\r\n                <input type=\"button\" class=\"button-primary\" data-action=\"nc_database_cleanup\" data-action_type=\"spam\" value=\"删除\">\r\n            <\/td>\r\n\t\t<\/tr>\r\n\t\t<tr>\r\n\t\t\t<td class=\"column-name\">回收站评论<\/td>\r\n\t\t\t<td class=\"trash column-name\">0<\/td>\r\n\t\t\t<td class=\"column-name\">\r\n                <input type=\"button\" class=\"button-primary\" data-action=\"nc_database_cleanup\" data-action_type=\"trash\" value=\"删除\">\r\n            <\/td>\r\n\t\t<\/tr>\r\n\t\t<tr class=\"alternate\">\r\n\t\t\t<td class=\"column-name\">孤立的文章元信息<\/td>\r\n\t\t\t<td class=\"postmeta column-name\">0<\/td>\r\n\t\t\t<td class=\"column-name\">\r\n                <input type=\"button\" class=\"button-primary\" data-action=\"nc_database_cleanup\" data-action_type=\"postmeta\" value=\"删除\">\r\n            <\/td>\r\n\t\t<\/tr>\r\n\t\t<tr>\r\n\t\t\t<td class=\"column-name\">孤立的评论元信息<\/td>\r\n\t\t\t<td class=\"commentmeta column-name\">0<\/td>\r\n\t\t\t<td class=\"column-name\">\r\n                <input type=\"button\" class=\"button-primary\" data-action=\"nc_database_cleanup\" data-action_type=\"commentmeta\" value=\"删除\">\r\n            <\/td>\r\n\t\t<\/tr>\r\n\t\t<tr class=\"alternate\">\r\n\t\t\t<td class=\"column-name\">孤立的关系信息<\/td>\r\n\t\t\t<td class=\"relationships column-name\">0<\/td>\r\n\t\t\t<td class=\"column-name\">\r\n                <input type=\"button\" class=\"button-primary\" data-action=\"nc_database_cleanup\" data-action_type=\"relationships\" value=\"删除\">\r\n            <\/td>\r\n\t\t<\/tr>\r\n\t\t<tr>\r\n\t\t\t<td class=\"column-name\">控制板订阅缓存<\/td>\r\n\t\t\t<td class=\"feed column-name\">0<\/td>\r\n\t\t\t<td class=\"column-name\">\r\n                <input type=\"button\" class=\"button-primary\" data-action=\"nc_database_cleanup\" data-action_type=\"feed\" value=\"删除\">\r\n            <\/td>\r\n\t\t<\/tr>\r\n\t<\/tbody>\r\n<\/table>",
+            "new_lines": "wpautop",
+            "esc_html": 0
+        },
+        {
+            "key": "field_5e07599034645",
+            "label": "CDN设置",
+            "name": "",
+            "type": "tab",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placement": "top",
+            "endpoint": 0
+        },
+        {
+            "key": "field_5e0759ab34646",
+            "label": "使用说明",
+            "name": "",
+            "type": "message",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "message": "注意：积木本身不具CDN功能，仅是实现对站点内资源域名的替换。",
+            "new_lines": "wpautop",
+            "esc_html": 0
+        },
+        {
+            "key": "field_5e075b73d6985",
+            "label": "启用CDN替换",
+            "name": "open_cdn_replace",
+            "type": "button_group",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "choices": {
+                "disabled": "禁用",
+                "enable": "启用"
+            },
+            "allow_null": 0,
+            "default_value": "disabled",
+            "layout": "horizontal",
+            "return_format": "value"
+        },
+        {
+            "key": "field_5e075c70d6986",
+            "label": "替换列表",
+            "name": "cdn_replace_list",
+            "type": "repeater",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_5e075b73d6985",
+                        "operator": "==",
+                        "value": "enable"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "collapsed": "",
+            "min": 1,
+            "max": 0,
+            "layout": "table",
+            "button_label": "添加替换",
+            "sub_fields": [
+                {
+                    "key": "field_5e075cb1d6987",
+                    "label": "源域名",
+                    "name": "source",
+                    "type": "text",
+                    "instructions": "需要替换的域名，不包含 http:\/\/ 或 https:\/\/",
+                    "required": 1,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": ""
+                },
+                {
+                    "key": "field_5e075cf1d6988",
+                    "label": "CDN域名",
+                    "name": "target",
+                    "type": "text",
+                    "instructions": "目标域名，不包含 http:\/\/ 或 https:\/\/",
+                    "required": 1,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": ""
+                }
+            ]
+        },
+        {
+            "key": "field_5e0816891b77a",
+            "label": "安全防护",
+            "name": "",
+            "type": "tab",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placement": "top",
+            "endpoint": 0
+        },
+        {
+            "key": "field_5e0818611b77c",
+            "label": "后台访问控制",
+            "name": "wp-admin-access-control",
+            "type": "button_group",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "choices": {
+                "disabled": "禁用",
+                "enable": "启用"
+            },
+            "allow_null": 0,
+            "default_value": "disabled",
+            "layout": "horizontal",
+            "return_format": "value"
+        },
+        {
+            "key": "field_5e0816c91b77b",
+            "label": "允许访问后台的用户组",
+            "name": "wp-admin-access-group",
+            "type": "select",
+            "instructions": "默认包含 administrator 管理员 用户组",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_5e0818611b77c",
+                        "operator": "==",
+                        "value": "enable"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "choices": {
+                "administrator": "管理员",
+                "editor": "编辑",
+                "author": "作者",
+                "contributor": "贡献者",
+                "subscriber": "订阅者"
+            },
+            "default_value": [],
+            "allow_null": 0,
+            "multiple": 1,
+            "ui": 1,
+            "ajax": 1,
+            "return_format": "value",
+            "placeholder": ""
+        },
+        {
+            "key": "field_5e08ad006953d",
+            "label": "后台安全入口",
+            "name": "nice-security-access",
+            "type": "button_group",
+            "instructions": "开启后，需访问指定的URL才能进行登录后台操作。",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "choices": {
+                "disabled": "禁用",
+                "enable": "启用"
+            },
+            "allow_null": 0,
+            "default_value": "disabled",
+            "layout": "horizontal",
+            "return_format": "value"
+        },
+        {
+            "key": "field_5e08b26ca4dc2",
+            "label": "安全入口路径",
+            "name": "nice-security-access-path",
+            "type": "text",
+            "instructions": "栗子：设置安全入口路径为 nicetheme ，则登录路径为 网站地址\/wp-login.php?nicetheme 。其它路径将无法获得登录表单",
+            "required": 1,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_5e08ad006953d",
+                        "operator": "==",
+                        "value": "enable"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "maxlength": ""
+        },
+        {
+            "key": "field_5c24afcc8069f",
+            "label": "自定义",
+            "name": "",
+            "type": "tab",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placement": "top",
+            "endpoint": 0
+        },
+        {
+            "key": "field_5c23843882ef7",
+            "label": "自定义设置",
+            "name": "site",
+            "type": "group",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "layout": "block",
+            "sub_fields": [
+                {
+                    "key": "field_5c23847d82ef8",
+                    "label": "头部自定义代码",
+                    "name": "custom_head_code",
+                    "type": "textarea",
+                    "instructions": "请谨慎填写，自定义代码不作任何安全处理！",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "",
+                    "maxlength": "",
+                    "rows": "",
+                    "new_lines": ""
+                },
+                {
+                    "key": "field_5c2384cd82ef9",
+                    "label": "底部自定义代码",
+                    "name": "custom_footer_code",
+                    "type": "textarea",
+                    "instructions": "请谨慎填写，自定义代码不做任何安全处理！",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "",
+                    "maxlength": "",
+                    "rows": "",
+                    "new_lines": ""
+                }
+            ]
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "options_page",
+                "operator": "==",
+                "value": "nc-optimizeup-options"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": 1,
+    "description": "",
+    "config_save_path": "plugins\/nicetheme-jimu\/modules\/base\/conf",
+    "modified": 1579569597
+}

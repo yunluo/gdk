@@ -1,0 +1,150 @@
+/* a11y-dark theme */
+/* Based on the Tomorrow Night Eighties theme: https://github.com/isagalaev/highlight.js/blob/master/src/styles/tomorrow-night-eighties.css */
+/* @author: ericwbailey */
+
+pre { padding: 0 !important; }
+/* Comment */
+.hljs-comment,
+.hljs-quote {
+  color: #d4d0ab;
+}
+
+/* Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+  color: #ffa07a;
+}
+
+/* Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+  color: #f5ab35;
+}
+
+/* Yellow */
+.hljs-attribute {
+  color: #ffd700;
+}
+
+/* Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+  color: #abe338;
+}
+
+/* Blue */
+.hljs-title,
+.hljs-section {
+  color: #00e0e0;
+}
+
+/* Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+  color: #dcc6e0;
+}
+
+.hljs {
+  position:relative;
+  display: block;
+  overflow-x: auto;
+  background: #2b2b2b;
+  color: #f8f8f2;
+  padding: 1.75rem 1.25rem;
+}
+.hljs:before{
+    content: attr(data-title);
+    position: absolute;
+    top: 6px;
+    padding: 0 .75rem .1rem;
+    font-size: 10px;
+    right: 20px;
+    text-align: right;
+    color: rgba(245, 246, 250, 0.4);
+    font-weight: 700;
+    letter-spacing: .8px;
+    text-transform: uppercase;
+    border-radius: 0;
+    background: #ff6753;
+}
+.hljs:after{
+    content: "";
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 0.5em;
+    background: #ff6753;
+}
+.hljs-ln{
+  margin-bottom:0
+}
+.hljs-emphasis {
+  font-style: italic;
+}
+
+.hljs-strong {
+  font-weight: bold;
+}
+
+@media screen and (-ms-high-contrast: active) {
+  .hljs-addition,
+  .hljs-attribute,
+  .hljs-built_in,
+  .hljs-builtin-name,
+  .hljs-bullet,
+  .hljs-comment,
+  .hljs-link,
+  .hljs-literal,
+  .hljs-meta,
+  .hljs-number,
+  .hljs-params,
+  .hljs-string,
+  .hljs-symbol,
+  .hljs-type,
+  .hljs-quote {
+        color: highlight;
+    }
+
+    .hljs-keyword,
+    .hljs-selector-tag {
+        font-weight: bold;
+    }
+}
+
+/* for block of numbers */
+.hljs-ln td.hljs-ln-numbers {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    text-align: center;
+    color: #ccc;
+    border-right: 0;
+    vertical-align: top;
+    padding-right: 5px;
+
+    /* your custom style here */
+}
+
+/* for block of code */
+.hljs-ln td.hljs-ln-code {
+    padding-left: 10px;
+}
