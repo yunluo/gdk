@@ -33,20 +33,20 @@ function deactivate_myself() {
 	deactivate_plugins( plugin_basename( __FILE__ ) );
 	wp_die('启动失败，积木插件需要运行在 PHP 7.0 版本及更高的环境下。');
 }
-if (!version_compare(PHP_VERSION, '7.0.0', '>=')) {
+if (!version_compare(PHP_VERSION, '7.2.26', '>=')) {
   add_action('update_option_active_plugins', 'deactivate_myself');
 }
 
 define('NC_STORE_VER', '0.3.5'); 
-define('NC_STORE_FILE', __FILE__);
-define('NC_BASE_URL', plugin_dir_url( __FILE__ ) );
-define('NC_STORE_ROOT_PATH', plugin_dir_path( __FILE__ ) );
+define('NC_STORE_FILE', __FILE__);//插件入口文件
+define('NC_BASE_URL', plugin_dir_url( __FILE__ ) );//插件目录url
+define('NC_STORE_ROOT_PATH', plugin_dir_path( __FILE__ ) );//插件目录路径
 include('library/nc-base/kernel/kernel.php');
 include('library/nc-base/static-load.php');
 include('library/nc-base/add-menu-page.php');
 
 
-if (version_compare(PHP_VERSION, '7.0.0', '>=')) {
+if (version_compare(PHP_VERSION, '7.2.26', '>=')) {
 	include('modules/field-group/Field_Group_Values.php');
 	include('modules/field-group/get_all_custom_field_meta.php');
 }
