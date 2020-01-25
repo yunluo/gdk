@@ -3,7 +3,7 @@
 //require ( 'shortcode.php' );//短代码
 
 include('optimization.php');//优化措施
-//require ( 'avatar.php' );//头像功能
+include( 'advanced.php' );//头像功能
 
 //require ( 'server.php' );//第三方服务
 

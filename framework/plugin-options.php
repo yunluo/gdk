@@ -11,18 +11,19 @@ $current_theme = wp_get_theme();
 $gdk_default_options = [];
 $gdk_options = [];
 include('options-config.php');
-$gdk_current_options = get_option('gdk_options_setup', []);
+$gdk_current_options = get_option('gdk_options_setup');
 
 function gdk_update_options() {
 	global $gdk_default_options, $gdk_options, $gdk_current_options;
 	foreach ($gdk_options as $panel) {
 		foreach ($panel as $option) {
-			$id = $option['id'];
-			$type = $option['type'];
+			$id = isset( $option['id'] ) ? $option['id'] : '';
+			$type = isset( $option['type'] ) ? $option['type'] : '';
+			$std = isset( $option['std'] ) ? $option['std'] : '';
 			if ( !$id ) continue;
-			$gdk_default_options[$id] = $option['std'];
+			$gdk_default_options[$id] = $std;
 			if ( isset($gdk_current_options[$id]) ) continue;
-			$gdk_current_options[$id] = isset( $option['std'] ) ? $option['std'] : '';
+			$gdk_current_options[$id] = $std;
 		}
 	}
 }
@@ -44,9 +45,9 @@ function gdk_options_page() {
 	<div class="wp-filter">
 	</div>
 <?php
-	if ($_GET['update']) echo '<div class="updated"><p><strong>设置已保存。</strong></p></div>';
-	if ($_GET['reset']) echo '<div class="updated"><p><strong>设置已重置。</strong></p></div>';
-	if ($_GET['test']) echo '<div class="updated"><p><strong>如果您的邮箱收到测试邮件，则证明您的SMTP设置是没问题的。</strong></p></div>';
+	if (isset($_GET['update'])) echo '<div class="updated"><p><strong>设置已保存。</strong></p></div>';
+	if (isset($_GET['reset'])) echo '<div class="updated"><p><strong>设置已重置。</strong></p></div>';
+	if (isset($_GET['test'])) echo '<div class="updated"><p><strong>如果您的邮箱收到测试邮件，则证明您的SMTP设置是没问题的。</strong></p></div>';
 ?>
 
 	<div class="wp-filter">
@@ -98,7 +99,6 @@ switch ( $type ) {
 	case 'number':
 ?>
 		<label>
-		<span class="description"><?php echo $option['before']; ?></span>
 		<input name="<?php echo $id; ?>" class="small-text" id="<?php echo $id; ?>" type="number" value="<?php echo esc_attr(gdk_get_option( $id )) ?>" />
 		<span class="description"><?php echo $option['desc']; ?></span>
 		</label>

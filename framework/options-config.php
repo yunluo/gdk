@@ -4,87 +4,106 @@
  */
 
 $gdk_options = array(
-	'常规选项' => array(
-			array(
-			'name'  => '滚动内容来源',
-			'desc'  => '选择一个内容调用显示在顶部的滚动',
-			'id'    => 'git_gun_b',
+	'优化选项' => array(
+		array(
+			'name'  => '新版编辑器开关',
+			'desc'  => '新版编辑器尚不成熟，很多主题不兼容，建议禁用',
+			'id'    => 'gdk_diasble_gutenberg',
 			'type'  => 'radio',
 			'options' => array(
-				'git_gun_shuo' => '调用说说标题',
-				'git_gun_tui' => '调用下方公告'
+				'1' => '禁用',
+				'0' => '开启'
 			),
-			'std'   => 'git_gun_tui'
+			'std'   => '1'
 		),
 		array(
-			'name'  => '滚动公告栏',
-			'desc'  => '最新消息显示在全站导航条下方，非常给力的推广位置',
-			'id'    => 'git_tui',
-			'type'  => 'textarea',
-			'std'   => '<li>欢迎访问极客公园网站，WordPress信息，WordPress教程，推荐使用最新版火狐浏览器和Chrome浏览器访问本网站，欢迎加入极客公园<code><a target="_blank" href="https://gitcafe.net/go/qun"><i class="fa fa-qq"></i> QQ群</a></code></li><li>Git主题现已支持滚动公告栏功能，兼容其他浏览器，看到的就是咯，在后台最新消息那里用li标签添加即可。</li><li>最新版Git主题已支持说说碎语功能，可像添加文章一样直接添加说说，新建说说页面即可，最后重新保存固定连接，<a target="_blank" href="https://gitcafe.net/shuo.html">演示地址</a></li><li>百度口碑求点赞啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊<a target="_blank" href="http://koubei.baidu.com/s/gitcafe.net">http://koubei.baidu.com/s/gitcafe.net</a></li><li>如果您觉得本站非常有看点，那么赶紧使用Ctrl+D 收藏极客公园吧</li>'
-		),
-		array(
-			'name'  => '友情链接页面',
-			'desc'  => '只显示输入分类的链接，id之间用英文逗号隔开，建议只显示友情链接即可。',
-			'id'    => 'git_linkpage_cat',
-			'type'  => 'number'
-		),
-		array(
-			'name'  => '列表Ajax下拉加载',
-			'desc'  => '开启本选项之后网站会采用ajax方式下拉自动加载,默认只在传统blog列表页面生效,如果使用卡片式或者CMS,请关闭',
-			'id'    => 'git_ajaxpager_b',
-			'type'  => 'checkbox'
-		),
-		array(
-			'title' => '热门排行',
-			'type'  => 'title'
-		),
-		array(
-			'name'  => '开启',
-			'desc'  => '【注意，在开启3D幻灯片的时候是默认打开的，无法关闭】',
-			'id'    => 'hot_list_check',
-			'type'  => 'checkbox'
-		),
-		array(
-			'name'  => '排序根据',
-			'desc'  => '选择一个参数作为排序的根据，可以选择评论数目，文章置顶，置顶文章最多10篇',
-			'id'    => 'git_hot_b',
+			'name'  => '清理冗余头部代码开关',
+			'desc'  => 'wordpress头部自带很多无用代码，不安全且浪费，建议禁用',
+			'id'    => 'gdk_diasble_head_useless',
 			'type'  => 'radio',
 			'options' => array(
-				'git_hot_comment' => '评论数目',
-				'git_hot_zd' => '文章置顶'
+				'1' => '禁用',
+				'0' => '开启'
 			),
-			'std'   => 'git_hot_comment'
+			'std'   => '1'
 		),
 		array(
-			'name'  => '排行名称',
-			'desc'  => '这里是显示在网站首页热门排行那里',
-			'id'    => 'hot_list_title',
-			'type'  => 'text',
-			'std'   => '本周热门'
+			'name'  => '禁用wordpress更新',
+			'desc'  => 'wordpress更新会不时发送请求数据，所以可以关闭wordpress更新，包括主题，插件和内核更新',
+			'id'    => 'gdk_diasble_wp_update',
+			'type'  => 'radio',
+			'options' => array(
+				'1' => '禁用',
+				'0' => '开启'
+			),
+			'std'   => '1'
 		),
 		array(
-			'name'  => '用户登录信息',
-			'desc'  => '开启',
-			'id'    => 'git_sign_b',
-			'type'  => 'checkbox'
+			'name'  => '禁用emojis功能',
+			'desc'  => 'wordpress的emojis功能会加载国外资源，那是网站速度，所以建议禁用',
+			'id'    => 'gdk_disable_emojis',
+			'type'  => 'radio',
+			'options' => array(
+				'1' => '禁用',
+				'0' => '开启'
+			),
+			'std'   => '1'
 		),
 		array(
-			'name'  => '百度分享',
-			'desc'  => '开启并且同时开启打赏功能，支持https',
-			'id'    => 'git_bdshare_b',
-			'type'  => 'checkbox'
+			'name'  => '禁用XML-RPC功能',
+			'desc'  => '该功能有安全风险，如果不使用wordpress的手机客户端或者第三方编辑器软件，那么建议禁用',
+			'id'    => 'gdk_disable_xmlrpc',
+			'type'  => 'radio',
+			'options' => array(
+				'1' => '禁用',
+				'0' => '开启'
+			),
+			'std'   => '1'
 		),
 		array(
-			'title' => '占位文本',
-			'type'  => 'title'
+			'name'  => '禁用文章版本功能',
+			'desc'  => '该功能有会造成数据库体量暴增为了你的数据库考虑，建议禁用',
+			'id'    => 'gdk_disable_revision',
+			'type'  => 'radio',
+			'options' => array(
+				'1' => '禁用',
+				'0' => '开启'
+			),
+			'std'   => '1'
 		),
 		array(
-			'name'  => '搜索框',
-			'desc'  => '占位文本',
-			'id'    => 'git_search_placeholder',
-			'type'  => 'text',
-			'std'   => '输入内容并回车'
+			'name'  => '禁用pingback功能',
+			'desc'  => '该功能会增加垃圾评论的几率，建议禁用',
+			'id'    => 'gdk_disable_trackbacks',
+			'type'  => 'radio',
+			'options' => array(
+				'1' => '禁用',
+				'0' => '开启'
+			),
+			'std'   => '1'
+		),
+		array(
+			'name'  => 'wordpress更新中国加速',
+			'desc'  => '该功能会帮助顺利更新wordpress，突破429，注意：如果上面的wordpress禁用更新了，此处设置无效，建议开启',
+			'id'    => 'gdk_porxy_update',
+			'type'  => 'radio',
+			'options' => array(
+				'0' => '禁用',
+				'1' => '开启'
+			),
+			'std'   => '1'
+		),
+		array(
+			'name'  => '头像加速功能',
+			'desc'  => '该功能会增加头像加载速度，有随机头像，V2EX头像镜像和七牛头像镜像，默认选择随机头像',
+			'id'    => 'gdk_switch_get_avatar',
+			'type'  => 'radio',
+			'options' => array(
+				'1' => '随机头像',
+				'2' => 'V2EX头像镜像',
+				'3' => '七牛头像镜像',
+			),
+			'std'   => '1'
 		),
 		array(
 			'name'  => '评论',

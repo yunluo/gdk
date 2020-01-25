@@ -333,3 +333,53 @@ function nc_get_meta($key, $single = true) {
 function nc_the_meta($key, $placeholder = '') {
     echo nc_get_meta($key, true) ?: $placeholder;
 }
+
+function gdk_is_mobile() {
+    if (empty($_SERVER['HTTP_USER_AGENT'])) {
+        return false;
+    } elseif ((strpos($_SERVER['HTTP_USER_AGENT'], 'Mobile') !== false && strpos($_SERVER['HTTP_USER_AGENT'], 'iPad') === false) // many mobile devices (all iPh, etc.)
+     || strpos($_SERVER['HTTP_USER_AGENT'], 'Android') !== false || strpos($_SERVER['HTTP_USER_AGENT'], 'NetType/') !== false || strpos($_SERVER['HTTP_USER_AGENT'], 'Kindle') !== false || strpos($_SERVER['HTTP_USER_AGENT'], 'MQQBrowser') !== false || strpos($_SERVER['HTTP_USER_AGENT'], 'Opera Mini') !== false || strpos($_SERVER['HTTP_USER_AGENT'], 'Opera Mobi') !== false || strpos($_SERVER['HTTP_USER_AGENT'], 'HUAWEI') !== false || strpos($_SERVER['HTTP_USER_AGENT'], 'TBS/') !== false || strpos($_SERVER['HTTP_USER_AGENT'], 'Mi') !== false || strpos($_SERVER['HTTP_USER_AGENT'], 'iPhone') !== false) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+if (function_exists('curl_init')) {
+    function curl_post($url, $postfields = '', $headers = '', $timeout = 20, $file = 0) {
+        $ch = curl_init();
+        $options = array(
+            CURLOPT_URL => $url,
+            CURLOPT_HEADER => false,
+            CURLOPT_NOBODY => false,
+            CURLOPT_POST => true,
+            CURLOPT_MAXREDIRS => 20,
+            CURLOPT_USERAGENT => 'User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36',
+            CURLOPT_TIMEOUT => $timeout,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_SSL_VERIFYHOST => 0,
+            CURLOPT_SSL_VERIFYPEER => 0
+        );
+        if (is_array($postfields) && $file == 0) {
+            $options[CURLOPT_POSTFIELDS] = http_build_query($postfields);
+        } else {
+            $options[CURLOPT_POSTFIELDS] = $postfields;
+        }
+        curl_setopt_array($ch, $options);
+        if (is_array($headers)) {
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        }
+        $result = curl_exec($ch);
+        $code = curl_errno($ch);
+        $msg = curl_error($ch);
+        $info = curl_getinfo($ch);
+        curl_close($ch);
+        return array(
+            'data' => $result,
+            'code' => $code,
+            'msg' => $msg,
+            'info' => $info
+        );
+    }
+}
