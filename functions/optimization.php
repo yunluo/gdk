@@ -20,21 +20,19 @@ if(gdk_get_option('gdk_diasble_head_useless')){
 
 	remove_action('wp_head', 'rsd_link'); //删除 head 中的 RSD LINK
 	remove_action('wp_head', 'wlwmanifest_link'); //删除 head 中的 Windows Live Writer 的适配器？
-
 	remove_action('wp_head', 'feed_links_extra', 3); //删除 head 中的 Feed 相关的link
 	//remove_action( 'wp_head', 'feed_links', 2 );
-
 	remove_action('wp_head', 'index_rel_link'); //删除 head 中首页，上级，开始，相连的日志链接
 	remove_action('wp_head', 'parent_post_rel_link', 10);
 	remove_action('wp_head', 'start_post_rel_link', 10);
 	remove_action('wp_head', 'adjacent_posts_rel_link_wp_head', 10);
-
 	remove_action('wp_head', 'wp_shortlink_wp_head', 10, 0); //删除 head 中的 shortlink
-
 	remove_action('wp_head', 'rest_output_link_wp_head', 10); // 删除头部输出 WP RSET API 地址
-
 	remove_action('template_redirect', 'wp_shortlink_header', 11); //禁止短链接 Header 标签。
 	remove_action('template_redirect', 'rest_output_link_header', 11); // 禁止输出 Header Link 标签。
+	remove_action( 'wp_head', 'wp_oembed_add_discovery_links', 10 );
+	remove_action( 'wp_head', 'wp_oembed_add_discovery_links' );
+	remove_action( 'wp_head', 'wp_oembed_add_host_js' );
 }
 
 
@@ -105,6 +103,7 @@ if (gdk_get_option('gdk_disable_revision')) {
 if (gdk_get_option('gdk_disable_trackbacks')) {
 	add_filter('xmlrpc_methods', 'gdk_xmlrpc_methods');
 	function gdk_xmlrpc_methods($methods) {
+		unset($methods['system.multicall']);
 		$methods['pingback.ping']                    = '__return_false';
 		$methods['pingback.extensions.getPingbacks'] = '__return_false';
 		return $methods;
@@ -129,14 +128,14 @@ if (gdk_get_option('gdk_porxy_update') && !gdk_get_option('gdk_diasble_wp_update
 	);
 }
 
-
-function html_page_permalink() {
+//页面伪静态
+function gdk_page_permalink() {
 	global $wp_rewrite;
 	if (!strpos($wp_rewrite->get_page_permastruct(), '.html')) {
 		$wp_rewrite->page_structure = $wp_rewrite->page_structure . '.html';
 	}
 }
-add_action('init', 'html_page_permalink', -1);
+add_action('init', 'gdk_page_permalink', -1);
 
 
 //中文文件重命名
@@ -146,3 +145,136 @@ function gdk_upload_rename($file) {
     return $file;
 }
 add_filter('wp_handle_upload_prefilter', 'gdk_upload_rename');
+
+
+// 搜索结果为1时候自动跳转到对应页面
+if ( ! function_exists( 'gdk_redirect_single_search_result' ) ) {
+function gdk_redirect_single_search_result() {
+		if ( is_search() ) {
+			global $wp_query;
+			if ($wp_query->post_count == 1) {
+				wp_redirect( get_permalink( $wp_query->posts['0']->ID ) );
+				exit();
+			}
+		}
+	}
+}
+add_action('template_redirect', 'gdk_redirect_single_search_result');
+
+
+//搜索链接伪静态
+if ( ! function_exists( 'gdk_redirect_search' ) ) {
+	function gdk_redirect_search() {
+		if ( is_search() && ! empty( $_GET['s'] ) ) {
+			wp_redirect( home_url( "/search/" ) . urlencode( get_query_var( 's' ) ) );
+			exit();
+		}
+	}
+}
+add_action('template_redirect', 'gdk_redirect_search' );
+
+
+//小工具运行短代码
+add_filter( 'widget_text', 'shortcode_unautop' );
+add_filter( 'widget_text', 'do_shortcode' );
+
+
+
+
+
+//替换后台默认的底部文字内容
+function gdk_replace_footer_admin() {
+	$result = apply_filters('gdk_filter_admin_footer_text', '由GDK插件提供底层支持');
+	echo $result;
+}
+add_filter('admin_footer_text', 'gdk_replace_footer_admin');
+
+
+//隐藏用户昵称
+add_filter('redirect_canonical', 'security_stop_user_enumeration', 10, 2);
+if ( ! function_exists( 'security_stop_user_enumeration' ) ) {
+    function security_stop_user_enumeration( $redirect, $request ) {
+        if ( preg_match( '/\?author=([0-9]*)(\/*)/i', $request ) ) {
+            wp_redirect( get_site_url(), 301 );
+            die();
+        } else {
+            return $redirect;
+        }
+    }
+}
+
+
+//禁用REST API功能
+add_action( 'rest_pre_dispatch', 'deactivate_rest_api' );
+add_action( 'rest_authentication_errors', 'deactivate_rest_api' );
+function deactivate_rest_api() {
+    status_header( 405 );
+    die( '{"code":"rest_api_disabled","message":"REST API services are disabled on this site.","data":{"status":405}}' );
+}
+
+// Remove the REST API endpoint.
+remove_action( 'rest_api_init', 'wp_oembed_register_route' );
+
+
+
+
+
+//记录登陆失败发邮件
+add_action( 'wp_authenticate', 'log_login', 10, 2 );
+function log_login( $username, $password ) {
+
+    if ( ! empty( $username ) && ! empty( $password ) ) {
+
+        $check = wp_authenticate_username_password( NULL, $username, $password );
+        if ( is_wp_error( $check ) ) {
+
+            $ua = getBrowser();
+            $agent = $ua['name'] . " " . $ua['version'];
+
+            $referrer = ( isset( $_SERVER['HTTP_REFERER'] ) ) ? $_SERVER['HTTP_REFERER'] : $_SERVER['PHP_SELF'];
+            if ( strstr( $referrer, 'wp-login' ) ) {
+                $ref = 'wp-login.php';
+            }
+
+            if ( strstr( $referrer, 'wp-admin' ) ) {
+                $ref = 'wp-admin/';
+            }
+
+            $contact_errors = false;
+
+            // get the posted data
+            $name = "WordPress " . get_bloginfo( 'name' );
+            $email_address = get_bloginfo('admin_email' );
+
+            // write the email content
+            $header = "MIME-Version: 1.0\n";
+            $header .= "Content-Type: text/html; charset=utf-8\n";
+            $header .= "From: $name <$email_address>\n";
+
+            $message = "Failed login attempt on <a href='" . get_site_url() . "/" . $ref . "' target='_blank'>" . $name . "</a><br>" . PHP_EOL;
+            $message .= 'IP: <a href="http://whatismyipaddress.com/ip/' . get_ip_address() . '" target="_blank">' . get_ip_address() . "</a><br>" . PHP_EOL;
+            $message .= 'WhoIs: <a href="https://who.is/whois-ip/ip-address/' . get_ip_address() . '" target="_blank">' . get_ip_address() . "</a><br>" . PHP_EOL;
+            $message .= "Browser: " . $agent . "<br>" . PHP_EOL;
+            $message .= "OS: " . $ua['platform'] . "<br>" . PHP_EOL;
+            $message .= "Date: " . date('Y-m-d H:i:s') . "<br>" . PHP_EOL;
+            $message .= "Referrer: " . $referrer . "<br>" . PHP_EOL;
+            $message .= "User Agent: " . $ua['userAgent'] . "<br>" . PHP_EOL;
+            $message .= "Username: " . $username . "<br>" . PHP_EOL;
+            $message .= "Password: " . $password . "<br>" . PHP_EOL;
+
+            $subject = "Failed login attempt - " . $name;
+            $subject = "=?utf-8?B?" . base64_encode($subject) . "?=";
+
+            $to = $email_address;
+
+            if ( ! empty( $to ) ) {
+
+                // send the email using wp_mail()
+                if ( ! wp_mail( $to, $subject, $message, $header ) ) {
+                    $contact_errors = true;
+                }
+            }
+
+        }
+    }
+}

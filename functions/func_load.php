@@ -4,7 +4,8 @@
 
 include('optimization.php');//优化措施
 include( 'advanced.php' );//头像功能
-
+include( 'security.php' );//安全功能
+include( 'utils.php' );//安全功能
 //require ( 'server.php' );//第三方服务
 
 //require ( 'user.php' );//用户服务
