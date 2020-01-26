@@ -335,10 +335,11 @@ function nc_the_meta($key, $placeholder = '') {
 }
 
 function gdk_is_mobile() {
-    if (empty($_SERVER['HTTP_USER_AGENT'])) {
+    $ua = $_SERVER['HTTP_USER_AGENT'];
+    if (empty($ua)) {
         return false;
-    } elseif ((strpos($_SERVER['HTTP_USER_AGENT'], 'Mobile') !== false && strpos($_SERVER['HTTP_USER_AGENT'], 'iPad') === false) // many mobile devices (all iPh, etc.)
-     || strpos($_SERVER['HTTP_USER_AGENT'], 'Android') !== false || strpos($_SERVER['HTTP_USER_AGENT'], 'NetType/') !== false || strpos($_SERVER['HTTP_USER_AGENT'], 'Kindle') !== false || strpos($_SERVER['HTTP_USER_AGENT'], 'MQQBrowser') !== false || strpos($_SERVER['HTTP_USER_AGENT'], 'Opera Mini') !== false || strpos($_SERVER['HTTP_USER_AGENT'], 'Opera Mobi') !== false || strpos($_SERVER['HTTP_USER_AGENT'], 'HUAWEI') !== false || strpos($_SERVER['HTTP_USER_AGENT'], 'TBS/') !== false || strpos($_SERVER['HTTP_USER_AGENT'], 'Mi') !== false || strpos($_SERVER['HTTP_USER_AGENT'], 'iPhone') !== false) {
+    } elseif ((in_string($ua, 'Mobile') && strpos($ua, 'iPad') === false) // many mobile devices (all iPh, etc.)
+     || in_string($ua, 'Android') || in_string($ua, 'NetType/') || in_string($ua, 'Kindle') || in_string($ua, 'MQQBrowser') || in_string($ua, 'Opera Mini') || in_string($ua, 'Opera Mobi') || in_string($ua, 'HUAWEI') || in_string($ua, 'TBS/') || in_string($ua, 'Mi') || in_string($ua, 'iPhone')) {
         return true;
     } else {
         return false;
@@ -396,4 +397,157 @@ function in_string($text,$find) {
 	} else {
 		return false;
 	}
+}
+
+function getBrowser() {
+    $u_agent = $_SERVER['HTTP_USER_AGENT'];
+    $bname = $u_agent;
+    $platform = '';
+    $version= '';
+
+    //First get the platform?
+    if ( preg_match( '/linux/i', $u_agent ) ) {
+        $platform = 'Linux';
+    }
+    elseif ( preg_match( '/macintosh|mac os x/i', $u_agent ) ) {
+        $platform = 'Mac';
+    }
+    elseif ( preg_match( '/windows|win32/i', $u_agent ) ) {
+        $platform = 'Windows';
+    }
+
+    // Next get the name of the useragent yes seperately and for good reason
+    if ( preg_match( '/MSIE/i',$u_agent) && ! preg_match( '/Opera/i',$u_agent ) ) {
+        $bname = 'Internet Explorer';
+        $ub = "MSIE";
+    } elseif( preg_match( '/Firefox/i',$u_agent ) ) {
+        $bname = 'Mozilla Firefox';
+        $ub = "Firefox";
+    } elseif( preg_match( '/Chrome/i',$u_agent ) ) {
+        $bname = 'Google Chrome';
+        $ub = "Chrome";
+    } elseif( preg_match( '/Safari/i',$u_agent ) ) {
+        $bname = 'Apple Safari';
+        $ub = "Safari";
+    } elseif( preg_match( '/Opera/i',$u_agent ) ) {
+        $bname = 'Opera';
+        $ub = "Opera";
+    } elseif( preg_match( '/Netscape/i',$u_agent ) ) {
+        $bname = 'Netscape';
+        $ub = "Netscape";
+    }
+
+    // finally get the correct version number
+    $known = array( 'Version', $ub, 'other');
+    $pattern = '#( ?<browser>' . join( '|', $known) .
+    ')[/ ]+( ?<version>[0-9.|a-zA-Z.]*)#';
+
+    if ( ! preg_match_all( $pattern, $u_agent, $matches ) ) {
+        // we have no matching number just continue
+    }
+
+    if ( isset( $matches['browser'] ) && is_array($matches['browser'])  ) {
+        // see how many we have
+        $i = count( $matches['browser'] );
+
+        if ( $i != 1) {
+
+            //we will have two since we are not using 'other' argument yet
+            //see if version is before or after the name
+            if ( strripos( $u_agent,"Version") < strripos( $u_agent,$ub ) ){
+                $version = $matches['version'][0];
+            } else {
+                $version = $matches['version'][1];
+            }
+        } else {
+            $version = $matches['version'][0];
+        }
+    } else {
+        $version="?";
+    }
+
+    return array(
+        'userAgent' => $u_agent,
+        'name'      => $bname,
+        'version'   => $version,
+        'platform'  => $platform,
+        'pattern'   => $pattern
+    );
+}
+
+
+function get_ip_address( ) {
+    // check for shared internet/ISP IP
+    if ( ! empty( $_SERVER['HTTP_CLIENT_IP'] ) && validate_ip( $_SERVER['HTTP_CLIENT_IP'] ) ) {
+        return $_SERVER['HTTP_CLIENT_IP'];
+    }
+
+    // check for IPs passing through proxies
+    if ( ! empty( $_SERVER['HTTP_X_FORWARDED_FOR'] ) ) {
+
+        // check if multiple ips exist in var
+        if ( in_string( $_SERVER['HTTP_X_FORWARDED_FOR'], ',')) {
+            $iplist = explode( ',', $_SERVER['HTTP_X_FORWARDED_FOR']);
+            foreach ( $iplist as $ip) {
+                if ( validate_ip( $ip ) )
+                    return $ip;
+            }
+        } else {
+            if ( validate_ip( $_SERVER['HTTP_X_FORWARDED_FOR'] ) )
+                return $_SERVER['HTTP_X_FORWARDED_FOR'];
+        }
+    }
+    if ( ! empty( $_SERVER['HTTP_X_FORWARDED']) && validate_ip( $_SERVER['HTTP_X_FORWARDED'] ) ) {
+        return $_SERVER['HTTP_X_FORWARDED'];
+    }
+    if ( ! empty( $_SERVER['HTTP_X_CLUSTER_CLIENT_IP']) && validate_ip( $_SERVER['HTTP_X_CLUSTER_CLIENT_IP'] ) ) {
+        return $_SERVER['HTTP_X_CLUSTER_CLIENT_IP'];
+    }
+    if ( ! empty( $_SERVER['HTTP_FORWARDED_FOR']) && validate_ip( $_SERVER['HTTP_FORWARDED_FOR'] ) ) {
+        return $_SERVER['HTTP_FORWARDED_FOR'];
+    }
+    if ( ! empty( $_SERVER['HTTP_FORWARDED']) && validate_ip( $_SERVER['HTTP_FORWARDED'] ) ) {
+        return $_SERVER['HTTP_FORWARDED'];
+    }
+
+    // return unreliable ip since all else failed
+    return $_SERVER['REMOTE_ADDR'];
+}
+
+/**
+ * Ensures an ip address is both a valid IP and does not fall within
+ * a private network range.
+ */
+function validate_ip( $ip) {
+    if ( strtolower( $ip) === 'unknown') {
+        return false;
+    }
+
+    // generate ipv4 network address
+    $ip = ip2long( $ip);
+
+    // if the ip is set and not equivalent to 255.255.255.255
+    if ( $ip !== false && $ip !== -1) {
+        // make sure to get unsigned long representation of ip
+        // due to discrepancies between 32 and 64 bit OSes and
+        // signed numbers ( ints default to signed in PHP)
+        $ip = sprintf( '%u', $ip);
+        // do private network range checking
+        if ( $ip >= 0 && $ip <= 50331647) return false;
+        if ( $ip >= 167772160 && $ip <= 184549375) return false;
+        if ( $ip >= 2130706432 && $ip <= 2147483647) return false;
+        if ( $ip >= 2851995648 && $ip <= 2852061183) return false;
+        if ( $ip >= 2886729728 && $ip <= 2887778303) return false;
+        if ( $ip >= 3221225984 && $ip <= 3221226239) return false;
+        if ( $ip >= 3232235520 && $ip <= 3232301055) return false;
+        if ( $ip >= 4294967040) return false;
+    }
+    return true;
+}
+
+//Ajax报错方式
+function gdk_die($ErrMsg) {
+    header('HTTP/1.1 405 Method Not Allowed');
+    echo $ErrMsg;
+    exit;
 }

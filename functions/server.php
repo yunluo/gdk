@@ -1,128 +1,14 @@
 <?php
 
-//新文章同步到新浪微博
-function post_to_sina_weibo($post_ID) {
-    if (get_post_meta($post_ID, 'git_weibo_sync', true) == 1) return;
-    $get_post_info = get_post($post_ID);
-    $get_post_centent = get_post($post_ID)->post_content;
-    $get_post_title = get_post($post_ID)->post_title;
-    if ($get_post_info->post_status == 'publish' && $_POST['original_post_status'] != 'publish') {
-        $appkey = git_get_option('git_wbapky_b');
-        $username = git_get_option('git_wbuser_b');
-        $userpassword = git_get_option('git_wbpasd_b');
-        $request = new WP_Http;
-        $keywords = "";
-        $tags = wp_get_post_tags($post_ID);
-        foreach ($tags as $tag) {
-            $keywords = $keywords . '#' . $tag->name . "#";
-        }
-        $string1 = '【' . strip_tags($get_post_title) . '】：';
-        $string2 = $keywords . ' [阅读全文]：' . get_permalink($post_ID);
-        /* 微博字数控制，避免超标同步失败 */
-        $wb_num = (138 - WeiboLength($string1 . $string2)) * 2;
-        $status = $string1 . mb_strimwidth(strip_tags(apply_filters('the_content', $get_post_centent)) , 0, $wb_num, '...') . $string2;
-        $api_url = 'https://api.weibo.com/2/statuses/update.json';
-        $body = array(
-            'status' => $status,
-            'source' => $appkey
-        );
-        $headers = array(
-            'Authorization' => 'Basic ' . base64_encode("$username:$userpassword")
-        );
-        $result = $request->post($api_url, array(
-            'body' => $body,
-            'headers' => $headers
-        ));
-        /* 若同步成功，则给新增自定义栏目git_weibo_sync，避免以后更新文章重复同步 */
-        add_post_meta($post_ID, 'git_weibo_sync', 1, true);
-    }
-}
-if (git_get_option('git_sinasync_b')) {
-    add_action('publish_post', 'post_to_sina_weibo', 0);
-}
 
-
-/*
-//获取微博字符长度函数
-*/
-function WeiboLength($str) {
-    $arr = arr_split_zh($str); //先将字符串分割到数组中
-    foreach ($arr as $v) {
-        $temp = ord($v); //转换为ASCII码
-        if ($temp > 0 && $temp < 127) {
-            $len = $len + 0.5;
-        } else {
-            $len++;
-        }
-    }
-    return ceil($len); //加一取整
-
-}
-/*
-//拆分字符串函数,只支持 gb2312编码
-//参考：http://u-czh.iteye.com/blog/1565858
-*/
-function arr_split_zh($tempaddtext) {
-    $tempaddtext = iconv("UTF-8", "GBK//IGNORE", $tempaddtext);
-    $cind = 0;
-    $arr_cont = array();
-    for ($i = 0; $i < strlen($tempaddtext); $i++) {
-        if (strlen(substr($tempaddtext, $cind, 1)) > 0) {
-            if (ord(substr($tempaddtext, $cind, 1)) < 0xA1) { //如果为英文则取1个字节
-                array_push($arr_cont, substr($tempaddtext, $cind, 1));
-                $cind++;
-            } else {
-                array_push($arr_cont, substr($tempaddtext, $cind, 2));
-                $cind+= 2;
-            }
-        }
-    }
-    foreach ($arr_cont as & $row) {
-        $row = iconv("gb2312", "UTF-8", $row);
-    }
-    return $arr_cont;
-}
-
-
-//百度收录提示
-if (git_get_option('git_baidurecord_b') && function_exists('curl_init')) {
-    function baidu_check($url, $post_id){
-        $baidu_record = get_post_meta($post_id, 'baidu_record', true);
-        if ($baidu_record != 1) {
-            $url = 'http://www.baidu.com/s?wd=' . $url;
-            $curl = curl_init();
-            curl_setopt($curl, CURLOPT_URL, $url);
-            curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-            $rs = curl_exec($curl);
-            curl_close($curl);
-            if (!strpos($rs, '没有找到该URL，您可以直接访问') && !strpos($rs, '很抱歉，没有找到与')) {
-                update_post_meta($post_id, 'baidu_record', 1) || add_post_meta($post_id, 'baidu_record', 1, true);
-                return 1;
-            } else {
-                return 0;
-            }
-        } else {
-            return 1;
-        }
-    }
-    function baidu_record(){
-        global $wpdb;
-        $post_id = null === $post_id ? get_the_ID() : $post_id;
-        if (baidu_check(get_permalink($post_id), $post_id) == 1) {
-            echo '<a target="_blank" title="点击查看" rel="external nofollow" href="http://www.baidu.com/s?wd=' . get_the_title() . '">已收录</a>';
-        } else {
-            echo '<a style="color:red;" rel="external nofollow" title="点击提交，谢谢您！" target="_blank" href="http://zhanzhang.baidu.com/sitesubmit/index?sitename=' . get_permalink() . '">未收录</a>';
-        }
-    }
-}
 
 //七牛CDN
 if (!is_admin() && git_get_option('git_qncdn_b')) {
-    add_action('wp_loaded', 'Googlo_ob_start');
-    function Googlo_ob_start() {
-        ob_start('Googlo_qiniu_cdn_replace');
+    add_action('wp_loaded', 'gdk_cdn_start');
+    function gdk_cdn_start() {
+        ob_start('gdk_cdn_replace');
     }
-    function Googlo_qiniu_cdn_replace($html) {
+    function gdk_cdn_replace($html) {
         $local_host = home_url(); //博客域名
         $qiniu_host = git_get_option('git_cdnurl_b'); //七牛域名
         $cdn_exts = git_get_option('git_cdnurl_format'); //扩展名（使用|分隔）
@@ -163,6 +49,44 @@ if (is_admin() && git_get_option('git_cdnurl_b') && git_get_option('git_adminqn_
     }
     add_filter('wp_get_attachment_url', 'attachment_replace');
 }
+
+
+
+
+
+//百度收录提示
+if (git_get_option('git_baidurecord_b') && function_exists('curl_init')) {
+    function baidu_check($url, $post_id){
+        $baidu_record = get_post_meta($post_id, 'baidu_record', true);
+        if ($baidu_record != 1) {
+            $url = 'http://www.baidu.com/s?wd=' . $url;
+            $curl = curl_init();
+            curl_setopt($curl, CURLOPT_URL, $url);
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+            $rs = curl_exec($curl);
+            curl_close($curl);
+            if (!strpos($rs, '没有找到该URL，您可以直接访问') && !strpos($rs, '很抱歉，没有找到与')) {
+                update_post_meta($post_id, 'baidu_record', 1) || add_post_meta($post_id, 'baidu_record', 1, true);
+                return 1;
+            } else {
+                return 0;
+            }
+        } else {
+            return 1;
+        }
+    }
+    function baidu_record(){
+        global $wpdb;
+        $post_id = null === $post_id ? get_the_ID() : $post_id;
+        if (baidu_check(get_permalink($post_id), $post_id) == 1) {
+            echo '<a target="_blank" title="点击查看" rel="external nofollow" href="http://www.baidu.com/s?wd=' . get_the_title() . '">已收录</a>';
+        } else {
+            echo '<a style="color:red;" rel="external nofollow" title="点击提交，谢谢您！" target="_blank" href="http://zhanzhang.baidu.com/sitesubmit/index?sitename=' . get_permalink() . '">未收录</a>';
+        }
+    }
+}
+
+
 
 //百度主动推送
 if (git_get_option('git_sitemap_api')) {

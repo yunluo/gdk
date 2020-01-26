@@ -17,9 +17,9 @@ function gdk_update_options() {
 	global $gdk_default_options, $gdk_options, $gdk_current_options;
 	foreach ($gdk_options as $panel) {
 		foreach ($panel as $option) {
-			$id = isset( $option['id'] ) ? $option['id'] : '';
-			$type = isset( $option['type'] ) ? $option['type'] : '';
-			$std = isset( $option['std'] ) ? $option['std'] : '';
+			$id = $option['id'] ?? '';
+			$type = $option['type'] ?? '';
+			$std = $option['std'] ?? '';
 			if ( !$id ) continue;
 			$gdk_default_options[$id] = $std;
 			if ( isset($gdk_current_options[$id]) ) continue;
@@ -67,7 +67,7 @@ foreach ( array_keys($gdk_options) as $i => $name ) {
 <?php
 $index = 0;
 foreach ( $gdk_options as $panel ) {
-	echo '<div class="panel" id="panel_' . $index . '" ' . ( $index == $activePanelIdx ? ' style="display:block"' : '' ) . '><table class="form-table">';
+	echo '<div class="panel gdk_option" id="panel_' . $index . '" ' . ( $index == $activePanelIdx ? ' style="display:block"' : '' ) . '><table class="form-table">';
 	foreach ( $panel as $option ) {
 		$type = $option['type'];
 		if ( $type == 'title' ) {
@@ -246,6 +246,13 @@ switch ( $type ) {
 
 .filter-links .current {
     border-bottom: 4px solid #6b48ff;
+}
+
+.gdk_option input[type=radio]:checked::before {
+    background-color: #6b48ff;
+}
+.gdk_option input[type=radio]:focus {
+    box-shadow: 0 0 0 1px #6b48ff;
 }
 
 .wp-filter .drawer-toggle:before {
