@@ -37,6 +37,7 @@ if (version_compare(PHP_VERSION, '7.2.26', '>=')) {
 }
 
 //include('modules/base/main.php');
+include('class/wp-clean-up.php');
 include('framework/plugin-options.php');
 include('functions/func_load.php');
 

@@ -58,6 +58,7 @@ foreach ( array_keys($gdk_options) as $i => $name ) {
 	echo '<li><a href="#panel_' . $i . '" data-panel="' . $i . '" ' . ( $i == $activePanelIdx ? 'class="current"' : '' ) . '>' . $name . '</a></li>';
 }
 ?>
+			<li><a href="#panel_data" data-panel="data">数据清理</a></li>
 			<li><a href="#panel_about" data-panel="about">关于主题</a></li>
 		</ul>
 <div class="search-form"><label class="screen-reader-text" for="wp-filter-search-input">筛选主题选项…</label><input placeholder="筛选主题选项…" type="search" id="wp-filter-search-input" class="wp-filter-search"></div>
@@ -161,7 +162,11 @@ switch ( $type ) {
 		$index++;
 }
 ?>
-
+	<div class="panel" id="panel_data">
+	<table class="form-table">
+	<?php echo wp_clean_up_page();?>
+	</table>
+	</div>
 	<div class="panel" id="panel_about">
 		<table class="form-table">
 			<tr>
@@ -204,19 +209,20 @@ switch ( $type ) {
 			</tr>
 		</table>
 	</div>
-	<p class="submit">
+	<hr />
+	<p class="submit" style="display:inline;float:left;margin-right:50px;">
 		<input name="submit" type="submit" class="button button-primary" value="保存更改"/>
 		<input type="hidden" name="action" value="update" />
 		<input type="hidden" name="panel" value="<?php echo $activePanelIdx; ?>" id="active_panel_name" />
 	</p>
 </form>
-<form method="post">
+<form method="post"  style="display:inline;float:left;margin-right:50px;">
 	<p class="submit">
 		<input name="test" type="submit" class="button button-secondary" value="SMTP测试" onclick="return confirm('点击后网站将向邮箱【<?php echo get_bloginfo( 'admin_email' );?>】发送测试邮件，如果网站卡死或者邮箱未收到测试邮件就是SMTP邮箱未设置好，未卡死并邮箱【<?php echo get_bloginfo( 'admin_email' );?>】收到邮件证明SMTP功能完好');"/>
 		<input type="hidden" name="action" value="test" />
 	</p>
 </form>
-<form method="post">
+<form method="post"  style="display:inline;float:left;margin-right:50px;">
 	<p class="submit">
 		<input name="reset" type="submit" class="button button-secondary" value="重置选项" onclick="return confirm('你确定要重置选项吗？');"/>
 		<input type="hidden" name="action" value="reset" />
