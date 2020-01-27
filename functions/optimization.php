@@ -312,3 +312,91 @@ add_filter('login_headerurl', function (){
 add_filter('login_headertext', function (){
 	return get_bloginfo('name');
 });
+
+
+
+
+    
+    function gdk_custom_head_code() {
+        $gdk_option = get_option('gdk_option');
+        $site = $gdk_option['site'];
+        echo $site['custom_head_code'];
+    }
+    add_action('wp_head', 'gdk_custom_head_code');
+
+
+
+    function gdk_custom_footer_code() {
+        $gdk_option = get_option('gdk_option');
+        $site = $gdk_option['site'];
+        echo $site['custom_footer_code'];
+    }
+    add_action('wp_footer', 'gdk_custom_footer_code');
+
+
+
+
+if(gdk_option('gdk_no_category')){
+    if (!function_exists('gdk_no_category_base_refresh_rules')):
+        add_action('load-themes.php',  'gdk_no_category_base_refresh_rules');
+        add_action('created_category', 'gdk_no_category_base_refresh_rules');
+        add_action('edited_category', 'gdk_no_category_base_refresh_rules');
+        add_action('delete_category', 'gdk_no_category_base_refresh_rules');
+        function gdk_no_category_base_refresh_rules() {
+            global $wp_rewrite;
+            $wp_rewrite -> flush_rules();
+        }
+        add_action('init', 'gdk_no_category_base_permastruct');
+        function gdk_no_category_base_permastruct() {
+            global $wp_rewrite, $wp_version;
+            if (version_compare($wp_version, '3.4', '<')) {
+                // For pre-3.4 support
+                $wp_rewrite -> extra_permastructs['category'][0] = '%category%';
+            } else {
+                $wp_rewrite -> extra_permastructs['category']['struct'] = '%category%';
+            }
+        }
+        // Add our custom category rewrite rules
+        add_filter('category_rewrite_rules', 'gdk_no_category_base_rewrite_rules');
+        function gdk_no_category_base_rewrite_rules($category_rewrite) {
+            //var_dump($category_rewrite); // For Debugging
+            $category_rewrite = array();
+            $categories = get_categories(array('hide_empty' => false));
+            foreach ($categories as $category) {
+                $category_nicename = $category -> slug;
+                if ($category -> parent == $category -> cat_ID)// recursive recursion
+                    $category -> parent = 0;
+                elseif ($category -> parent != 0)
+                    $category_nicename = get_category_parents($category -> parent, false, '/', true) . $category_nicename;
+                $category_rewrite['(' . $category_nicename . ')/(?:feed/)?(feed|rdf|rss|rss2|atom)/?$'] = 'index.php?category_name=$matches[1]&feed=$matches[2]';
+                $category_rewrite['(' . $category_nicename . ')/page/?([0-9]{1,})/?$'] = 'index.php?category_name=$matches[1]&paged=$matches[2]';
+                $category_rewrite['(' . $category_nicename . ')/?$'] = 'index.php?category_name=$matches[1]';
+            }
+            // Redirect support from Old Category Base
+            global $wp_rewrite;
+            $old_category_base = get_option('category_base') ? get_option('category_base') : 'category';
+            $old_category_base = trim($old_category_base, '/');
+            $category_rewrite[$old_category_base . '/(.*)$'] = 'index.php?category_redirect=$matches[1]';
+            
+            return $category_rewrite;
+        }
+            
+        // Add 'category_redirect' query variable
+        add_filter('query_vars', 'gdk_no_category_base_query_vars');
+        function gdk_no_category_base_query_vars($public_query_vars) {
+            $public_query_vars[] = 'category_redirect';
+            return $public_query_vars;
+        }
+
+        add_filter('request', 'gdk_no_category_base_request');
+        function gdk_no_category_base_request($query_vars) {
+            if (isset($query_vars['category_redirect'])) {
+                $catlink = trailingslashit(get_option('home')) . user_trailingslashit($query_vars['category_redirect'], 'category');
+                status_header(301);
+                header("Location: $catlink");
+                exit();
+            }
+            return $query_vars;
+        }
+    endif;
+}

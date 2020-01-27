@@ -165,3 +165,83 @@ add_filter('sanitize_user', function ($username, $raw_username, $strict){
     }
     return $username;
 }, 10, 3);
+
+
+//隐藏用户名字
+if( gdk_option('gdk_hide_user_name') ){
+	function gdk_text_encrypt($string, $operation, $key = '') {
+	    $string = $operation == 'D' ? str_replace( array('!','-','_'), array('=','+','/'), $string ) : $string;
+	    $key = md5($key);
+	    $key_length = strlen($key);
+	    $string = $operation == 'D' ? base64_decode($string) : substr(md5($string . $key) , 0, 8) . $string;
+	    $string_length = strlen($string);
+	    $rndkey = $box = array();
+	    $result = '';
+	    for ($i = 0; $i <= 255; $i++) {
+	        $rndkey[$i] = ord($key[$i % $key_length]);
+	        $box[$i] = $i;
+	    }
+	    for ($j = $i = 0; $i < 256; $i++) {
+	        $j = ($j + $box[$i] + $rndkey[$i]) % 256;
+	        $tmp = $box[$i];
+	        $box[$i] = $box[$j];
+	        $box[$j] = $tmp;
+	    }
+	    for ($a = $j = $i = 0; $i < $string_length; $i++) {
+	        $a = ($a + 1) % 256;
+	        $j = ($j + $box[$a]) % 256;
+	        $tmp = $box[$a];
+	        $box[$a] = $box[$j];
+	        $box[$j] = $tmp;
+	        $result.= chr(ord($string[$i]) ^ ($box[($box[$a] + $box[$j]) % 256]));
+	    }
+	    if ($operation == 'D') {
+	        if (substr($result, 0, 8) == substr(md5(substr($result, 8) . $key) , 0, 8)) {
+	            return substr($result, 8);
+	        } else {
+	            return '';
+	        }
+	    } else {
+	        return str_replace(array('=','+','/'), array('!','-','_'), base64_encode($result));
+	    }
+	}
+
+	function gdk_custom_author_link_request( $query_vars ) {
+	    if ( array_key_exists( 'author_name', $query_vars ) ) {
+	        global $wpdb;
+	        $author_id = gdk_text_encrypt( $query_vars['author_name'], 'D', AUTH_KEY );
+	        if ( $author_id ) {
+				$query_vars['author'] = $author_id;				
+	            unset( $query_vars['author_name'] );    
+	        }
+	    }
+	    return $query_vars;
+	}
+	add_filter( 'request', 'gdk_custom_author_link_request' );
+
+	function gdk_custom_author_link( $link, $author_id) {
+	    global $wp_rewrite;
+	    $author_id = (int) $author_id;
+	    $link = $wp_rewrite->get_author_permastruct();
+	    if ( empty($link) ) {
+	        $file = home_url( '/' );
+	        $link = $file . '?author=' . gdk_text_encrypt($author_id, 'E',AUTH_KEY);
+	    } else {
+	    	
+	        $link = str_replace('%author%', gdk_text_encrypt($author_id, 'E',AUTH_KEY), $link);
+	        $link = home_url() . user_trailingslashit( $link );
+	    }
+	 
+	    return $link;
+	}
+	add_filter( 'author_link', 'gdk_custom_author_link', 10, 2 );
+
+	// wp-rest 可能暴露用户名
+	function gdk_custom_rest_prepare_user( $response, $user, $request ){
+
+		$response->data['slug'] = gdk_text_encrypt( $user->ID, 'E', AUTH_KEY );
+
+		return $response;
+	}
+	add_filter( 'rest_prepare_user', 'gdk_custom_rest_prepare_user', 10, 3 );
+}

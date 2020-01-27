@@ -50,16 +50,16 @@ if (gdk_option('gdk_cdn')) {
     }
     function gdk_cdn_replace($html) {
         $local_host = home_url(); //博客域名
-        $qiniu_host = gdk_option('git_cdnurl_b'); //七牛域名
-        $cdn_exts = gdk_option('git_cdnurl_format'); //扩展名（使用|分隔）
-        $cdn_dirs = gdk_option('git_cdnurl_dir'); //目录（使用|分隔）
+        $cdn_host = gdk_option('gdk_cdn_host'); //cdn域名
+        $cdn_exts = gdk_option('gdk_cdn_ext'); //扩展名（使用|分隔）
+        $cdn_dirs = gdk_option('gdk_cdn_dir'); //目录（使用|分隔）
         $cdn_dirs = str_replace('-', '\-', $cdn_dirs);
         if ($cdn_dirs) {
             $regex = '/' . str_replace('/', '\/', $local_host) . '\/((' . $cdn_dirs . ')\/[^\s\?\\\'\"\;\>\<]{1,}.(' . $cdn_exts . '))([\"\\\'\s\?]{1})/';
-            $html = preg_replace($regex, $qiniu_host . '/$1$4', $html);
+            $html = preg_replace($regex, $cdn_host . '/$1$4', $html);
         } else {
             $regex = '/' . str_replace('/', '\/', $local_host) . '\/([^\s\?\\\'\"\;\>\<]{1,}.(' . $cdn_exts . '))([\"\\\'\s\?]{1})/';
-            $html = preg_replace($regex, $qiniu_host . '/$1$3', $html);
+            $html = preg_replace($regex, $cdn_host . '/$1$3', $html);
         }
         return $html;
     }
@@ -79,10 +79,10 @@ if (gdk_option('git_cdn_water')) {
 }
 
 //自动替换媒体库图片的域名
-if (is_admin() && gdk_option('git_cdnurl_b') && gdk_option('git_adminqn_b')) {
+if (is_admin() && gdk_option('gdk_cdn')) {
     function attachment_replace($text) {
         $replace = array(
-             home_url()  => gdk_option('git_cdnurl_b')
+             home_url()  => gdk_option('gdk_cdn')
         );
         $text = str_replace(array_keys($replace) , $replace, $text);
         return $text;

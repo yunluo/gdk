@@ -210,7 +210,7 @@ function wp_clean_up_optimize(){
 				<?php echo wp_clean_up_count('revision'); ?>
 			</td>
 			<td class="column-name">
-				<form action="" method="post">
+				<form method="post">
 					<input type="hidden" name="wp_clean_up_revision" value="revision" />
 					<input type="submit" class="<?php if(wp_clean_up_count('revision')>0){echo 'button-primary';}else{echo 'button';} ?>" value="删除" />
 				</form>
@@ -224,7 +224,7 @@ function wp_clean_up_optimize(){
 				<?php echo wp_clean_up_count('draft'); ?>
 			</td>
 			<td class="column-name">
-				<form action="" method="post">
+				<form method="post">
 					<input type="hidden" name="wp_clean_up_draft" value="draft" />
 					<input type="submit" class="<?php if(wp_clean_up_count('draft')>0){echo 'button-primary';}else{echo 'button';} ?>" value="删除" />
 				</form>
@@ -238,7 +238,7 @@ function wp_clean_up_optimize(){
 				<?php echo wp_clean_up_count('autodraft'); ?>
 			</td>
 			<td class="column-name">
-				<form action="" method="post">
+				<form method="post">
 					<input type="hidden" name="wp_clean_up_autodraft" value="autodraft" />
 					<input type="submit" class="<?php if(wp_clean_up_count('autodraft')>0){echo 'button-primary';}else{echo 'button';} ?>" value="删除" />
 				</form>
@@ -252,7 +252,7 @@ function wp_clean_up_optimize(){
 				<?php echo wp_clean_up_count('moderated'); ?>
 			</td>
 			<td class="column-name">
-				<form action="" method="post">
+				<form method="post">
 					<input type="hidden" name="wp_clean_up_moderated" value="moderated" />
 					<input type="submit" class="<?php if(wp_clean_up_count('moderated')>0){echo 'button-primary';}else{echo 'button';} ?>" value="删除" />
 				</form>
@@ -266,7 +266,7 @@ function wp_clean_up_optimize(){
 				<?php echo wp_clean_up_count('spam'); ?>
 			</td>
 			<td class="column-name">
-				<form action="" method="post">
+				<form method="post">
 					<input type="hidden" name="wp_clean_up_spam" value="spam" />
 					<input type="submit" class="<?php if(wp_clean_up_count('spam')>0){echo 'button-primary';}else{echo 'button';} ?>" value="删除" />
 				</form>
@@ -280,7 +280,7 @@ function wp_clean_up_optimize(){
 				<?php echo wp_clean_up_count('trash'); ?>
 			</td>
 			<td class="column-name">
-				<form action="" method="post">
+				<form method="post">
 					<input type="hidden" name="wp_clean_up_trash" value="trash" />
 					<input type="submit" class="<?php if(wp_clean_up_count('trash')>0){echo 'button-primary';}else{echo 'button';} ?>" value="删除" />
 				</form>
@@ -294,7 +294,7 @@ function wp_clean_up_optimize(){
 				<?php echo wp_clean_up_count('postmeta'); ?>
 			</td>
 			<td class="column-name">
-				<form action="" method="post">
+				<form method="post">
 					<input type="hidden" name="wp_clean_up_postmeta" value="postmeta" />
 					<input type="submit" class="<?php if(wp_clean_up_count('postmeta')>0){echo 'button-primary';}else{echo 'button';} ?>" value="删除" />
 				</form>
@@ -308,7 +308,7 @@ function wp_clean_up_optimize(){
 				<?php echo wp_clean_up_count('commentmeta'); ?>
 			</td>
 			<td class="column-name">
-				<form action="" method="post">
+				<form method="post">
 					<input type="hidden" name="wp_clean_up_commentmeta" value="commentmeta" />
 					<input type="submit" class="<?php if(wp_clean_up_count('commentmeta')>0){echo 'button-primary';}else{echo 'button';} ?>" value="删除" />
 				</form>
@@ -322,7 +322,7 @@ function wp_clean_up_optimize(){
 				<?php echo wp_clean_up_count('relationships'); ?>
 			</td>
 			<td class="column-name">
-				<form action="" method="post">
+				<form method="post">
 					<input type="hidden" name="wp_clean_up_relationships" value="relationships" />
 					<input type="submit" class="<?php if(wp_clean_up_count('relationships')>0){echo 'button-primary';}else{echo 'button';} ?>" value="删除" />
 				</form>
@@ -336,7 +336,7 @@ function wp_clean_up_optimize(){
 				<?php echo wp_clean_up_count('feed'); ?>
 			</td>
 			<td class="column-name">
-				<form action="" method="post">
+				<form method="post">
 					<input type="hidden" name="wp_clean_up_feed" value="feed" />
 					<input type="submit" class="<?php if(wp_clean_up_count('feed')>0){echo 'button-primary';}else{echo 'button';} ?>" value="删除" />
 				</form>
@@ -346,7 +346,7 @@ function wp_clean_up_optimize(){
 </table>
 </p>
 <p>
-<form action="" method="post">
+<form method="post">
 	<input type="hidden" name="wp_clean_up_all" value="all" />
 	<input type="submit" class="button-primary" value="删除全部" />
 </form>
@@ -394,7 +394,7 @@ function wp_clean_up_optimize(){
 	</tfoot>
 </table>
 <p>
-<form action="" method="post">
+<form method="post">
 	<input type="hidden" name="wp_clean_up_optimize" value="optimize" />
 	<input type="submit" class="button-primary" value="优化数据库" />
 </form>

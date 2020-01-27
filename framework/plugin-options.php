@@ -42,12 +42,10 @@ function gdk_options_page() {
 
 <div class="wrap">
 	<h2>GDK选项</h2>
-	<div class="wp-filter">
-	</div>
+	<hr/>
 <?php
 	if (isset($_GET['update'])) echo '<div class="updated"><p><strong>设置已保存。</strong></p></div>';
 	if (isset($_GET['reset'])) echo '<div class="updated"><p><strong>设置已重置。</strong></p></div>';
-	if (isset($_GET['test'])) echo '<div class="updated"><p><strong>如果您的邮箱收到测试邮件，则证明您的SMTP设置是没问题的。</strong></p></div>';
 ?>
 
 	<div class="wp-filter">
@@ -216,16 +214,16 @@ switch ( $type ) {
 		<input type="hidden" name="panel" value="<?php echo $activePanelIdx; ?>" id="active_panel_name" />
 	</p>
 </form>
-<form method="post"  style="display:inline;float:left;margin-right:50px;">
-	<p class="submit">
-		<input name="test" type="submit" class="button button-secondary" value="SMTP测试" onclick="return confirm('点击后网站将向邮箱【<?php echo get_bloginfo( 'admin_email' );?>】发送测试邮件，如果网站卡死或者邮箱未收到测试邮件就是SMTP邮箱未设置好，未卡死并邮箱【<?php echo get_bloginfo( 'admin_email' );?>】收到邮件证明SMTP功能完好');"/>
-		<input type="hidden" name="action" value="test" />
-	</p>
-</form>
+
 <form method="post"  style="display:inline;float:left;margin-right:50px;">
 	<p class="submit">
 		<input name="reset" type="submit" class="button button-secondary" value="重置选项" onclick="return confirm('你确定要重置选项吗？');"/>
 		<input type="hidden" name="action" value="reset" />
+	</p>
+</form>
+<form style="display:inline;float:left;margin-right:50px;">
+	<p class="submit">
+		<input  type="button" class="button button-secondary mail_test" value="SMTP测试" onclick="return confirm('点击后点击后,网站会向指定邮箱发送测试邮件,如果发送有响应则证明邮箱成功,如果没有任何响应说明邮箱配置失败!');"/>
 	</p>
 </form>
 </div>
@@ -254,6 +252,7 @@ switch ( $type ) {
 .wp-filter {
 	padding: 0 20px;
 	margin-bottom: 0;
+	font-size: 15px;
 }
 
 .filter-links .current {
@@ -263,7 +262,7 @@ switch ( $type ) {
 .gdk_option input[type=radio]:checked::before {
     background-color: #6b48ff;
 }
-.gdk_option input[type=radio]:focus {
+.gdk_option input[type=radio]:focus, .gdk_option input[type=checkbox]:focus{
     box-shadow: 0 0 0 1px #6b48ff;
 }
 
@@ -334,6 +333,21 @@ jQuery(function ($) {
 		$(".submit .button").prop("disabled", true);
 		$(this).find(".submit .button").val("正在提交…");
 	});
+
+	$(".mail_test").click(function () {
+		var ajax_data = { action: 'gdk_test_email' };
+    $.post(ajaxurl, ajax_data,
+        function(a) {
+            if (a == '1') {
+                alert('邮箱配置成功');
+            }else{
+				alert('邮箱配置失败,请重新检查');
+			}
+        });
+	});
+
+
+
 /* 配置文本框以隐藏显示功能*/ 
 function depend(n, e, i, c, t, u) {
     $("input[name=" + n + "]:checked").val(function() {
@@ -346,8 +360,8 @@ function depend(n, e, i, c, t, u) {
 depend('gdk_lock_login','#row-gdk_failed_login_limit,#row-gdk_lockout_duration');
 depend('gdk_smtp','#row-gdk_smtp_username,#row-gdk_smtp_host,#row-gdk_smtp_port,#row-gdk_smtp_mail,#row-gdk_smtp_password');
 depend('gdk_baidu_push','#row-gdk_baidu_api');
-
-
+depend('gdk_tag_link','#row-gdk_tag_num');
+depend('gdk_cdn','#row-gdk_cdn_host,#row-gdk_cdn_ext,#row-gdk_cdn_dir,#row-gdk_cdn_style,#row-git_cdn_water');
 
 
 });
@@ -372,10 +386,6 @@ function gdk_add_options_page() {
 				delete_option('gdk_options_setup');
 				gdk_update_options();
 				header('Location: admin.php?page=gdk-options&reset=true&panel=' . $_POST['panel']);
-				break;
-			case 'test':
-				wp_mail( get_bloginfo( 'admin_email' ) ,'[TEST]SMTP测试邮件','SMTP测试内容，当您收到这封邮件的时候，证明您的网站SMTP配置已成功！');
-				header('Location: admin.php?page=gdk-options&test=true&panel=' . $_POST['panel']);
 				break;
 		}
 		exit;
