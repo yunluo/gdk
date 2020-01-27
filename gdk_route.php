@@ -4,10 +4,9 @@
 
   	Plugin Name: GitCafe Development Kit 极客公园开发套件
 	Plugin URI: https://www.nicetheme.cn/nicetheme-plugins-store.html
-	Description: nicetheme 的一些基本操作
+	Description: 为WordPress主题开发提供底层支持
 	Version: 0.3.5
 	Author URI: http://www.nicetheme.cn
-	Nicetheme Module: jimu
 	Text Domain: jimu
 	Compatible:
 
@@ -37,12 +36,9 @@ if (version_compare(PHP_VERSION, '7.2.26', '>=')) {
 }
 
 //include('modules/base/main.php');
-include('class/wp-clean-up.php');
+include('class/clean-up.php');
 include('framework/plugin-options.php');
 include('functions/func_load.php');
 
 
-function nc_store_pluggable_include() {
-	include( 'modules/pluggable/load.php' );
-}
-add_action( 'after_setup_theme', 'nc_store_pluggable_include', 99999 );
+
