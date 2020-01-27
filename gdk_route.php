@@ -17,7 +17,7 @@ function deactivate_myself() {
 	deactivate_plugins( plugin_basename( __FILE__ ) );
 	wp_die('启动失败，积木插件需要运行在 PHP 7.2 版本及更高的环境下。');
 }
-if (!version_compare(PHP_VERSION, '7.2.26', '>=')) {
+if (!version_compare(PHP_VERSION, '7.2', '>=')) {
   add_action('update_option_active_plugins', 'deactivate_myself');
 }
 
