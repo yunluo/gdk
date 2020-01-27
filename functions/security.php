@@ -3,7 +3,7 @@
 define('DISALLOW_FILE_MODS',true);
 
 //阻止乱七八糟的请求
-add_action( 'wp', 'gdk_prevent_script_injection' );
+if(gdk_option('gdk_block_requst')){
     function gdk_prevent_script_injection() {
         global $user_ID;
         if( ! current_user_can( 'level_10' )) {
@@ -27,19 +27,21 @@ add_action( 'wp', 'gdk_prevent_script_injection' );
             }
         }
     }
+    add_action( 'wp', 'gdk_prevent_script_injection' );
+}
 
 if(gdk_option('gdk_lock_login')){
     if ( ! class_exists( 'GDK_Limit_Login_Attempts' ) ) {
         class GDK_Limit_Login_Attempts {
-            var $failed_login_limit = 3;
+            private $failed_login_limit;
             //登录失败的次数限制
-            var $lockout_duration   = 60;
+            private $lockout_duration;
             //暂停登陆时间
             var $transient_name     = 'attempted_login';
             //Transient used
-            public function __construct() {
-                $failed_login_limit = gdk_option('gdk_failed_login_limit');
-                $lockout_duration   = gdk_option('gdk_lockout_duration');
+            public function __construct($config = null) {
+                $this->failed_login_limit = $config['failed_login_limit'];
+                $this->lockout_duration   = $config['lockout_duration'];
                 add_filter( 'authenticate', array( $this, 'check_attempted_login' ), 30, 3 );
                 add_action( 'wp_login_failed', array( $this, 'login_failed' ), 10, 1 );
             }
@@ -91,7 +93,7 @@ if(gdk_option('gdk_lock_login')){
                 if ( $diff < $minute * 2 )
                     return esc_attr( 'about 1 minute ago' );
                 if ( $diff < $hour )
-                    return floor( $diff / $minute ) . ' ' . esc_attr( '分' );
+                    return floor( $diff / $minute ) . ' ' . esc_attr( '分钟' );
                 if ( $diff < $hour * 2 )
                     return esc_attr( 'about 1 hour');
                 return floor( $diff / $hour ) . ' ' . esc_attr( '小时' );
@@ -99,7 +101,11 @@ if(gdk_option('gdk_lock_login')){
         }
     }
     //Enable it:
-    new GDK_Limit_Login_Attempts();
+    $config = [
+		'failed_login_limit' => gdk_option('gdk_failed_login_limit'),   // 登录失败的次数限制
+		'lockout_duration'   => gdk_option('gdk_lockout_duration'),   // 暂停登陆时间
+	];
+    new GDK_Limit_Login_Attempts($config);
 }
 
 
@@ -109,7 +115,7 @@ function gdk_disable_login_errors( $error ) {
 	$err_codes = $errors->get_error_codes();
 	if ( ! in_array( 'too_many_tried', $err_codes ) ) {
 		// For security reason
-		return esc_attr('Access denied!');
+		return esc_attr('Access Denied!');
 	}
 	return $error;
 }
@@ -148,3 +154,14 @@ function gdk_comment_lang($incoming_comment) {
 	return($incoming_comment);
 }
 add_filter('preprocess_comment', 'gdk_comment_lang');
+
+//禁止使用admin登录
+add_filter( 'wp_authenticate',  function ($user){
+    if($user == 'admin') exit;
+});
+add_filter('sanitize_user', function ($username, $raw_username, $strict){
+    if($raw_username == 'admin' || $username == 'admin'){
+        exit;
+    }
+    return $username;
+}, 10, 3);

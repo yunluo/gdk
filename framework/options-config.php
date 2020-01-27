@@ -6,79 +6,90 @@
 $gdk_options = [
 	'优化选项' => [
 		[
-			'name'  => '新版编辑器开关',
-			'desc'  => '新版编辑器尚不成熟，很多主题不兼容，建议禁用',
+			'name'  => '禁用新版编辑器',
+			'desc'  => '新版编辑器尚不成熟，很多主题不兼容，建议开启',
 			'id'    => 'gdk_diasble_gutenberg',
 			'type'  => 'radio',
 			'options' => [
-				'1' => '禁用',
-				'0' => '开启'
+				'0' => '禁用',
+				'1' => '开启'
 			],
 			'std'   => '1'
 		],
 		[
 			'name'  => '禁用头部冗余代码',
-			'desc'  => 'WordPress头部自带很多无用代码，不安全且浪费，建议禁用',
+			'desc'  => 'WordPress头部自带很多无用代码，不安全且浪费，建议开启',
 			'id'    => 'gdk_diasble_head_useless',
 			'type'  => 'radio',
 			'options' => [
-				'1' => '禁用',
-				'0' => '开启'
+				'0' => '禁用',
+				'1' => '开启'
 			],
 			'std'   => '1'
 		],
 		[
 			'name'  => '禁用WordPress更新',
-			'desc'  => 'WordPress更新会不时发送请求数据，所以可以关闭WordPress更新，包括主题，插件和内核更新',
+			'desc'  => 'WordPress更新会不时发送请求数据，所以可以关闭WordPress更新，包括主题，插件和内核更新,默认禁用',
 			'id'    => 'gdk_diasble_wp_update',
 			'type'  => 'radio',
 			'options' => [
-				'1' => '禁用',
-				'0' => '开启'
+				'0' => '禁用',
+				'1' => '开启'
 			],
-			'std'   => '1'
+			'std'   => '0'
 		],
 		[
 			'name'  => '禁用Emojis功能',
-			'desc'  => 'WordPress的Emojis功能会加载国外资源，那是网站速度，所以建议禁用',
+			'desc'  => 'WordPress的Emojis功能会加载国外资源，那是网站速度，所以建议开启',
 			'id'    => 'gdk_disable_emojis',
 			'type'  => 'radio',
 			'options' => [
-				'1' => '禁用',
-				'0' => '开启'
+				'0' => '禁用',
+				'1' => '开启'
 			],
 			'std'   => '1'
 		],
 		[
 			'name'  => '禁用XML-RPC功能',
-			'desc'  => '该功能有安全风险，如果不使用WordPress的手机客户端或者第三方编辑器软件，那么建议禁用',
+			'desc'  => '该功能有安全风险，如果不使用WordPress的手机客户端或者第三方编辑器软件，那么建议开启',
 			'id'    => 'gdk_disable_xmlrpc',
 			'type'  => 'radio',
 			'options' => [
-				'1' => '禁用',
-				'0' => '开启'
+				'0' => '禁用',
+				'1' => '开启'
 			],
 			'std'   => '1'
 		],
 		[
 			'name'  => '禁用文章版本功能',
-			'desc'  => '该功能有会造成数据库体量暴增为了你的数据库考虑，建议禁用',
+			'desc'  => '该功能有会造成数据库体量暴增为了你的数据库考虑，建议开启',
 			'id'    => 'gdk_disable_revision',
 			'type'  => 'radio',
 			'options' => [
-				'1' => '禁用',
-				'0' => '开启'
+				'0' => '禁用',
+				'1' => '开启'
 			],
 			'std'   => '1'
 		],
 		[
 			'name'  => '禁用pingback功能',
-			'desc'  => '该功能会增加垃圾评论的几率，建议禁用',
+			'desc'  => '该功能会增加垃圾评论的几率，建议开启',
 			'id'    => 'gdk_disable_trackbacks',
 			'type'  => 'radio',
 			'options' => [
-				'1' => '禁用',
-				'0' => '开启'
+				'0' => '禁用',
+				'1' => '开启'
+			],
+			'std'   => '1'
+		],
+		[
+			'name'  => '文件上传重命名',
+			'desc'  => '该功能会将zip,rar,7z格式以外的所有全部数字重命名，服务器文件不建议使用中文,默认开启',
+			'id'    => 'gdk_upload_rename',
+			'type'  => 'radio',
+			'options' => [
+				'0' => '禁用',
+				'1' => '开启'
 			],
 			'std'   => '1'
 		],
@@ -103,7 +114,7 @@ $gdk_options = [
 				'2' => 'V2EX头像镜像',
 				'3' => '七牛头像镜像',
 			],
-			'std'   => '1'
+			'std'   => '3'
 		]
 	],
 	'SEO设置' => [
@@ -126,6 +137,17 @@ $gdk_options = [
 			'id'    => 'git_delimiter',
 			'type'  => 'text',
 			'std'   => '|'
+		],
+		[
+			'name'  => '自动添加nofollow',
+			'desc'  => '该功能会给外链自动添加nofollow,默认开启',
+			'id'    => 'gdk_nofollow',
+			'type'  => 'radio',
+			'options' => [
+				'0' => '禁用',
+				'1' => '开启'
+			],
+			'std'   => '1'
 		],
 		[
 			'name'  => '文章自动内链',
@@ -157,6 +179,17 @@ $gdk_options = [
 			'std'   => '1'
 		],
 		[
+			'name'  => '禁止蜘蛛爬取作者页面',
+			'desc'  => '该功能会屏蔽蜘蛛访问作者页面,如果是单作者网站没必要展示作者页,根据自己网站实际情况选择是否开启,默认禁用',
+			'id'    => 'gdk_no_author_page',
+			'type'  => 'radio',
+			'options' => [
+				'0' => '禁用',
+				'1' => '开启'
+			],
+			'std'   => '0'
+		],
+		[
 			'name'  => '网站地图 sitemap_xml',
 			'desc'  => '该功能会自动生成网站地图链接:域名/sitemap_xml,开启后建议更新固定链接一次,默认开启',
 			'id'    => 'gdk_sitemap_xml',
@@ -168,10 +201,15 @@ $gdk_options = [
 			'std'   => '1'
 		],
 		[
-			'name'  => '图片自动添加alt以及title',
-			'desc'  => '启用',
-			'id'    => 'git_imgalt_b',
-			'type'  => 'checkbox'
+			'name'  => '文章图片自动添加alt以及title',
+			'desc'  => '该功能会自动给文章中图片添加alt和title,并且是按照文章标题进行命名,默认开启',
+			'id'    => 'gdk_seo_img',
+			'type'  => 'radio',
+			'options' => [
+				'0' => '禁用',
+				'1' => '开启'
+			],
+			'std'   => '1'
 		],
 		[
 			'name'  => '外链自动GO跳转',
@@ -180,29 +218,35 @@ $gdk_options = [
 			'type'  => 'checkbox'
 		],
 		[
-			'name'  => '外链自动添加nofollow',
-			'desc'  => '启用',
-			'id'    => 'git_nofollow',
-			'type'  => 'checkbox'
-		],
-		[
-			'name'  => 'Robot.txt优化',
-			'desc'  => '启用 【开启本项之后，将只对搜索引擎开放首页，页面，文章页，其他一律屏蔽】',
-			'id'    => 'git_robot_b',
-			'type'  => 'checkbox'
-		],
-		[
-			'title' => '百度主动推送 <a href="http://zhanzhang.baidu.com/linksubmit/index" target="_blank">查看主动推送效果</a>',//标题文字
-			'type'  => 'title'//title 是标签下的标题
+			'name'  => '百度自动&主动推送',
+			'desc'  => '该功能会自动给文章中图片添加alt和title,并且是按照文章标题进行命名,默认开启',
+			'id'    => 'gdk_baidu_push',
+			'type'  => 'radio',
+			'options' => [
+				'0' => '禁用',
+				'1' => '开启'
+			],
+			'std'   => '1'
 		],
 		[
 			'name'  => '主动推送接口地址，填写本项即开启推送',
-			'desc'  => '在百度站长平台获取主动推送接口地址，比如：http://data.zz.baidu.com/urls?site=域名&token=一组字符, <a class="button-primary" rel="nofollow" href="http://zhanzhang.baidu.com/linksubmit/index" target="_blank">主动推送接口地址</a>',
-			'id'    => 'git_sitemap_api',
+			'desc'  => '在百度站长平台获取主动推送接口地址，比如：http://data.zz.baidu.com/urls?site=域名&token=一组字符, <a class="key_word" rel="nofollow" href="http://zhanzhang.baidu.com/linksubmit/index" target="_blank">主动推送接口地址</a>',
+			'id'    => 'gdk_baidu_api',
 			'type'  => 'text'
 		]
 	],
 	'安全设置' => [
+		[
+			'name'  => '屏蔽各种不正常的请求',
+			'desc'  => '该功能会将各种不正常的请求比如破解,注入类的屏蔽掉，默认开启',
+			'id'    => 'gdk_block_requst',
+			'type'  => 'radio',
+			'options' => [
+				'1' => '开启',
+				'0' => '禁用'
+			],
+			'std'   => '1'
+		],
 		[
 			'title' => '登陆安全防御',
 			'type'  => 'title'
@@ -244,7 +288,7 @@ $gdk_options = [
 		],
 		[
 			'name'  => '关键词，IP，邮箱屏蔽',
-			'desc'  => '开启 【启用后，在WordPress-设置-讨论-黑名单中添加想要屏蔽的关键词，邮箱，网址，IP地址，每行一个】<a class="button-primary" target="_blank" href="https://img.alicdn.com/imgextra/i4/1597576229/TB2FnxnlpXXXXcDXXXXXXXXXXXX_!!1597576229.png">如图设置</a>',
+			'desc'  => '开启 【启用后，在WordPress-设置-讨论-黑名单中添加想要屏蔽的关键词，邮箱，网址，IP地址，每行一个】<a class="key_word" target="_blank" href="https://img.alicdn.com/imgextra/i4/1597576229/TB2FnxnlpXXXXcDXXXXXXXXXXXX_!!1597576229.png">如图设置</a>',
 			'id'    => 'git_spam_keywords',
 			'type'  => 'checkbox'
 		],
@@ -258,142 +302,6 @@ $gdk_options = [
 			'name'  => '屏蔽长链接评论',
 			'desc'  => '开启 【启用后，屏蔽含有过长网址(超过50个字符)的评论，当然如果你已经选择了上面的选项的话，就不用选择了】',
 			'id'    => 'git_spam_long',
-			'type'  => 'checkbox'
-		],
-		[
-			'title' => '评论设置属性',
-			'type'  => 'title'
-		],
-		[
-			'name'  => '贴图',
-			'desc'  => '不显示',
-			'id'    => 'git_tietu',
-			'type'  => 'checkbox'
-		],
-		[
-			'name'  => '加粗',
-			'desc'  => '不显示',
-			'id'    => 'git_jiacu',
-			'type'  => 'checkbox'
-		],
-		[
-			'name'  => '删除线',
-			'desc'  => '不显示',
-			'id'    => 'git_shanchu',
-			'type'  => 'checkbox'
-		],
-		[
-			'name'  => '居中',
-			'desc'  => '不显示',
-			'id'    => 'git_juzhong',
-			'type'  => 'checkbox'
-		],
-		[
-			'name'  => '斜体',
-			'desc'  => '不显示',
-			'id'    => 'git_xieti',
-			'type'  => 'checkbox'
-		],
-		[
-			'name'  => '签到',
-			'desc'  => '不显示',
-			'id'    => 'git_qiandao',
-			'type'  => 'checkbox'
-		],
-		[
-			'title' => '评论VIP设置',
-			'type'  => 'title'
-		],
-		[
-			'name'  => '启用',
-			'desc'  => ' 【启用之后，您需要在下面设置用户的评论数字区间】',
-			'id'    => 'git_vip',
-			'type'  => 'checkbox'
-		],
-		[
-			'name'  => 'VIP 1',
-			'desc'  => '输入的数字减一就是VIP 1的所要求的评论数字区间，默认是5',
-			'id'    => 'git_vip1',
-			'type'  => 'number',
-			'std'   => 5
-		],
-		[
-			'name'  => 'VIP 2',
-			'desc'  => '输入的数字减去上面的数字就是VIP 2的所要求的评论数字区间,默认是10',
-			'id'    => 'git_vip2',
-			'type'  => 'number',
-			'std'   => 10
-		],
-		[
-			'name'  => 'VIP 3',
-			'desc'  => '输入的数字减去上面的数字就是VIP 3的所要求的评论数字区间，默认是20',
-			'id'    => 'git_vip3',
-			'type'  => 'number',
-			'std'   => 20
-		],
-		[
-			'name'  => 'VIP 4',
-			'desc'  => '输入的数字减去上面的数字就是VIP 4的所要求的评论数字区间，默认是40',
-			'id'    => 'git_vip4',
-			'type'  => 'number',
-			'std'   => 30
-		],
-		[
-			'name'  => 'VIP 5',
-			'desc'  => '输入的数字减去上面的数字就是VIP 5的所要求的评论数字区间，默认是70',
-			'id'    => 'git_vip5',
-			'type'  => 'number',
-			'std'   => 40
-		],
-		[
-			'name'  => 'VIP 6',
-			'desc'  => '输入的数字减去上面的数字就是VIP 6的所要求的评论数字区间，默认是110',
-			'id'    => 'git_vip6',
-			'type'  => 'number',
-			'std'   => 50
-		],
-		[
-			'name'  => '文章摘要',
-			'desc'  => '个字',
-			'id'    => 'git_excerpt_length',
-			'type'  => 'number',
-			'std'   => 180
-		],
-		[
-			'name'  => '文章二维码',
-			'desc'  => '启用',
-			'id'    => 'git_qr_b',
-			'type'  => 'checkbox'
-		],
-		[
-			'name'  => '作者模块',
-			'desc'  => '启用',
-			'id'    => 'git_auther_b',
-			'type'  => 'checkbox'
-		],
-		[
-			'name'  => '文章目录索引',
-			'desc'  => '启用  【开启之后，默认索引文章H2标题】',
-			'id'    => 'git_article_list',
-			'type'  => 'checkbox'
-		],
-		[
-			'name'  => '相关文章显示条数',
-			'desc'  => '条&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 这是是显示文章下面的相关文章数目的',
-			'id'    => 'git_related_count',
-			'type'  => 'number',
-			'std'   => 8
-		],
-		[
-			'name'  => '禁止站内文章Pingback',
-			'desc'  => '开启&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 开启后，不会发送站内Pingback，建议开启',
-			'id'    => 'git_pingback_b',
-			'type'  => 'checkbox'
-		],
-		[
-			'name'  => '禁止后台编辑时自动保存',
-			'desc'  => '开启&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 开启后，后台编辑文章时候不会定时保存，有效缩减数据库存储量；但是，一般不建议开启，除非你的数据库容量很小',
-			'id'    => 'git_autosave_b',
 			'type'  => 'checkbox'
 		],
 		[
@@ -412,20 +320,20 @@ $gdk_options = [
 		[
 			'name'  => '金币和RMB兑换关系',
 			'desc'  => '请输入兑换关系，比如1RMB=10金币，请慎重选择，一旦设置好后面不能修改的',
-			'id'    => 'git_chongzhi_dh',
+			'id'    => 'git_payjs_rate',
 			'type'  => 'number',
 			'std'   => 10
 		],
 		[
 			'name'  => '选择一个支付方式',
 			'desc'  => '两种方案选择其中一种，必须选择一个哦',
-			'id'    => 'git_pay_way',
+			'id'    => 'git_payjs',
 			'type'  => 'radio',
 			'options' => [
-				'git_payjs_ok' => '调用Payjs支付',
-				'git_eapay_ok' => '调用简付支付'
+				'0' => '禁用',
+				'1' => '开启'
 			],
-			'std'   => 'git_payjs_ok'
+			'std'   => '1'
 		],
 		[
 			'title' => 'PayJs支付设置&nbsp;&nbsp;&nbsp;<a href="https://payjs.cn/ref/ZVEMKD" target="_blank" >注册PayJs</a>&nbsp;&nbsp;&nbsp;【微信官方，微信正规渠道，强烈推荐】',
@@ -444,37 +352,19 @@ $gdk_options = [
 			'id'    => 'git_payjs_secret',
 			'type'  => 'text',
 			'std'   => 444444444
-		],
-		[
-			'title' => '简付支付设置&nbsp;&nbsp;&nbsp;<a href="https://b.eapay.cc" target="_blank" >注册简付</a>',
-			'type'  => 'title'
-		],
-		[
-			'name'  => '简付App ID',
-			'desc'  => '',
-			'id'    => 'git_eapay_id',
-			'type'  => 'text',
-			'std'   => 2333333333
-		],
-		[
-			'name'  => '简付App Key',
-			'desc'  => '',
-			'id'    => 'git_eapay_secret',
-			'type'  => 'text',
-			'std'   => 444444444
 		]
 	],
 	'高级设置' => [
 			[
 				'name'  => 'jQuery来源设置',
 				'desc'  => '选择一个适合自己的jQuery公共库来源',
-				'id'    => 'git_jqcdn',
+				'id'    => 'git_jq',
 				'type'  => 'radio',
 				'options' => [
-					'git_jqcdn_upai' => '远程jQuery库【底部加载，速度快，兼容差】',
-					'git_jqcdn_bendi' => '本地jQuery库【头部加载，速度慢，兼容好】'
+					'1' => '远程jQuery库【底部加载，速度快，兼容差】',
+					'0' => '本地jQuery库【头部加载，速度慢，兼容好】'
 				],
-				'std'   => 'git_jqcdn_upai'
+				'std'   => '1'
 			],
 			[
 			'name'  => 'HTML代码压缩',
@@ -517,7 +407,7 @@ $gdk_options = [
 		],
 		[
 			'name'  => 'CDN域名',
-			'desc'  => '输入您的CDN域名，一般需要到cdn后台获取，必须带 <font color="#cc0000"><strong>http(s):// ，且结尾不能带/ </strong></font>',
+			'desc'  => '输入您的CDN域名，一般需要到cdn后台获取，必须带 <span class="key_word">http(s):// ，且结尾不能带/ </span>',
 			'id'    => 'gdk_cdn_host',
 			'type'  => 'text',
 			'std'   => ''
@@ -549,7 +439,7 @@ $gdk_options = [
 		],
 		[
 			'name'  => 'CDN水印',
-			'desc'  => '启用【如果启用，请在七牛，又拍，OSS等CDN中设置自定义样式，名字为：<font color="#cc0000"><strong>water.jpg</strong></font>，分隔符为 ! 】',
+			'desc'  => '启用【如果启用，请在七牛，又拍，OSS等CDN中设置自定义样式，名字为：<span class="key_word">water.jpg</span>，分隔符为<span class="key_word">!</span> 】',
 			'id'    => 'git_cdn_water',
 			'type'  => 'checkbox'
 		],
@@ -611,7 +501,7 @@ $gdk_options = [
 			'desc'  => '在本输入框内输入您的微信公众号描述信息，支持html代码，字数合适就行，不能太多',
 			'id'    => 'git_mp_tips',
 			'type'  => 'textarea',
-			'std'   => '请关注极客公园官方微信公众号，关注并订阅<span style="color:#E96463;font-weight:bold;">云落极客公园</span>获取验证码。在微信里搜索<span style="color:#E96463;font-weight:bold;">云落极客公园</span>或者微信扫描二维码都可以关注极客公园官方微信公众号。'
+			'std'   => '请关注极客公园官方微信公众号，关注并订阅<span class="key_word">云落极客公园</span>获取验证码。在微信里搜索<span class="key_word">云落极客公园</span>或者微信扫描二维码都可以关注极客公园官方微信公众号。'
 		],
 		[
 			'title' => 'HTML5 桌面推送',
@@ -664,50 +554,48 @@ $gdk_options = [
 			'type'  => 'title'
 		],
 		[
-			'name'  => '发件人地址',
-			'desc'  => '请输入您的邮箱地址',
-			'id'    => 'git_maildizhi_b',
-			'type'  => 'text',
-			'std'   => ''
+			'name'  => 'SMTP邮箱发送',
+			'desc'  => '该功能利用第三方SMTP邮箱服务发送邮件,比如评论邮件,需要配置好再开启',
+			'id'    => 'gdk_smtp',
+			'type'  => 'radio',
+			'options' => [
+				'0' => '禁用',
+				'1' => '开启'
+			],
+			'std'   => '0'
 		],
 		[
 			'name'  => '发件人昵称',
-			'desc'  => '请输入您的网站名称',
-			'id'    => 'git_mailnichen_b',
+			'desc'  => '请输入您的网站名称,比如:云落',
+			'id'    => 'gdk_smtp_username',
 			'type'  => 'text',
 			'std'   => ''
 		],
 		[
 			'name'  => 'SMTP服务器地址',
-			'desc'  => '请输入您的邮箱的SMTP服务器，查看<a class="button-primary" target="_blank" href="http://wenku.baidu.com/link?url=Xc_mRFw2K-dimKX845QalqLpZzly07mC4a_t_QjOSPov0uFx3MWTl3wgw4tOAyTbDlS7lT8TOAj8VOxDYU186wQLKPt1fKncz7k_jbP_RQi">查看常用SMTP地址</a>',
-			'id'    => 'git_mailsmtp_b',
+			'desc'  => '请输入您的邮箱的SMTP服务器，<a class="key_word" target="_blank" href="https://blog.csdn.net/whyhonest/article/details/7289420">点击查看常用SMTP地址</a>',
+			'id'    => 'gdk_smtp_host',
 			'type'  => 'text',
 			'std'   => 'smtp.qq.com'
 		],
 		[
-			'name'  => 'SSL安全连接',
-			'desc'  => '启用【如果你布吉岛这个是什么东东，那么请不要启用】',
-			'id'    => 'git_smtpssl_b',
-			'type'  => 'checkbox'
-		],
-		[
 			'name'  => 'SMTP服务器端口',
-			'desc'  => '请输入您的smtp端口，一般QQ邮箱25就可以了,如果选择了上面的SSL，推荐使用465端口',
-			'id'    => 'git_mailport_b',
+			'desc'  => '请输入您的smtp端口，一般QQ邮箱推荐使用465端口',
+			'id'    => 'gdk_smtp_port',
 			'type'  => 'number',
 			'std'   => 465
 		],
 		[
 			'name'  => '邮箱账号',
 			'desc'  => '请输入您的邮箱地址，比如云落的sp91@qq.com',
-			'id'    => 'git_mailuser_b',
+			'id'    => 'gdk_smtp_mail',
 			'type'  => 'text',
 			'std'   => ''
 		],
 		[
 			'name'  => '邮箱密码',
-			'desc'  => '请输入您的邮箱授权码',
-			'id'    => 'git_mailpass_b',
+			'desc'  => '请输入您的邮箱授权码,<span class="key_word">注意不同邮箱服务器的密码不一样,有的是密码,有的比如QQ邮箱就是授权码</span>',
+			'id'    => 'gdk_smtp_password',
 			'type'  => 'password',
 			'std'   => ''
 		],

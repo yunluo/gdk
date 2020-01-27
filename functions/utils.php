@@ -551,3 +551,261 @@ function gdk_die($ErrMsg) {
     echo $ErrMsg;
     exit;
 }
+
+
+//设置cookie数据
+function gdk_set_cookie($key, $value, $expire){
+	$expire	= ($expire < time())?$expire+time():$expire;
+	$secure = ('https' === parse_url(get_option('home'), PHP_URL_SCHEME));
+	setcookie($key, $value, $expire, COOKIEPATH, COOKIE_DOMAIN, $secure);
+    if ( COOKIEPATH != SITECOOKIEPATH ){
+        setcookie($key, $value, $expire, SITECOOKIEPATH, COOKIE_DOMAIN, $secure);
+    }
+    $_COOKIE[$key] = $value;
+}
+
+//判断是否是电话号码,是号码返回 true  不是返回false
+function gdk_is_mobile_number($number){
+	return (bool)preg_match('/^0{0,1}(1[3,5,8][0-9]|14[5,7]|166|17[0,1,3,6,7,8]|19[8,9])[0-9]{8}$/', $number);
+}
+
+
+//获取纯文本
+function gdk_plain_text($text) {
+	$text = wp_strip_all_tags($text);
+	$text = str_replace('"', '', $text);
+	$text = str_replace('\'', '', $text);
+	$text = str_replace("\r\n", ' ', $text);
+	$text = str_replace("\n", ' ', $text);
+	$text = str_replace("  ", ' ', $text);
+	return trim($text);
+}
+
+
+// 获取第一段
+function gdk_first_p($text) {
+	if($text) {
+		$text = explode("\n", trim(strip_tags($text)));
+		$text = trim($text['0']);
+	}
+	return $text;
+}
+
+//获取当前页面链接
+function gdk_get_current_url(){
+    $ssl		= (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') ? true:false;
+    $sp			= strtolower($_SERVER['SERVER_PROTOCOL']);
+    $protocol	= substr($sp, 0, strpos($sp, '/')) . (($ssl) ? 's' : '');
+    $port		= $_SERVER['SERVER_PORT'];
+    $port		= ((!$ssl && $port=='80') || ($ssl && $port=='443')) ? '' : ':'.$port;
+    $host		= $_SERVER['HTTP_X_FORWARDED_HOST'] ?? $_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME'];
+    return $protocol . '://' . $host . $port . $_SERVER['REQUEST_URI'];
+}
+
+//黑名单检测
+function gdk_blacklist_check($str){
+    $moderation_keys	= trim(get_option('moderation_keys'));
+    $blacklist_keys		= trim(get_option('blacklist_keys'));
+
+    $words = explode("\n", $moderation_keys ."\n".$blacklist_keys);
+
+    foreach ((array)$words as $word){
+        $word = trim($word);
+
+        // Skip empty linesgdk_
+        if ( empty($word) ) continue;
+
+        // Do some escaping magic so that '#' chars in the
+        // spam words don't break things:
+        $word	= preg_quote($word, '#');
+        if ( preg_match("#$word#i", $str) ) return true;
+    }
+
+    return false;
+}
+
+
+//
+function gdk_http_request($url, $args=array(), $err_args=array()){
+    $args = wp_parse_args( $args, array(
+        'timeout'			=> 5,
+        'method'			=> '',
+        'body'				=> array(),
+        'sslverify'			=> false,
+        'blocking'			=> true,	// 如果不需要立刻知道结果，可以设置为 false
+        'stream'			=> false,	// 如果是保存远程的文件，这里需要设置为 true
+        'filename'			=> null,	// 设置保存下来文件的路径和名字
+        'need_json_decode'	=> true,
+        'need_json_encode'	=> false,
+        // 'headers'		=> array('Accept-Encoding'=>'gzip;'),	//使用压缩传输数据
+        // 'headers'		=> array('Accept-Encoding'=>''),
+        // 'compress'		=> false,
+        'decompress'		=> true,
+    ));
+
+    if(isset($_GET['debug'])){
+        print_r($args);	
+    }
+
+    $need_json_decode	= $args['need_json_decode'];
+    $need_json_encode	= $args['need_json_encode'];
+
+    $method				= ($args['method'])?strtoupper($args['method']):($args['body']?'POST':'GET');
+
+    unset($args['need_json_decode']);
+    unset($args['need_json_encode']);
+    unset($args['method']);
+
+    if($method == 'GET'){
+        $response = wp_remote_get($url, $args);
+    }elseif($method == 'POST'){
+        if($need_json_encode && is_array($args['body'])){
+            $args['body']	= json_encode($args['body']);
+        }
+        $response = wp_remote_post($url, $args);
+    }elseif($method == 'FILE'){	// 上传文件
+        $args['method'] = ($args['body'])?'POST':'GET';
+        $args['sslcertificates']	= isset($args['sslcertificates'])?$args['sslcertificates']: ABSPATH.WPINC.'/certificates/ca-bundle.crt';
+        $args['user-agent']			= isset($args['user-agent'])?$args['user-agent']:'WordPress';
+        $wp_http_curl	= new WP_Http_Curl();
+        $response		= $wp_http_curl->request($url, $args);
+    }elseif($method == 'HEAD'){
+        if($need_json_encode && is_array($args['body'])){
+            $args['body']	= json_encode($args['body']);
+        }
+
+        $response = wp_remote_head($url, $args);
+    }else{
+        if($need_json_encode && is_array($args['body'])){
+            $args['body']	= json_encode($args['body']);
+        }
+
+        $response = wp_remote_request($url, $args);
+    }
+
+    if(is_wp_error($response)){
+        trigger_error($url."\n".$response->get_error_code().' : '.$response->get_error_message()."\n".var_export($args['body'],true));
+        return $response;
+    }
+
+    $headers	= $response['headers'];
+    $response	= $response['body'];
+
+    if($need_json_decode || isset($headers['content-type']) && strpos($headers['content-type'], '/json')){
+        if($args['stream']){
+            $response	= file_get_contents($args['filename']);
+        }
+
+        $response	= json_decode($response);
+
+        if(get_current_blog_id() == 339){
+            // print_r($response);
+        }
+
+        if(is_wp_error($response)){
+            return $response;
+        }
+    }
+    
+    extract(wp_parse_args($err_args,  array(
+        'errcode'	=>'errcode',
+        'errmsg'	=>'errmsg',
+        'detail'	=>'detail',
+        'success'	=>0,
+    )));
+
+    if(isset($response[$errcode]) && $response[$errcode] != $success){
+        $errcode	= $response[$errcode];
+        $errmsg		= isset($response[$errmsg])?$response[$errmsg]:'';
+
+        if(isset($response[$detail])){
+            $detail	= $response[$detail];
+
+            trigger_error($url."\n".$errcode.' : '.$errmsg."\n".var_export($detail,true)."\n".var_export($args['body'],true));
+            return new WP_Error($errcode, $errmsg, $detail);
+        }else{
+
+            trigger_error($url."\n".$errcode.' : '.$errmsg."\n".var_export($args['body'],true));
+            return new WP_Error($errcode, $errmsg);
+        }	
+    }
+
+    if(isset($_GET['debug'])){
+        echo $url;
+        print_r($response);
+    }
+
+    return $response;
+}
+
+//
+function gdk_get_qq_vid($id_or_url){
+    if(filter_var($id_or_url, FILTER_VALIDATE_URL)){ 
+        if(preg_match('#https://v.qq.com/x/page/(.*?).html#i',$id_or_url, $matches)){
+            return $matches[1];
+        }elseif(preg_match('#https://v.qq.com/x/cover/.*/(.*?).html#i',$id_or_url, $matches)){
+            return $matches[1];
+        }else{
+            return '';
+        }
+    }else{
+        return $id_or_url;
+    }
+}
+
+function get_video_mp4($id_or_url){
+    if(filter_var($id_or_url, FILTER_VALIDATE_URL)){ 
+        if(preg_match('#http://www.miaopai.com/show/(.*?).htm#i',$id_or_url, $matches)){
+            return 'http://gslb.miaopai.com/stream/'.esc_attr($matches[1]).'.mp4';
+        }elseif(preg_match('#https://v.qq.com/x/page/(.*?).html#i',$id_or_url, $matches)){
+            return get_qqv_mp4($matches[1]);
+        }elseif(preg_match('#https://v.qq.com/x/cover/.*/(.*?).html#i',$id_or_url, $matches)){
+            return get_qqv_mp4($matches[1]);
+        }else{
+            return str_replace(['%3A','%2F'], [':','/'], urlencode($id_or_url));
+        }
+    }else{
+        return get_qqv_mp4($id_or_url);
+    }
+}
+
+
+function get_qqv_mp4($vid){
+    if(strlen($vid) > 20){
+        return new WP_Error('invalid_qqv_vid', '非法的腾讯视频 ID');
+    }
+
+    $mp4 = wp_cache_get($vid, 'qqv_mp4');
+    if($mp4 === false){
+        $response	= gdk_http_request('http://vv.video.qq.com/getinfo?otype=json&platform=11001&vid='.$vid, array(
+            'timeout'			=>4,
+            'need_json_decode'	=>false
+        ));
+
+        if(is_wp_error($response)){
+            return $response;
+        }
+
+        $response	= trim(substr($response, strpos($response, '{')),';');
+        $response	= json_decode($response);
+
+        if(is_wp_error($response)){
+            return $response;
+        }
+
+        if(empty($response['vl'])){
+            return new WP_Error('illegal_qqv', '该腾讯视频不存在或者为收费视频！');
+        }
+
+        $u		= $response['vl']['vi'][0];
+        $p0		= $u['ul']['ui'][0]['url'];
+        $p1		= $u['fn'];
+        $p2		= $u['fvkey'];
+
+        $mp4	= $p0.$p1.'?vkey='.$p2;
+
+        wp_cache_set($vid, $mp4, 'qqv_mp4', HOUR_IN_SECONDS*6);
+    }
+
+    return $mp4;
+}

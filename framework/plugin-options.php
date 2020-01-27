@@ -1,6 +1,6 @@
 <?php
 /**
- * Git 主题后台选项
+ * Git 插件后台选项
  */
 
  if ( ! defined( 'WPINC' ) ) {
@@ -59,9 +59,9 @@ foreach ( array_keys($gdk_options) as $i => $name ) {
 }
 ?>
 			<li><a href="#panel_data" data-panel="data">数据清理</a></li>
-			<li><a href="#panel_about" data-panel="about">关于主题</a></li>
+			<li><a href="#panel_about" data-panel="about">关于插件</a></li>
 		</ul>
-<div class="search-form"><label class="screen-reader-text" for="wp-filter-search-input">筛选主题选项…</label><input placeholder="筛选主题选项…" type="search" id="wp-filter-search-input" class="wp-filter-search"></div>
+<div class="search-form"><label class="screen-reader-text" for="wp-filter-search-input">筛选插件选项…</label><input placeholder="筛选插件选项…" type="search" id="wp-filter-search-input" class="wp-filter-search"></div>
 </div>
 
 <form method="post">
@@ -241,6 +241,12 @@ switch ( $type ) {
 	border-bottom: 1px solid #d2d3e0;
 	padding-bottom: 5px;
 }
+.key_word{
+	color:#f70044;
+	font-weight:bold;
+	text-decoration:none;
+	margin: 10px;
+}
 .panel th {
 	font-weight: normal;
 }
@@ -328,6 +334,22 @@ jQuery(function ($) {
 		$(".submit .button").prop("disabled", true);
 		$(this).find(".submit .button").val("正在提交…");
 	});
+/* 配置文本框以隐藏显示功能*/ 
+function depend(n, e, i, c, t, u) {
+    $("input[name=" + n + "]:checked").val(function() {
+        "0" == this.value && $(e, i, c, t, u).hide();
+    }), $("input[name=" + n + "]").click(function() {
+        $(e, i, c, t, u).toggle();
+    });
+}
+//依赖关系,第一个是需要点击的name值,后面是需要伸缩的ID值,参照下面写
+depend('gdk_lock_login','#row-gdk_failed_login_limit,#row-gdk_lockout_duration');
+depend('gdk_smtp','#row-gdk_smtp_username,#row-gdk_smtp_host,#row-gdk_smtp_port,#row-gdk_smtp_mail,#row-gdk_smtp_password');
+depend('gdk_baidu_push','#row-gdk_baidu_api');
+
+
+
+
 });
 </script>
 <?php

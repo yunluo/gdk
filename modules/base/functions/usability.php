@@ -2,33 +2,7 @@
 $nc_option = get_option('nc_option');
 $usability = $nc_option['usability'];
 
-if ($usability['friendly_images']) {
-  //给文章图片自动添加alt和title信息
-    if (!function_exists('nc_imagesalt')):
-        function nc_imagesalt($content) {
-            global $post;
-            $pattern ="/<a(.*?)href=('|\")(.*?).(bmp|gif|jpeg|jpg|png)('|\")(.*?)>/i";
-            $replacement = '<a$1href=$2$3.$4$5 alt="'.strip_tags($post->post_title).'" title="'.strip_tags($post->post_title).'"$6>';
-            $content = preg_replace($pattern, $replacement, $content);
-            return $content;
-        }
-        add_filter('the_content', 'nc_imagesalt');
-    endif;
-    if (!function_exists('nc_image_alt_tag')):
-        function nc_image_alt_tag($content) {
-            global $post;
-            preg_match_all('/<img (.*?)\/>/', $content, $images);
-            if(!is_null($images)) {
-            foreach($images[1] as $index => $value){
-                $new_img = str_replace('<img', '<img alt="'.strip_tags($post->post_title).'-'.get_option('blogname').'"', $images[0][$index]);
-                $content = str_replace($images[0][$index], $new_img, $content);
-            }
-            }
-            return $content;
-        }
-        add_filter('the_content', 'nc_image_alt_tag', 99999);
-    endif;
-}
+
 
 if ($usability['no_category_base']) {
     if (!function_exists('nc_no_category_base_refresh_rules')):
@@ -95,23 +69,7 @@ if ($usability['no_category_base']) {
     endif;
 }
 
-if ($usability['auto_rename_media_files']) {
-    if (!function_exists('nc_rename_upload_filter')):
-        add_filter('wp_handle_upload_prefilter', 'nc_rename_upload_filter' );
 
-        function nc_rename_upload_filter( $file ){
-            $info = pathinfo($file['name']);
-            $ext = $info['extension'];
-            $ignore_exts = ['zip', 'rar', '7z'];
-
-            if (!in_array($ext, $ignore_exts)) {
-                $filedate = date('YmdHis').rand(10,99); //为了避免时间重复，再加一段2位的随机数
-                $file['name'] = $filedate.'.'.$ext;
-            }
-            return $file;
-        }
-    endif;
-}
 if (!function_exists('nc_custom_head_code')):
     add_action('wp_head', 'nc_custom_head_code');
     function nc_custom_head_code() {
@@ -130,9 +88,7 @@ if (!function_exists('nc_custom_footer_code')):
     }
 endif;
 
-if ($usability['disable_admin_bar']) {
-    add_filter('show_admin_bar', '__return_false');
-}
+
 
 if( $usability['nc_highlight'] == 1 ){
 
@@ -169,76 +125,7 @@ if( $usability['nc_highlight'] == 1 && is_admin() ){
 
 }
 
-if( $usability['nc_lazyload'] == 1 && !is_admin() ){
 
-	require_once( NC_OPTIMIZEUP_DIR . '/lib/phpQuery/phpQuery.php' );
-
-	function usability_lazyload(){
-
-		wp_register_script( 'ncLazyloadJs', NC_OPTIMIZEUP_URL . 'assets/lazyload/lazyload.min.js', array(), NC_OPTIMIZEUP_VERSION, true );
-		wp_enqueue_script('ncLazyloadJs');
-
-	}
-	add_action( 'wp_enqueue_scripts', 'usability_lazyload' );
-
-	add_action( 'wp', 'nc_lazyload_start');
-
-}
-
-
-function nc_lazyload_start(){
-	ob_start( 'lazyload_replaces' );
-}
-
-function lazyload_replaces( $buffer ){
-
-	$html = phpQuery::newDocument( $buffer );
-	phpQuery::selectDocument($html);
-	pq('body pre *,body code *')->addClass('nc-no-lazy');
-	$images = pq('body img:not(.nc-no-lazy, .post_cover_image, .loading)');
-	$other = pq('body *[style]:not(.nc-no-lazy, .post_cover_image, .loading)');
-	pq('body pre *,body code *')->removeClass('nc-no-lazy');
-
-	foreach ($images as $key => $image) {
-
-		$src = pq( $image )->attr( 'src' );
-
-		if( $src ){
-			pq( $image )
-			->attr( 'src', 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7' )
-			->attr( 'data-src', $src )
-			->attr( 'data-nclazyload', 'true');
-		}
-
-		$srcset = pq( $image )->attr( 'srcset' );
-		if( $srcset ){
-			pq( $image )->attr('data-srcset', $srcset )->removeAttr('srcset');
-		}
-		
-		$sizes = pq( $image )->attr( 'sizes' );
-		if( $sizes ){
-			pq( $image )->attr('data-sizes', $sizes )->removeAttr('sizes');
-		}
-
-	}
-
-	foreach ($other as $key => $item) {
-
-		$style = pq($item)->attr('style');
-
-		preg_match('/(.*?)background(-image)?:(\s?url\(.*?\))(.*?)/im', $style, $matches );
-
-		if( isset( $matches[3] ) ){
-			pq($item)->attr('style', $matches[1] . 'background' . $matches[2] . ':url("data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7")' . $matches[4] );
-			pq($item)->attr('data-bg', $matches[3])->attr( 'data-nclazyload', 'true');
-		}
-
-
-	}
-
-	return $html->htmlOuter();
-
-}
 
 if( $usability['nc_lightgallery'] == 1 && !is_admin() ){
 
@@ -264,9 +151,7 @@ if( $usability['nc_lightgallery'] == 1 && !is_admin() ){
 
 }
 
-if ($nc_option['wechat_qq_share_custom']) {
-	include( NC_STORE_ROOT_PATH . 'modules/pluggable/custom_share.php' );
-}
+
 
 if( isset( $usability['hide_author_url_user_name'] ) && $usability['hide_author_url_user_name'] == 1 ){
 	

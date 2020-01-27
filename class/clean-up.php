@@ -191,6 +191,7 @@ function wp_clean_up_optimize(){
 	}
 ?>
 
+
 <p>
 <table class="widefat" style="width:550px;">
 	<thead>

@@ -1,6 +1,15 @@
 <?php
 
 
+function wpjam_feed_disabled() {
+    wp_die('Feed已经关闭, 请访问网站<a href="'.get_bloginfo('url').'">首页</a>！');
+}
+
+add_action('do_feed',		'wpjam_feed_disabled', 1);
+add_action('do_feed_rdf',	'wpjam_feed_disabled', 1);
+add_action('do_feed_rss',	'wpjam_feed_disabled', 1);
+add_action('do_feed_rss2',	'wpjam_feed_disabled', 1);
+add_action('do_feed_atom',	'wpjam_feed_disabled', 1);
 
 //禁用新版编辑器
 if(gdk_option('gdk_diasble_gutenberg')){
@@ -139,12 +148,20 @@ add_action('init', 'gdk_page_permalink', -1);
 
 
 //中文文件重命名
-function gdk_upload_rename($file) {
-    $time = date("YmdHis");
-    $file['name'] = $time . "" . mt_rand(1, 100) . "." . pathinfo($file['name'], PATHINFO_EXTENSION);
-    return $file;
+if(gdk_option('gdk_upload_rename')){
+        add_filter('wp_handle_upload_prefilter', 'gdk_upload_rename' );
+        function gdk_upload_rename( $file ){
+            $info = pathinfo($file['name']);
+            $ext = $info['extension'];
+            $ignore_exts = ['zip', 'rar', '7z'];//被忽略的文件格式
+
+            if (!in_array($ext, $ignore_exts)) {
+                $filedate = date('YmdHis').mt_rand(100, 999); 
+                $file['name'] = $filedate.'.'.$ext;
+            }
+            return $file;
+        }
 }
-add_filter('wp_handle_upload_prefilter', 'gdk_upload_rename');
 
 
 // 搜索结果为1时候自动跳转到对应页面
@@ -278,3 +295,20 @@ function log_login( $username, $password ) {
         }
     }
 }
+
+//前台禁止加载语言包
+add_filter('locale', function($locale) {
+    $locale = ( is_admin() ) ? $locale : 'en_US';
+    return $locale;
+});
+
+// 定制登录页面链接的连接
+add_filter('login_headerurl', function (){
+	return home_url();
+});
+
+
+// 定制登录页面链接的标题
+add_filter('login_headertext', function (){
+	return get_bloginfo('name');
+});

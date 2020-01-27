@@ -1,7 +1,7 @@
 <?php
 // ----------------------
 // 开一个api的统一URL
-function sitemap_xml_flush_rules(){
+function gdk_sitemap_xml_flush_rules(){
     $rules = get_option( 'rewrite_rules' );
     if ( !isset( $rules['^sitemap(.*?)\.xml$'] ) ) {
         global $wp_rewrite;
@@ -10,16 +10,16 @@ function sitemap_xml_flush_rules(){
 }
 
 // 添加自定义URL重写
-function sitemap_xml_custom_rewrite_rule() {
+function gdk_sitemap_xml_custom_rewrite_rule() {
     add_rewrite_rule('^sitemap(.*?)\.xml$','index.php?sitemap=gdk$matches[1]','top');
 }
 
-function sitemap_xml_insert_query_vars( $vars ){
+function gdk_sitemap_xml_insert_query_vars( $vars ){
     array_push($vars, 'sitemap');
     return $vars;
 }
 
-function sitemap_xml_cancel_redirect( $redirect_url ) {
+function gdk_sitemap_xml_cancel_redirect( $redirect_url ) {
 	$api_type = get_query_var('sitemap');
 	if ( !empty($api_type) ){
 		return false;
@@ -28,7 +28,7 @@ function sitemap_xml_cancel_redirect( $redirect_url ) {
 	}
 }
 
-function sitemap_xml_api_handlers( $template ){
+function gdk_sitemap_xml_api_handlers( $template ){
 
     $hook = explode('-', get_query_var( 'sitemap' ) );
     
@@ -57,11 +57,11 @@ function sitemap_xml_api_handlers( $template ){
 	return $template;
 }
 
-add_action( 'init', 'sitemap_xml_custom_rewrite_rule' , 10, 0);
-add_filter( 'query_vars', 'sitemap_xml_insert_query_vars' );
-add_filter( 'redirect_canonical', 'sitemap_xml_cancel_redirect' );
-add_action( 'wp_loaded', 'sitemap_xml_flush_rules' );
-add_filter( 'template_include', 'sitemap_xml_api_handlers', 99 );
+add_action( 'init', 'gdk_sitemap_xml_custom_rewrite_rule' , 10, 0);
+add_filter( 'query_vars', 'gdk_sitemap_xml_insert_query_vars' );
+add_filter( 'redirect_canonical', 'gdk_sitemap_xml_cancel_redirect' );
+add_action( 'wp_loaded', 'gdk_sitemap_xml_flush_rules' );
+add_filter( 'template_include', 'gdk_sitemap_xml_api_handlers', 99 );
 
 function gdk_create_sitemap() {
 
