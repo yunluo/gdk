@@ -44,53 +44,8 @@ if ($others_seo['auto_nofollow']) {
     endif;
 }
 
-if ($others_seo['auto_tag_link_switcher']) {
-    if (!function_exists('nc_tag_link')):
-        function nc_tag_link($content)
-        {
-            $post_tags = get_the_tags();
 
-            if ($post_tags) {
-                foreach ($post_tags as $tag) {
-                    $link = get_tag_link($tag->term_id);
-                    $keyword = $tag->name;
-        
-                    $cleankeyword = stripslashes($keyword);
-                    $url = '<a target="_blank" href="'.$link.'" title="'.str_replace('%s', addcslashes($cleankeyword, '$'), __('View all posts in %s')).'">'.addcslashes($cleankeyword, '$').'</a>';
-                    $regEx = '\'(?!((<.*?)|(<a.*?)))('. $cleankeyword . ')(?!(([^<>]*?)>)|([^>]*?</a>))\'s';
-                    $content = preg_replace($regEx, $url, $content, $others_seo['auto_tag_link_switcher_limit'] ?? 5);
-                }
-            }
-            return $content;
-        }
-    add_filter('the_content', 'nc_tag_link', 1);
-    endif;
-}
-if ($general_options['improve_robots_txt']) {
-    if (!function_exists('nc_robots_txt')):
-        add_filter('robots_txt', 'nc_robots_txt', 10, 2);
 
-    function nc_robots_txt($robotext)
-    {
-        if (isset($GLOBALS['nice_sitemap_xml'])) {
-            $sitemap = 'Sitemap: ' . home_url('/sitemap.xml');
-        } else {
-            $sitemap = '';
-        }
-        $robotext = "User-agent: *
-Disallow: /wp-admin/
-Disallow: /wp-content/plugins/
-Disallow: /wp-includes/
-Disallow: /*/trackback
-Disallow: /feed
-Disallow: /*/feed
-Disallow: /attachment/
-Disallow: /wp-content/themes/
-{$sitemap}";
-        return $robotext;
-    }
-    endif;
-}
 
 if (isset($others_seo['baidu_submit']) && $others_seo['baidu_submit']) {
     add_action('post_updated', 'nc_baidu_submit');

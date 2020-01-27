@@ -3,7 +3,7 @@
 
 
 //禁用新版编辑器
-if(gdk_get_option('gdk_diasble_gutenberg')){
+if(gdk_option('gdk_diasble_gutenberg')){
 add_filter('use_block_editor_for_post', '__return_false');
 remove_action( 'wp_enqueue_scripts', 'wp_common_block_scripts_and_styles' );
 }
@@ -12,7 +12,7 @@ remove_action( 'wp_enqueue_scripts', 'wp_common_block_scripts_and_styles' );
 add_filter('pre_option_link_manager_enabled', '__return_true');
 
 //移除 WP_Head 无关紧要的代码
-if(gdk_get_option('gdk_diasble_head_useless')){
+if(gdk_option('gdk_diasble_head_useless')){
 	remove_action('wp_head', 'wp_generator'); //删除 head 中的 WP 版本号
 	foreach (array('rss2_head', 'commentsrss2_head', 'rss_head', 'rdf_header', 'atom_head', 'comments_atom_head', 'opml_head', 'app_head') as $action) {
 	    remove_action($action, 'the_generator');
@@ -37,7 +37,7 @@ if(gdk_get_option('gdk_diasble_head_useless')){
 
 
 /**  开始关闭WordPress更新  **/
-if (gdk_get_option('gdk_diasble_wp_update')) {
+if (gdk_option('gdk_diasble_wp_update')) {
     add_filter('automatic_updater_disabled', '__return_true');	
     remove_action('init', 'wp_schedule_update_checks');	
     wp_clear_scheduled_hook('wp_version_check');
@@ -62,7 +62,7 @@ remove_filter( 'the_content', 'wpautop' );
 add_filter( 'the_content', 'wpautop' , 12);
 
 //禁用emoji功能
-if (gdk_get_option('gdk_disable_emojis')) {
+if (gdk_option('gdk_disable_emojis')) {
         function gdk_disable_emojis_link() {
             remove_action( 'wp_head', 'print_emoji_detection_script', 7 );
             remove_action( 'admin_print_scripts', 'print_emoji_detection_script' );
@@ -83,14 +83,14 @@ if (gdk_get_option('gdk_disable_emojis')) {
 
 
 //禁用 XML-RPC 接口
-if (gdk_get_option('gdk_disable_xmlrpc')) {
+if (gdk_option('gdk_disable_xmlrpc')) {
 	add_filter('xmlrpc_enabled', '__return_false');
 	remove_action('xmlrpc_rsd_apis', 'rest_output_rsd');
 }
 
 
 //禁用日志修订功能
-if (gdk_get_option('gdk_disable_revision')) {
+if (gdk_option('gdk_disable_revision')) {
 	function gdk_disable_post_revisions() {
 		foreach ( get_post_types() as $post_type ) {
 			remove_post_type_support( $post_type, 'revisions' );
@@ -100,7 +100,7 @@ if (gdk_get_option('gdk_disable_revision')) {
 }
 
 //彻底关闭 pingback
-if (gdk_get_option('gdk_disable_trackbacks')) {
+if (gdk_option('gdk_disable_trackbacks')) {
 	add_filter('xmlrpc_methods', 'gdk_xmlrpc_methods');
 	function gdk_xmlrpc_methods($methods) {
 		unset($methods['system.multicall']);
@@ -115,7 +115,7 @@ if (gdk_get_option('gdk_disable_trackbacks')) {
 }
 
 //国内更新word press加速
-if (gdk_get_option('gdk_porxy_update') && !gdk_get_option('gdk_diasble_wp_update')) {
+if (gdk_option('gdk_porxy_update') && !gdk_option('gdk_diasble_wp_update')) {
 	add_filter('site_transient_update_core',function($value) {
 		foreach($value->updates as &$update) {
 			if($update->locale == 'zh_CN') {

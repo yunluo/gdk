@@ -2,7 +2,7 @@
 
 //头像解决方案
 function gdk_switch_get_avatar( $avatar ) {
-	switch (gdk_get_option('gdk_switch_get_avatar')) {
+	switch (gdk_option('gdk_switch_get_avatar')) {
 		case 1:
 		  $avatarsrc = 'https://cdn.jsdelivr.net/gh/yunluo/GitCafeApi/avatar/' . mt_rand(1, 1999) . '.jpg';
 		$avatar = "<img src=$avatarsrc class='avatar rand_avatar photo' />";

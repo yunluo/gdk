@@ -30,7 +30,7 @@ function gdk_update_options() {
 gdk_update_options();
 
 //获取设置选项
-function gdk_get_option($id, $returnDefault = false) {
+function gdk_option($id, $returnDefault = false) {
 	global $gdk_default_options, $gdk_current_options;
 	return stripslashes( $returnDefault ? $gdk_default_options[$id] : $gdk_current_options[$id] );
 }
@@ -92,7 +92,7 @@ switch ( $type ) {
 	case 'text':
 ?>
 		<label>
-		<input name="<?php echo $id; ?>" class="regular-text" id="<?php echo $id; ?>" type="text" value="<?php echo esc_attr(gdk_get_option( $id )) ?>" />
+		<input name="<?php echo $id; ?>" class="regular-text" id="<?php echo $id; ?>" type="text" value="<?php echo esc_attr(gdk_option( $id )) ?>" />
 		</label>
 		<p class="description"><?php echo $option['desc']; ?></p>
 <?php
@@ -100,7 +100,7 @@ switch ( $type ) {
 	case 'number':
 ?>
 		<label>
-		<input name="<?php echo $id; ?>" class="small-text" id="<?php echo $id; ?>" type="number" value="<?php echo esc_attr(gdk_get_option( $id )) ?>" />
+		<input name="<?php echo $id; ?>" class="small-text" id="<?php echo $id; ?>" type="number" value="<?php echo esc_attr(gdk_option( $id )) ?>" />
 		<span class="description"><?php echo $option['desc']; ?></span>
 		</label>
 <?php
@@ -108,7 +108,7 @@ switch ( $type ) {
 	case 'textarea':
 ?>
 		<p><label for="<?php echo $id; ?>"><?php echo $option['desc']; ?></label></p>
-		<p><textarea name="<?php echo $id; ?>" id="<?php echo $id; ?>" rows="10" cols="50" class="large-text code"><?php echo esc_textarea(gdk_get_option( $id )) ?></textarea></p>
+		<p><textarea name="<?php echo $id; ?>" id="<?php echo $id; ?>" rows="10" cols="50" class="large-text code"><?php echo esc_textarea(gdk_option( $id )) ?></textarea></p>
 <?php
 	break;
 	case 'radio':
@@ -116,7 +116,7 @@ switch ( $type ) {
 		<fieldset>
 		<?php foreach ($option['options'] as $val => $name) : ?>
 		<label>
-			<input type="radio" name="<?php echo $id; ?>" id="<?php echo $id . '_' . $val; ?>" value="<?php echo $val; ?>" <?php checked( gdk_get_option( $id ), $val); ?>>
+			<input type="radio" name="<?php echo $id; ?>" id="<?php echo $id . '_' . $val; ?>" value="<?php echo $val; ?>" <?php checked( gdk_option( $id ), $val); ?>>
 			<?php echo $name; ?>
 		</label>
 		<?php endforeach; ?>
@@ -127,7 +127,7 @@ switch ( $type ) {
 	case 'checkbox':
 ?>
 		<label>
-			<input type='checkbox' name="<?php echo $id; ?>" id="<?php echo $id; ?>" value="1" <?php echo checked(gdk_get_option($id)); ?> />
+			<input type='checkbox' name="<?php echo $id; ?>" id="<?php echo $id; ?>" value="1" <?php echo checked(gdk_option($id)); ?> />
 			<span><?php echo $option['desc']; ?></span>
 		</label>
 <?php
@@ -135,7 +135,7 @@ switch ( $type ) {
 	case 'checkboxs':
 ?>
 		<fieldset>
-		<?php $checkboxValues = gdk_get_option( $id );
+		<?php $checkboxValues = gdk_option( $id );
 		if ( !is_array($checkboxValues) ) $checkboxValues = [];
 		foreach ( $option['options'] as $id => $name ) : ?>
 		<label>
@@ -150,7 +150,7 @@ switch ( $type ) {
 	default:
 ?>
 		<label>
-		<input name="<?php echo $id; ?>" class="regular-text" id="<?php echo $id; ?>" type="<?php echo $type; ?>" value="<?php echo esc_attr(gdk_get_option( $id )) ?>" />
+		<input name="<?php echo $id; ?>" class="regular-text" id="<?php echo $id; ?>" type="<?php echo $type; ?>" value="<?php echo esc_attr(gdk_option( $id )) ?>" />
 		</label>
 		<p class="description"><?php echo $option['desc']; ?></p>
 <?php

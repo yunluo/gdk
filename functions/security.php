@@ -28,7 +28,7 @@ add_action( 'wp', 'gdk_prevent_script_injection' );
         }
     }
 
-if(gdk_get_option('gdk_lock_login')){
+if(gdk_option('gdk_lock_login')){
     if ( ! class_exists( 'GDK_Limit_Login_Attempts' ) ) {
         class GDK_Limit_Login_Attempts {
             var $failed_login_limit = 3;
@@ -38,8 +38,8 @@ if(gdk_get_option('gdk_lock_login')){
             var $transient_name     = 'attempted_login';
             //Transient used
             public function __construct() {
-                $failed_login_limit = gdk_get_option('gdk_failed_login_limit');
-                $lockout_duration   = gdk_get_option('gdk_lockout_duration');
+                $failed_login_limit = gdk_option('gdk_failed_login_limit');
+                $lockout_duration   = gdk_option('gdk_lockout_duration');
                 add_filter( 'authenticate', array( $this, 'check_attempted_login' ), 30, 3 );
                 add_action( 'wp_login_failed', array( $this, 'login_failed' ), 10, 1 );
             }

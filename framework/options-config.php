@@ -128,24 +128,44 @@ $gdk_options = [
 			'std'   => '|'
 		],
 		[
-			'name'  => '自动内链',
-			'desc'  => '启用',
-			'id'    => 'git_autolink_b',
-			'type'  => 'checkbox'
-		],
-		[
-			'name'  => '关键词出现数目',
-			'desc'  => '文章中少于这个数字的关键词将不自动内链，默认是1，即全部链接',
-			'id'    => 'git_autolink_1',
-			'type'  => 'number',
-			'std'   => 1
+			'name'  => '文章自动内链',
+			'desc'  => '该功能会将文章中与标签匹配的文字自动添加标签链接,如果是纯文字的内容建议打开,默认禁用',
+			'id'    => 'gdk_tag_link',
+			'type'  => 'radio',
+			'options' => [
+				'0' => '禁用',
+				'1' => '开启'
+			],
+			'std'   => '0'
 		],
 		[
 			'name'  => '关键词链接次数',
-			'desc'  => '文章中最多链接的次数，默认是6',
-			'id'    => 'git_autolink_2',
+			'desc'  => '文章中最多链接的次数，默认是5',
+			'id'    => 'gdk_tag_num',
 			'type'  => 'number',
-			'std'   => 6
+			'std'   => 5
+		],
+		[
+			'name'  => 'Robots.txt 优化',
+			'desc'  => '该功能会自动生成一个虚拟Robots.txt文件,和真实文件效果一样的,默认开启',
+			'id'    => 'gdk_robots',
+			'type'  => 'radio',
+			'options' => [
+				'0' => '禁用',
+				'1' => '开启'
+			],
+			'std'   => '1'
+		],
+		[
+			'name'  => '网站地图 sitemap_xml',
+			'desc'  => '该功能会自动生成网站地图链接:域名/sitemap_xml,开启后建议更新固定链接一次,默认开启',
+			'id'    => 'gdk_sitemap_xml',
+			'type'  => 'radio',
+			'options' => [
+				'0' => '禁用',
+				'1' => '开启'
+			],
+			'std'   => '1'
 		],
 		[
 			'name'  => '图片自动添加alt以及title',

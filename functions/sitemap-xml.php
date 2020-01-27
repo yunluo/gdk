@@ -11,7 +11,7 @@ function sitemap_xml_flush_rules(){
 
 // 添加自定义URL重写
 function sitemap_xml_custom_rewrite_rule() {
-    add_rewrite_rule('^sitemap(.*?)\.xml$','index.php?sitemap=nice$matches[1]','top');
+    add_rewrite_rule('^sitemap(.*?)\.xml$','index.php?sitemap=gdk$matches[1]','top');
 }
 
 function sitemap_xml_insert_query_vars( $vars ){
@@ -32,7 +32,7 @@ function sitemap_xml_api_handlers( $template ){
 
     $hook = explode('-', get_query_var( 'sitemap' ) );
     
-    if( isset( $hook[0] ) && $hook[0] === 'nice' ){
+    if( isset( $hook[0] ) && $hook[0] === 'gdk' ){
 
         if( isset( $hook[1] ) ){
             status_header(404);
@@ -42,11 +42,11 @@ function sitemap_xml_api_handlers( $template ){
             exit; 
         }
 
-        $sitemap = get_transient('nice-sitemap');
+        $sitemap = get_transient('gdk-sitemap');
         
         if( false === $sitemap || empty( $sitemap ) ){
-            $sitemap = nc_create_sitemap();
-            set_transient( 'nice-sitemap', $sitemap );
+            $sitemap = gdk_create_sitemap();
+            set_transient( 'gdk-sitemap', $sitemap );
         }
 
         header("Content-type: text/xml");
@@ -63,7 +63,7 @@ add_filter( 'redirect_canonical', 'sitemap_xml_cancel_redirect' );
 add_action( 'wp_loaded', 'sitemap_xml_flush_rules' );
 add_filter( 'template_include', 'sitemap_xml_api_handlers', 99 );
 
-function nc_create_sitemap() {
+function gdk_create_sitemap() {
 
     if ( str_replace( '-', '', get_option( 'gmt_offset' ) ) < 10 ) {
         $tempo = '-0' . str_replace( '-', '', get_option( 'gmt_offset' ) );
@@ -100,9 +100,9 @@ function nc_create_sitemap() {
     return $sitemap;
 }
 
-function nc_clear_sitemap_cache(){
-    delete_transient( 'nice-sitemap' );
+function gdk_clear_sitemap_cache(){
+    delete_transient( 'gdk-sitemap' );
 }
-add_action("publish_post", "nc_clear_sitemap_cache");
-add_action("publish_page", "nc_clear_sitemap_cache");
-add_action( "save_post", "nc_clear_sitemap_cache" );
+add_action("publish_post", "gdk_clear_sitemap_cache");
+add_action("publish_page", "gdk_clear_sitemap_cache");
+add_action( "save_post", "gdk_clear_sitemap_cache" );
