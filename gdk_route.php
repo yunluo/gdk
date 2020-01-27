@@ -25,20 +25,8 @@ define('NC_STORE_VER', '0.3.5');
 define('NC_STORE_FILE', __FILE__);//插件入口文件
 define('NC_BASE_URL', plugin_dir_url( __FILE__ ) );//插件目录url
 define('NC_STORE_ROOT_PATH', plugin_dir_path( __FILE__ ) );//插件目录路径
-//include('library/nc-base/kernel/kernel.php');
-//include('library/nc-base/static-load.php');
-//include('library/nc-base/add-menu-page.php');
 
-
-if (version_compare(PHP_VERSION, '7.2.26', '>=')) {
-	//include('modules/field-group/Field_Group_Values.php');
-	//include('modules/field-group/get_all_custom_field_meta.php');
-}
-
-//include('modules/base/main.php');
 include('class/clean-up.php');
 include('framework/plugin-options.php');
 include('functions/func_load.php');
-
-
 
