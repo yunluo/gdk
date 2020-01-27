@@ -20,6 +20,8 @@ remove_action( 'wp_enqueue_scripts', 'wp_common_block_scripts_and_styles' );
 // 友情链接扩展
 add_filter('pre_option_link_manager_enabled', '__return_true');
 
+add_filter('show_admin_bar', '__return_false');
+
 //移除 WP_Head 无关紧要的代码
 if(gdk_option('gdk_diasble_head_useless')){
 	remove_action('wp_head', 'wp_generator'); //删除 head 中的 WP 版本号

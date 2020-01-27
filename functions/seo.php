@@ -235,7 +235,7 @@ if(gdk_option('gdk_nofollow')){
 
 
 
-if (isset($others_seo['baidu_submit']) && $others_seo['baidu_submit']) {
+
     add_action('post_updated', 'nc_baidu_submit');
     function nc_baidu_submit($post_ID)
     {
@@ -271,7 +271,7 @@ if (isset($others_seo['baidu_submit']) && $others_seo['baidu_submit']) {
                 })();
             </script>';
     }
-}
+
 add_action('wp_footer', 'nc_baidu_auto_code', 500);
 
 
