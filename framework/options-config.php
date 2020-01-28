@@ -520,6 +520,17 @@ $gdk_options = [
 			'type'  => 'title'
 		],
 		[
+			'name'  => 'HTML5 桌面推送',
+			'desc'  => '该功能开启后会在浏览器进行信息推送,需要高级浏览器支持,默认关闭',
+			'id'    => 'gdk_h5notice',
+			'type'  => 'radio',
+			'options' => [
+				'0' => '禁用',
+				'1' => '开启'
+			],
+			'std'   => '0'
+		],
+		[
 			'name'  => 'HTML5推送标题【必选】',
 			'desc'  => '显示在弹窗顶部',
 			'id'    => 'git_notification_title',

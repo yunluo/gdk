@@ -72,6 +72,33 @@ if (gdk_option('gdk_diasble_wp_update')) {
 remove_filter( 'the_content', 'wpautop' );
 add_filter( 'the_content', 'wpautop' , 12);
 
+
+//强制阻止WordPress代码转义
+function git_esc_html($content) {
+    $regex = '/(<pre\s+[^>]*?class\s*?=\s*?[",\'].*?prettyprint.*?[",\'].*?>)(.*?)(<\/pre>)/sim';
+    return preg_replace_callback($regex, 'git_esc_callback', $content);
+}
+function git_esc_callback($matches) {
+    $tag_open = $matches[1];
+    $content = $matches[2];
+    $tag_close = $matches[3];
+    $content = esc_html($content);
+    return $tag_open . $content . $tag_close;
+}
+add_filter('the_content', 'git_esc_html', 2);
+add_filter('comment_text', 'git_esc_html', 2);
+//强制兼容<pre>
+function git_prettify_replace($text) {
+    $replace = array(
+        '<pre>' => '<pre class="prettyprint linenums" >'
+    );
+    $text = str_replace(array_keys($replace) , $replace, $text);
+    return $text;
+}
+add_filter('the_content', 'git_prettify_replace');
+
+
+
 //禁用emoji功能
 if (gdk_option('gdk_disable_emojis')) {
         function gdk_disable_emojis_link() {

@@ -263,12 +263,18 @@ if(gdk_option('gdk_nofollow')){
 
     function nc_baidu_auto_code(){
         echo '<script>
-                (function(){
-                    var bp = document.createElement(\'script\');
-                    bp.src = \'https://zz.bdstatic.com/linksubmit/push.js\';
-                    var s = document.getElementsByTagName("script")[0];
-                    s.parentNode.insertBefore(bp, s);
-                })();
+        (function(){
+            var bp = document.createElement(\'script\');
+            var curProtocol = window.location.protocol.split(\':\')[0];
+            if (curProtocol === \'https\') {
+                bp.src = \'https://zz.bdstatic.com/linksubmit/push.js\';        
+            }
+            else {
+                bp.src = \'http://push.zhanzhang.baidu.com/push.js\';
+            }
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(bp, s);
+        })();
             </script>';
     }
 

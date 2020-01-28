@@ -339,7 +339,7 @@ jQuery(function ($) {
     $.post(ajaxurl, ajax_data,
         function(a) {
             if (a == '1') {
-                alert('邮箱配置成功');
+				alert('邮箱配置成功');
             }else{
 				alert('邮箱配置失败,请重新检查');
 			}
@@ -348,12 +348,12 @@ jQuery(function ($) {
 
 
 
-/* 配置文本框以隐藏显示功能*/ 
-function depend(n, e, i, c, t, u) {
+/* 配置文本框以隐藏显示功能,可以同时伸缩8个元素*/ 
+function depend(n, e, i, c, t, u, v, g, d) {
     $("input[name=" + n + "]:checked").val(function() {
-        "0" == this.value && $(e, i, c, t, u).hide();
-    }), $("input[name=" + n + "]").click(function() {
-        $(e, i, c, t, u).toggle();
+        "0" == this.value && $(e, i, c, t, u, v, g, d).hide();
+    }), $("input[name=" + n + "]").change(function() {
+        $(e, i, c, t, u, v, g, d).toggle();
     });
 }
 //依赖关系,第一个是需要点击的name值,后面是需要伸缩的ID值,参照下面写
@@ -362,7 +362,7 @@ depend('gdk_smtp','#row-gdk_smtp_username,#row-gdk_smtp_host,#row-gdk_smtp_port,
 depend('gdk_baidu_push','#row-gdk_baidu_api');
 depend('gdk_tag_link','#row-gdk_tag_num');
 depend('gdk_cdn','#row-gdk_cdn_host,#row-gdk_cdn_ext,#row-gdk_cdn_dir,#row-gdk_cdn_style,#row-git_cdn_water');
-
+depend('gdk_h5notice','#row-git_notification_title,#row-git_notification_days,#row-git_notification_cookie,#row-git_notification_icon,#row-git_notification_link,#row-git_notification_body');
 
 });
 </script>

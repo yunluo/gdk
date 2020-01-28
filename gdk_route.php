@@ -29,4 +29,5 @@ define('NC_STORE_ROOT_PATH', plugin_dir_path( __FILE__ ) );//插件目录路径
 include('class/clean-up.php');
 include('framework/plugin-options.php');
 include('functions/func_load.php');
+include('assets/assets_load.php');
 
