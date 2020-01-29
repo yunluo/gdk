@@ -88,30 +88,7 @@ function toe($atts, $content = null) {
     return '<div  class="sc_act">' . $content . '</div>';
 }
 add_shortcode('v_act', 'toe');
-/*绿色按钮*/
-function toi($atts, $content = null) {
-    extract(shortcode_atts(array(
-        "href" => 'http://'
-    ) , $atts));
-    return '<a class="greenbtn" href="' . $href . '" target="_blank" rel="nofollow">' . $content . '</a>';
-}
-add_shortcode('gb', 'toi');
-/*蓝色按钮*/
-function toj($atts, $content = null) {
-    extract(shortcode_atts(array(
-        "href" => 'http://'
-    ) , $atts));
-    return '<a class="bluebtn" href="' . $href . '" target="_blank" rel="nofollow">' . $content . '</a>';
-}
-add_shortcode('bb', 'toj');
-/*黄色按钮*/
-function tok($atts, $content = null) {
-    extract(shortcode_atts(array(
-        "href" => 'http://'
-    ) , $atts));
-    return '<a class="yellowbtn" href="' . $href . '" target="_blank" rel="nofollow">' . $content . '</a>';
-}
-add_shortcode('yb', 'tok');
+
 /*灵魂按钮*/
 function tom($atts, $content = null) {
     extract(shortcode_atts(array(
@@ -264,29 +241,7 @@ function git_insert_posts($atts, $content = null) {
     return $content;
 }
 add_shortcode('neilian', 'git_insert_posts');
-//给文章加外链短代码
-function git_external_posts($atts, $content = null) {
-    $result = curl_post($content) ['data'];
-    $title = preg_match('!<title>(.*?)</title>!i', $result, $matches) ? $matches[1] : '我是标题我是标题我是标题我是标题我是标题我是标题我是标题';
-    $tags = get_meta_tags($content);
-    $description = $tags['description'];
-    $imgpath = GIT_URL . '/assets/img/pic/' . mt_rand(1, 12) . '.jpg';
-    global $post;
-    $contents = '';
-    setup_postdata($post);
-    $contents.= '<div class="neilian wailian"><div class="fll"><a target="_blank" href="' . $content . '" class="fll linkss"><i class="fa fa-link fa-fw"></i>  ';
-    $contents.= $title;
-    $contents.= '</a><p class="note">';
-    $contents.= $description;
-    $contents.= '</p></div><div class="frr"><a target="_blank" href="' . $content . '"><img src=';
-    $contents.= $imgpath;
-    $contents.= ' class="neilian-thumb"></a></div></div>';
-    wp_reset_postdata();
-    return $contents;
-}
-if (function_exists('curl_init')) {
-    add_shortcode('wailian', 'git_external_posts');
-}
+
 
 //快速插入列表
 function git_list_shortcode_handler($atts, $content = '') {
@@ -301,12 +256,3 @@ function git_list_shortcode_handler($atts, $content = '') {
     return $output;
 }
 add_shortcode('list', 'git_list_shortcode_handler');
-
-//加载密码可见的样式
-function secret_css() {
-    global $post;
-    if (is_singular() && has_shortcode($post->post_content, 'secret')) {
-        echo '<style type="text/css">form.e-secret{margin:20px 0;padding:20px;height:60px;background:#f8f8f8}.e-secret input.euc-y-i[type=password]{float:left;background:#fff;width:100%;line-height:36px;margin-top:5px;border-radius:3px}.e-secret input.euc-y-s[type=submit]{float:right;margin-top:-47px;width:30%;margin-right:1px;border-radius:0 3px 3px 0}input.euc-y-s[type=submit]{background-color:#3498db;color:#fff;font-size:21px;box-shadow:none;-webkit-transition:.4s;-moz-transition:.4s;-o-transition:.4s;transition:.4s;-webkit-backface-visibility:hidden;position:relative;cursor:pointer;padding:13px 20px;text-align:center;border-radius:50px;-webkit-box-shadow:none;-moz-box-shadow:none;box-shadow:none;border:0;height:auto;outline:medium;line-height:20px;margin:0}input.euc-y-s[type=submit]:hover{background-color:#5dade2}input.euc-y-i[type=password],input.euc-y-i[type=text]{border:1px solid #F2EFEF;color:#777;display:block;background:#FCFCFC;font-size:18px;transition:all .5s ease 0;outline:0;box-sizing:border-box;-webkit-border-radius:25px;-moz-border-radius:25px;border-radius:25px;padding:5px 16px;margin:0;height:auto;line-height:30px}input.euc-y-i[type=password]:hover,input.euc-y-i[type=text]:hover{border:1px solid #56b4ef;box-shadow:0 0 4px #56b4ef}.wxbox{border:1px dashed #F60;line-height:200%;padding-top:5px;color:red;background-color:#FFF4FF;overflow:hidden;clear:both}.wxbox.yzts{padding-left:10%}.wx form{float:left}.wxbox #verifycode{width:46%;height:32px;line-height:30px;padding:0 25px;border:1px solid #F60}.wxbox #verifybtn{width:10%;height:34px;line-height:34px;padding:0 5px;background-color:#F60;text-align:center;border:none;cursor:pointer;color:#FFF}.cl{clear:both;height:0}.wxpic{float:left;width:18%}.wxtips{color:#32B9B5;float:left;width:72%;padding-left:5%;padding-top:0;font-size:20px;line-height:150%;text-align:left;font-family:Microsoft YaHei}.yzts{margin-left: 40px}@media (max-width:600px){.yzts{margin-left:5px}.wxpic{float:left}.wxbox #verifycode{width:35%}.wxbox #verifybtn{width:22%}.wxpic,.wxtips{width:100%}.wxtips{font-size:15px;padding:2px}}</style>';
-    }
-}
-add_action('wp_head', 'secret_css');
