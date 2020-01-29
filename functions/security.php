@@ -3,7 +3,9 @@
 define('DISALLOW_FILE_MODS',true);
 
 //阻止乱七八糟的请求
-if(gdk_option('gdk_block_requst')){
+if(gdk_option('gdk_block_requst'))      add_action( 'wp', 'gdk_prevent_script_injection' );
+
+
     function gdk_prevent_script_injection() {
         global $user_ID;
         if( ! current_user_can( 'level_10' )) {
@@ -27,10 +29,10 @@ if(gdk_option('gdk_block_requst')){
             }
         }
     }
-    add_action( 'wp', 'gdk_prevent_script_injection' );
-}
 
-if(gdk_option('gdk_lock_login')){
+
+
+
     if ( ! class_exists( 'GDK_Limit_Login_Attempts' ) ) {
         class GDK_Limit_Login_Attempts {
             private $failed_login_limit;
@@ -104,7 +106,9 @@ if(gdk_option('gdk_lock_login')){
     $config = [
 		'failed_login_limit' => gdk_option('gdk_failed_login_limit'),   // 登录失败的次数限制
 		'lockout_duration'   => gdk_option('gdk_lockout_duration'),   // 暂停登陆时间
-	];
+    ];
+    
+if(gdk_option('gdk_lock_login')){
     new GDK_Limit_Login_Attempts($config);
 }
 

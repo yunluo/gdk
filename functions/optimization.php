@@ -17,6 +17,29 @@ add_filter('use_block_editor_for_post', '__return_false');
 remove_action( 'wp_enqueue_scripts', 'wp_common_block_scripts_and_styles' );
 }
 
+add_filter('user_can_richedit','__return_false');  
+
+//禁用响应式图片
+function msiw(){
+	return 1;
+}
+add_filter('max_srcset_image_width', 'msiw');
+
+//移除默认的图片宽度以及高度
+function remove_wps_width($html) {
+    $html = preg_replace('/(width|height)=\"\d*\"\s/', "", $html);
+    return $html;
+}
+add_filter('post_thumbnail_html', 'remove_wps_width', 10);
+add_filter('image_send_to_editor', 'remove_wps_width', 10);
+
+//取消后台登陆错误的抖动提示
+function git_wps_login_error() {
+    remove_action('login_head', 'wp_shake_js', 12);
+}
+add_action('login_head', 'git_wps_login_error');
+
+
 // 友情链接扩展
 add_filter('pre_option_link_manager_enabled', '__return_true');
 
@@ -72,6 +95,22 @@ if (gdk_option('gdk_diasble_wp_update')) {
 remove_filter( 'the_content', 'wpautop' );
 add_filter( 'the_content', 'wpautop' , 12);
 
+// 禁止后台加载谷歌字体
+function gdk_remove_open_sans_from_wp_core() {
+	wp_deregister_style( 'open-sans' );
+	wp_register_style( 'open-sans', false );
+	wp_enqueue_style('open-sans','');
+}
+add_action( 'init', 'gdk_remove_open_sans_from_wp_core' );
+
+// 禁止dns-prefetch
+function remove_dns_prefetch( $hints, $relation_type ) {
+	if ( 'dns-prefetch' === $relation_type ) {
+		return array_diff( wp_dependencies_unique_hosts(), $hints );
+	}
+	return $hints;
+}
+add_filter( 'wp_resource_hints', 'remove_dns_prefetch', 10, 2 );
 
 //强制阻止WordPress代码转义
 function git_esc_html($content) {
@@ -176,45 +215,39 @@ function gdk_page_permalink() {
 add_action('init', 'gdk_page_permalink', -1);
 
 
-//中文文件重命名
-if(gdk_option('gdk_upload_rename')){
-        add_filter('wp_handle_upload_prefilter', 'gdk_upload_rename' );
-        function gdk_upload_rename( $file ){
-            $info = pathinfo($file['name']);
-            $ext = $info['extension'];
-            $ignore_exts = ['zip', 'rar', '7z'];//被忽略的文件格式
-
-            if (!in_array($ext, $ignore_exts)) {
-                $filedate = date('YmdHis').mt_rand(100, 999); 
-                $file['name'] = $filedate.'.'.$ext;
-            }
-            return $file;
-        }
+//文件自动重命名
+if(gdk_option('gdk_upload_rename')) {
+	function gdk_upload_rename( $file ) {
+		$info = pathinfo($file['name']);
+		$ext = $info['extension'];
+		$ignore_exts = ['zip', 'rar', '7z'];
+		//被忽略的文件格式
+		if (!in_array($ext, $ignore_exts)) {
+			$filedate = date('YmdHis').mt_rand(100, 999);
+			$file['name'] = $filedate.'.'.$ext;
+		}
+		return $file;
+	}
+	add_filter('wp_handle_upload_prefilter', 'gdk_upload_rename' );
 }
 
 
 // 搜索结果为1时候自动跳转到对应页面
-if ( ! function_exists( 'gdk_redirect_single_search_result' ) ) {
 function gdk_redirect_single_search_result() {
-		if ( is_search() ) {
-			global $wp_query;
-			if ($wp_query->post_count == 1) {
-				wp_redirect( get_permalink( $wp_query->posts['0']->ID ) );
-				exit();
-			}
+	if ( is_search() ) {
+		global $wp_query;
+		if ($wp_query->post_count == 1) {
+			wp_redirect( get_permalink( $wp_query->posts['0']->ID ) );
+			exit();
 		}
 	}
 }
 add_action('template_redirect', 'gdk_redirect_single_search_result');
-
-
 //搜索链接伪静态
-if ( ! function_exists( 'gdk_redirect_search' ) ) {
-	function gdk_redirect_search() {
-		if ( is_search() && ! empty( $_GET['s'] ) ) {
-			wp_redirect( home_url( "/search/" ) . urlencode( get_query_var( 's' ) ) );
-			exit();
-		}
+function gdk_redirect_search() {
+	if ( is_search() && ! empty( $_GET['s'] ) ) {
+		wp_redirect( home_url( "/search/" ) . urlencode( get_query_var( 's' ) ) );
+		exit();
 	}
 }
 add_action('template_redirect', 'gdk_redirect_search' );
@@ -223,9 +256,6 @@ add_action('template_redirect', 'gdk_redirect_search' );
 //小工具运行短代码
 add_filter( 'widget_text', 'shortcode_unautop' );
 add_filter( 'widget_text', 'do_shortcode' );
-
-
-
 
 
 //替换后台默认的底部文字内容

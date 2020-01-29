@@ -1,10 +1,8 @@
 <?php
 
 /*
-*Ajax操作
+*Ajax操作文件
 */
-
-
 
 function gdk_test_email() {
     $is_error = !wp_mail('donotreply@mywpku.com', '测试发信', 'WP 积木测试发信');

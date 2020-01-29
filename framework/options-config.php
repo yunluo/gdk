@@ -218,9 +218,9 @@ $gdk_options = [
 			'std'   => '1'
 		],
 		[
-			'name'  => '外链自动GO跳转',
-			'desc'  => '启用 【启用之后需要新建页面，模板选择Go跳转页面，别名为go】',
-			'id'    => 'git_go',
+			'name'  => '外链GO跳转',
+			'desc'  => '启用',
+			'id'    => 'gdk_link_go',
 			'type'  => 'checkbox'
 		],
 		[

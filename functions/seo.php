@@ -241,7 +241,7 @@ if(gdk_option('gdk_nofollow')){
     {
         global $post;
         $bd_submit_site = get_bloginfo('url');
-        $bd_submit_token = $others_seo['baidu_submit_key'];
+        $bd_submit_token = gdk_option('gdk_baidu_api');
         if (empty($post_ID) || empty($bd_submit_site) || empty($bd_submit_token)) {
             return;
         }
@@ -305,22 +305,6 @@ if(gdk_option('gdk_seo_img')) {
 	add_filter('the_content', 'nc_image_alt_tag', 99999);
 }
 
-
-
-//给外部链接加上跳转
-
-    function git_go_url($content){
-        preg_match_all('/<a(.*?)href="(.*?)"(.*?)>/', $content, $matches);
-        if ($matches && !is_page('about')) {
-            foreach ($matches[2] as $val) {
-                if (strpos($val, '://') !== false && strpos($val, home_url()) === false && !preg_match('/\\.(jpg|jpeg|png|ico|bmp|gif|tiff)/i', $val)) {
-                    $content = str_replace("href=\"{$val}\"", "href=\"" . get_permalink(git_page_id('go')) . "?url={$val}\" ", $content);
-                }
-            }
-        }
-        return $content;
-    }
-    add_filter('the_content', 'git_go_url', 999);
 
 
 //关键字
