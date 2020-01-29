@@ -72,23 +72,24 @@ if(gdk_option('gdk_diasble_head_useless')){
 
 /**  开始关闭WordPress更新  **/
 if (gdk_option('gdk_diasble_wp_update')) {
-    add_filter('automatic_updater_disabled', '__return_true');	
-    remove_action('init', 'wp_schedule_update_checks');	
-    wp_clear_scheduled_hook('wp_version_check');
-    wp_clear_scheduled_hook('wp_maybe_auto_update');
-    remove_action( 'admin_init', '_maybe_update_core' );	
-    //禁用主题更新
-    wp_clear_scheduled_hook('wp_update_themes');
-    remove_action( 'load-themes.php', 'wp_update_themes' );	
-    remove_action( 'load-update.php', 'wp_update_themes' );
-    remove_action( 'load-update-core.php', 'wp_update_themes' );
-    remove_action( 'admin_init', '_maybe_update_themes' );
-    //	禁用插件更新
-    wp_clear_scheduled_hook('wp_update_plugins');
-    remove_action( 'load-plugins.php', 'wp_update_plugins' );	
+    add_filter('automatic_updater_disabled', '__return_true');  // 彻底关闭自动更新
+    remove_action('init', 'wp_schedule_update_checks'); // 关闭更新检查定时作业
+    wp_clear_scheduled_hook('wp_version_check');            // 移除已有的版本检查定时作业
+    wp_clear_scheduled_hook('wp_update_plugins');       // 移除已有的插件更新定时作业
+    wp_clear_scheduled_hook('wp_update_themes');            // 移除已有的主题更新定时作业
+    wp_clear_scheduled_hook('wp_maybe_auto_update');        // 移除已有的自动更新定时作业
+    remove_action( 'admin_init', '_maybe_update_core' );        // 移除后台内核更新检查
+    remove_action( 'load-plugins.php', 'wp_update_plugins' );   // 移除后台插件更新检查
     remove_action( 'load-update.php', 'wp_update_plugins' );
     remove_action( 'load-update-core.php', 'wp_update_plugins' );
     remove_action( 'admin_init', '_maybe_update_plugins' );
+    remove_action( 'load-themes.php', 'wp_update_themes' );     // 移除后台主题更新检查
+    remove_action( 'load-update.php', 'wp_update_themes' );
+    remove_action( 'load-update-core.php', 'wp_update_themes' );
+    remove_action( 'admin_init', '_maybe_update_themes' );
+    add_filter( 'pre_site_transient_update_core', function (){return null;} );
+    add_filter( 'pre_site_transient_update_plugins', function (){return null;} );
+    add_filter( 'pre_site_transient_update_themes', function (){return null;} );
 }
 
 //禁用自带p标签的
@@ -104,13 +105,13 @@ function gdk_remove_open_sans_from_wp_core() {
 add_action( 'init', 'gdk_remove_open_sans_from_wp_core' );
 
 // 禁止dns-prefetch
-function remove_dns_prefetch( $hints, $relation_type ) {
+function gdk_remove_dns_prefetch( $hints, $relation_type ) {
 	if ( 'dns-prefetch' === $relation_type ) {
 		return array_diff( wp_dependencies_unique_hosts(), $hints );
 	}
 	return $hints;
 }
-add_filter( 'wp_resource_hints', 'remove_dns_prefetch', 10, 2 );
+add_filter( 'wp_resource_hints', 'gdk_remove_dns_prefetch', 10, 2 );
 
 //强制阻止WordPress代码转义
 function gdk_esc_html($content) {
@@ -129,7 +130,7 @@ add_filter('comment_text', 'gdk_esc_html', 2);
 //强制兼容<pre>
 function gdk_prettify_replace($text) {
     $replace = array(
-        '<pre>' => '<pre class="prettyprint linenums" >'
+        '<pre>' => '<pre class="prettyprint linenums">'
     );
     $text = str_replace(array_keys($replace) , $replace, $text);
     return $text;

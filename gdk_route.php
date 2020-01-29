@@ -1,11 +1,11 @@
 <?php
 /*
 Plugin Name: GitCafe Development Kit 极客公园开发套件
-Plugin URI: https://www.nicetheme.cn/nicetheme-plugins-store.html
+Plugin URI: https://gitcafe.net/
 Description: 为WordPress主题开发提供底层支持
 Version: 0.0.1
-Author : 云落
-Author URI: http://www.nicetheme.cn
+Author: 云落
+Author URI: https://gitcafe.net/
 Compatible:5.3
 */
 
