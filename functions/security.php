@@ -1,6 +1,6 @@
 <?php
 
-define('DISALLOW_FILE_MODS',true);
+//define('DISALLOW_FILE_MODS',true);
 
 //阻止乱七八糟的请求
 if(gdk_option('gdk_block_requst'))      add_action( 'wp', 'gdk_prevent_script_injection' );

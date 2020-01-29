@@ -347,7 +347,7 @@ function gdk_is_mobile() {
 }
 
 if (function_exists('curl_init')) {
-    function curl_post($url, $postfields = '', $headers = '', $timeout = 20, $file = 0) {
+    function gdk_curl($url, $postfields = '', $headers = '', $timeout = 20, $file = 0) {
         $ch = curl_init();
         $options = array(
             CURLOPT_URL => $url,

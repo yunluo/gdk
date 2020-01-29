@@ -308,7 +308,7 @@ if(gdk_option('gdk_seo_img')) {
 
 
 //关键字
-function deel_keywords() {
+function gdk_deel_keywords() {
     global $s, $post;
     $keywords = '';
     if (is_single()) {
@@ -334,10 +334,10 @@ function deel_keywords() {
 }
 
 
-    add_action('wp_head', 'deel_keywords');
+    add_action('wp_head', 'gdk_deel_keywords');
 
 //网站描述
-function deel_description() {
+function gdk_deel_description() {
     global $s, $post;
     $description = '';
     $blog_name = get_bloginfo('name');
@@ -373,7 +373,7 @@ function deel_description() {
     echo "<meta name=\"description\" content=\"$description\">\n";
 }
 
-    add_action('wp_head', 'deel_description');
+    add_action('wp_head', 'gdk_deel_description');
 
 
 
@@ -401,7 +401,7 @@ function deel_description() {
 
 
 //评论分页的seo处理
-function canonical_for_git(){
+function gdk_canonical(){
     global $post;
     if (get_query_var('paged') > 1) {
         echo "\n";
@@ -411,4 +411,4 @@ function canonical_for_git(){
         echo "<meta name=\"robots\" content=\"noindex,follow\">";
     }
 }
-add_action('wp_head', 'canonical_for_git');
+add_action('wp_head', 'gdk_canonical');

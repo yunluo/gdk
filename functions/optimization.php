@@ -20,24 +20,24 @@ remove_action( 'wp_enqueue_scripts', 'wp_common_block_scripts_and_styles' );
 add_filter('user_can_richedit','__return_false');  
 
 //禁用响应式图片
-function msiw(){
+function gdk_disable_srcset_img(){
 	return 1;
 }
-add_filter('max_srcset_image_width', 'msiw');
+add_filter('max_srcset_image_width', 'gdk_disable_srcset_img');
 
 //移除默认的图片宽度以及高度
-function remove_wps_width($html) {
+function gdk_remove_img_width($html) {
     $html = preg_replace('/(width|height)=\"\d*\"\s/', "", $html);
     return $html;
 }
-add_filter('post_thumbnail_html', 'remove_wps_width', 10);
-add_filter('image_send_to_editor', 'remove_wps_width', 10);
+add_filter('post_thumbnail_html', 'gdk_remove_img_width', 10);
+add_filter('image_send_to_editor', 'gdk_remove_img_width', 10);
 
 //取消后台登陆错误的抖动提示
-function git_wps_login_error() {
+function gdk_wps_login_error() {
     remove_action('login_head', 'wp_shake_js', 12);
 }
-add_action('login_head', 'git_wps_login_error');
+add_action('login_head', 'gdk_wps_login_error');
 
 
 // 友情链接扩展
@@ -113,28 +113,28 @@ function remove_dns_prefetch( $hints, $relation_type ) {
 add_filter( 'wp_resource_hints', 'remove_dns_prefetch', 10, 2 );
 
 //强制阻止WordPress代码转义
-function git_esc_html($content) {
+function gdk_esc_html($content) {
     $regex = '/(<pre\s+[^>]*?class\s*?=\s*?[",\'].*?prettyprint.*?[",\'].*?>)(.*?)(<\/pre>)/sim';
-    return preg_replace_callback($regex, 'git_esc_callback', $content);
+    return preg_replace_callback($regex, 'gdk_esc_callback', $content);
 }
-function git_esc_callback($matches) {
+function gdk_esc_callback($matches) {
     $tag_open = $matches[1];
     $content = $matches[2];
     $tag_close = $matches[3];
     $content = esc_html($content);
     return $tag_open . $content . $tag_close;
 }
-add_filter('the_content', 'git_esc_html', 2);
-add_filter('comment_text', 'git_esc_html', 2);
+add_filter('the_content', 'gdk_esc_html', 2);
+add_filter('comment_text', 'gdk_esc_html', 2);
 //强制兼容<pre>
-function git_prettify_replace($text) {
+function gdk_prettify_replace($text) {
     $replace = array(
         '<pre>' => '<pre class="prettyprint linenums" >'
     );
     $text = str_replace(array_keys($replace) , $replace, $text);
     return $text;
 }
-add_filter('the_content', 'git_prettify_replace');
+add_filter('the_content', 'gdk_prettify_replace');
 
 
 

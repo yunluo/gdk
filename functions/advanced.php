@@ -4,7 +4,7 @@ if (gdk_option('gdk_cdn'))                  add_action('wp_loaded', 'gdk_cdn_sta
 
 if (gdk_option('gdk_link_go'))     add_filter('the_content','gdk_link_go',999);// 外链GO跳转
 if (gdk_option('gdk_smtp'))         add_action('phpmailer_init', 'gdk_smtp');//SMTP
-if (gdk_option('git_cdn_water'))     add_filter('the_content', 'cdn_water');//CDN水印
+if (gdk_option('gdk_cdn_water'))     add_filter('the_content', 'gdk_cdn_water');//CDN水印
 
 
 
@@ -37,13 +37,13 @@ add_filter('get_avatar', 'gdk_switch_get_avatar');
 
 
 //fancybox图片灯箱效果
-function fancybox($content) {
+function gdk_fancybox($content) {
     $pattern = "/<a(.*?)href=('|\")([^>]*).(bmp|gif|jpeg|jpg|png|swf)('|\")(.*?)>(.*?)<\\/a>/i";
     $replacement = '<a$1href=$2$3.$4$5 data-fancybox="gallery" rel="box" class="fancybox"$6>$7</a>';
     $content = preg_replace($pattern, $replacement, $content);
     return $content;
 }
-add_filter('the_content', 'fancybox');
+add_filter('the_content', 'gdk_fancybox');
 
 
 function gdk_link_go($content) {
@@ -99,7 +99,7 @@ function gdk_cdn_replace($html) {
 
 
 //CDN水印
-function cdn_water($content) {
+function gdk_cdn_water($content) {
 	if (get_post_type() == 'post') {
 		$pattern = "/<img(.*?)src=('|\")(.*?).(bmp|gif|jpeg|jpg|png)('|\")(.*?)>/i";
 		$replacement = '<img$1src=$2$3.$4!water.jpg$5$6>';

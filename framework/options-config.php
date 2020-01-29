@@ -452,7 +452,7 @@ $gdk_options = [
 		[
 			'name'  => 'CDN水印',
 			'desc'  => '启用【如果启用，请在七牛，又拍，OSS等CDN中设置自定义样式，名字为：<span class="key_word">water.jpg</span>，分隔符为<span class="key_word">!</span> 】',
-			'id'    => 'git_cdn_water',
+			'id'    => 'gdk_cdn_water',
 			'type'  => 'checkbox'
 		],
 		[

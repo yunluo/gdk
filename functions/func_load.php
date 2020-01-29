@@ -9,6 +9,6 @@ include( 'security.php' );//安全功能
 
 
 
-include( 'shortcode.php' );//短代码
+//include( 'shortcode.php' );//短代码
 include( 'seo.php' );//seo功能
 
