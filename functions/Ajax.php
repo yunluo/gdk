@@ -18,6 +18,8 @@ add_action('wp_ajax_gdk_test_email', 'gdk_test_email');
 
 //粘贴上传图片
 function gdk_pasteup_imag() {
+    if( !isset( $_POST['pui_nonce'] ) || !wp_verify_nonce($_POST['pui_nonce'], 'pui-nonce') )
+	exit('Permissions check failed');
 	if($_FILES) {
 		global $post;
 		$post_ID = $post->ID;
@@ -34,12 +36,12 @@ function gdk_pasteup_imag() {
 				if (!file_exists($file_path)) {
 					move_uploaded_file($file["tmp_name"],$file_path);
 					$attachment = [
-					                        'guid'           => $wp_upload_dir['url'] . '/' . basename( $file_path ),
-					                        'post_mime_type' => $file['type'],
-					                        'post_title'     => $file_name,
-					                        'post_content'   => '',
-					                        'post_status'    => 'inherit'
-                    ];
+					                'guid'           => $wp_upload_dir['url'] . '/' . basename( $file_path ),
+					                'post_mime_type' => $file['type'],
+					                'post_title'     => $file_name,
+					                'post_content'   => '',
+					                'post_status'    => 'inherit'
+                    			];
 					$attach_id = wp_insert_attachment( $attachment, $file_name, $post_ID);
 					//这是wp内置的上传附件的函数
 					require_once( ABSPATH . 'wp-admin/includes/image.php' );

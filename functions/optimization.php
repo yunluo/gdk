@@ -169,12 +169,14 @@ if (gdk_option('gdk_disable_xmlrpc')) {
 
 //禁用日志修订功能
 if (gdk_option('gdk_disable_revision')) {
-	function gdk_disable_post_revisions() {
-		foreach ( get_post_types() as $post_type ) {
-			remove_post_type_support( $post_type, 'revisions' );
-		}
+	add_filter( 'wp_revisions_to_keep', 'gdk_revisions_to_keep', 10, 2 );
+	function gdk_revisions_to_keep( $num, $post ) {
+		return 0;
 	}
-	add_action( 'init', 'gdk_disable_post_revisions', 999 );
+	add_action('wp_print_scripts','gdk_disable_autosave');
+	function gdk_disable_autosave() {
+		wp_deregister_script('autosave');
+	}
 }
 
 //彻底关闭 pingback
@@ -485,4 +487,24 @@ if(gdk_option('gdk_no_category')){
             return $query_vars;
         }
     endif;
+}
+
+
+
+
+
+
+//WordPress 段代码按钮集合
+function gdk_shortcode_list() {
+    $wpshortcodes = ['代码高亮'=>'&lt;pre class=\'prettyprint linenums\'&gt;&nbsp;&nbsp;&lt;/pre&gt;','链接按钮'=>'[dm href=\'\'][/dm]'];
+    $output = '';
+    foreach ($wpshortcodes as $name => $alt) {
+        $output.= '<a class="add-shortcode ed_button button button-small" data-shortcodes="' . $alt . '">' . $name . '</a>';
+    }
+    return $output;
+}
+add_action('media_buttons_context', 'gdk_shortcode_button');
+function gdk_shortcode_button($context) {
+    $context = '<a id="insert-shortcode-button" style="position:relative" class="button insert-shortcodes add_shortcodes" title="添加简码" data-editor="content" href="javascript:void(0)">短代码</a><div class="shortcodes-wrap">' . gdk_shortcode_list() . '</div>';
+    return $context;
 }

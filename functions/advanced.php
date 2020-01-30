@@ -14,7 +14,7 @@ function gdk_switch_get_avatar( $avatar ) {
 	switch (gdk_option('gdk_switch_get_avatar')) {
 		case 1:
 		  $avatarsrc = 'https://cdn.jsdelivr.net/gh/yunluo/GitCafeApi/avatar/' . mt_rand(1, 1999) . '.jpg';
-		$avatar = "<img src=$avatar src class='avatar rand_avatar photo' />";
+		$avatar = "<img src=\"$avatarsrc\" class='avatar rand_avatar photo' />";
 		break;
 		case 2:
 		  $avatar = preg_replace("/http[s]{0,1}:\/\/(secure|www|\d).gravatar.com\/avatar\//","//cdn.v2ex.com/gravatar/",$avatar);
