@@ -1,7 +1,8 @@
 <?php
 /**
- * 主题选项配置文件
+ * 插件选项配置文件
  */
+
 
 $gdk_options = [
 	'优化选项' => [
@@ -232,13 +233,14 @@ $gdk_options = [
 				'0' => '禁用',
 				'1' => '开启'
 			],
-			'std'   => '1'
+			'std'   => '0'
 		],
 		[
 			'name'  => '主动推送接口地址，填写本项即开启推送',
 			'desc'  => '在百度站长平台获取主动推送接口地址，比如：http://data.zz.baidu.com/urls?site=域名&token=一组字符, <a class="key_word" rel="nofollow" href="http://zhanzhang.baidu.com/linksubmit/index" target="_blank">主动推送接口地址</a>',
 			'id'    => 'gdk_baidu_api',
-			'type'  => 'text'
+			'type'  => 'text',
+			'hide'  => '1'
 		]
 	],
 	'安全设置' => [
@@ -642,3 +644,14 @@ $gdk_options = [
 		]
 	]
 ];
+
+
+ //载入主题配置,默认路径在主题根目录options.php
+ if( file_exists(get_template_directory() . '/options.php')) include(get_template_directory() . '/options.php');
+
+if(!empty($gdk_theme_options)){
+	$gdk_options = array_merge($gdk_theme_options,$gdk_options);
+}
+
+
+//var_dump($gdk_options);

@@ -494,17 +494,3 @@ if(gdk_option('gdk_no_category')){
 
 
 
-//WordPress 段代码按钮集合
-function gdk_shortcode_list() {
-    $wpshortcodes = ['代码高亮'=>'&lt;pre class=\'prettyprint linenums\'&gt;&nbsp;&nbsp;&lt;/pre&gt;','链接按钮'=>'[dm href=\'\'][/dm]'];
-    $output = '';
-    foreach ($wpshortcodes as $name => $alt) {
-        $output.= '<a class="add-shortcode ed_button button button-small" data-shortcodes="' . $alt . '">' . $name . '</a>';
-    }
-    return $output;
-}
-add_action('media_buttons_context', 'gdk_shortcode_button');
-function gdk_shortcode_button($context) {
-    $context = '<a id="insert-shortcode-button" style="position:relative" class="button insert-shortcodes add_shortcodes" title="添加简码" data-editor="content" href="javascript:void(0)">短代码</a><div class="shortcodes-wrap">' . gdk_shortcode_list() . '</div>';
-    return $context;
-}

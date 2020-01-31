@@ -1,6 +1,6 @@
 <?php
 
-/* 短代码集合 */
+//短代码集合 
 
 
 
@@ -60,38 +60,39 @@ function reply_to_read($atts, $content = null) {
     }
 }
 add_shortcode('reply', 'reply_to_read');
-/*绿色提醒框*/
+
+//绿色提醒框
 function toz($atts, $content = null) {
     return '<div id="sc_notice">' . $content . '</div>';
 }
 add_shortcode('v_notice', 'toz');
-/*红色提醒框*/
+//红色提醒框
 function toa($atts, $content = null) {
     return '<div id="sc_error">' . $content . '</div>';
 }
 add_shortcode('v_error', 'toa');
-/*黄色提醒框*/
+//黄色提醒框
 function toc($atts, $content = null) {
     return '<div id="sc_warn">' . $content . '</div>';
 }
 add_shortcode('v_warn', 'toc');
-/*灰色提醒框*/
+//灰色提醒框
 function tob($atts, $content = null) {
     return '<div id="sc_tips">' . $content . '</div>';
 }
 add_shortcode('v_tips', 'tob');
-/*蓝色提醒框*/
+//蓝色提醒框
 function tod($atts, $content = null) {
     return '<div id="sc_blue">' . $content . '</div>';
 }
 add_shortcode('v_blue', 'tod');
-/*蓝边文本框*/
+//蓝边文本框
 function toe($atts, $content = null) {
     return '<div  class="sc_act">' . $content . '</div>';
 }
 add_shortcode('v_act', 'toe');
 
-/*灵魂按钮*/
+//灵魂按钮
 function tom($atts, $content = null) {
     extract(shortcode_atts(array(
         "href" => 'http://'
@@ -99,7 +100,7 @@ function tom($atts, $content = null) {
     return '<a class="lhb" href="' . $href . '" target="_blank" rel="nofollow">' . $content . '</a>';
 }
 add_shortcode('lhb', 'tom');
-/*添加视频按钮*/
+//添加视频按钮
 function too($atts, $content = null) {
     extract(shortcode_atts(array(
         "play" => '0'
@@ -112,7 +113,7 @@ function too($atts, $content = null) {
     }
 }
 add_shortcode('video', 'too');
-/*添加音频按钮*/
+//添加音频按钮
 function tkk($atts, $content = null) {
     extract(shortcode_atts(array(
         "play" => '0'
@@ -125,7 +126,7 @@ function tkk($atts, $content = null) {
     }
 }
 add_shortcode('audio', 'tkk');
-/*弹窗下载*/
+//弹窗下载
 function ton($atts, $content = null) {
     extract(shortcode_atts(array(
         "href" => 'http://',
@@ -146,7 +147,7 @@ function git_download($atts, $content = null) {
     return '<a class="lhb" href="' . get_permalink(git_page_id('download')) . '?pid=' . get_the_ID() . '" target="_blank" rel="nofollow">' . $content . '</a>';
 }
 add_shortcode('download', 'git_download');
-/* 短代码信息框 完毕*/
+
 //为WordPress添加展开收缩功能
 function xcollapse($atts, $content = null) {
     extract(shortcode_atts(array(
@@ -258,3 +259,47 @@ function git_list_shortcode_handler($atts, $content = '') {
     return $output;
 }
 add_shortcode('list', 'git_list_shortcode_handler');
+
+
+//WordPress 段代码按钮集合
+function gdk_shortcode_list() {
+    $wpshortcodes = [
+        '横线'=>'<hr />',
+        'H2标题'=>'<h2> </h2>',
+        'H3标题'=>'<h3> </h3>',
+        '记号笔'=>'<mark> </mark>',
+        '链接按钮'=>'[dm href=] [/dm]',
+        '下载按钮'=>'[dl href=] [/dl]',
+        '透明按钮'=>'[lhb href=] [/lhb]',
+        '视频按钮'=>'[video play=0] [/video]',
+        '音频按钮'=>'[audio play=0] [/audio]',
+        '绿色通知'=>'[v_notice] [/v_notice]',
+        '红色警告'=>'[v_error] [/v_error]',
+        '黄色错误'=>'[v_warn] [/v_warn]',
+        '灰色提示'=>'[v_tips] [/v_tips]',
+        '蓝边提示'=>'[v_act] [/v_act]',
+        '隐藏收缩'=>'[collapse title=\'\'] [/collapse]',
+        '回复可见'=>'[reply] [/reply]',
+        '登陆可见'=>'[vip] [/vip]',
+        '密码可见'=>'[secret wx=0] [/secret]',
+        '积分购买可见'=>'[pay point=\'10\']这里是需要付费的内容[/pay]',
+        '游客付费可见'=>'[pax money=1]',
+        '弹窗下载'=>'[fanctdl filename=\'这里填写文件名\' filepass=\'这里填写文件密码什么的\' href=\'这里填写的主下载链接\' filedown=\'这里填写的是文件的主下载名称\']这里填写的文件的辅助下载链接，可写多个,空格间隔[/fanctdl]',
+        '面板下载'=>'[dltable file=\'在此处写下文件名称\' pass=\'在这里写下文件密码\']这里填写的文件的辅助下载链接，可写多个,空格间隔[/dltable]',
+        '单页下载'=>'[pdownload title=]',
+        '文章内链'=>'[neilian ids=]',
+        '无序列表'=>'[list] [/list]',
+        '表格简码'=>'[table] [/table]'
+    ];
+    $output = '';
+    foreach ($wpshortcodes as $name => $alt) {
+        $output.= '<a class="add-shortcode ed_button button button-small" data-shortcodes="' . $alt . '">' . $name . '</a>';
+    }
+    return $output;
+}
+
+function gdk_shortcode_button($context) {
+    $context = '<a id="insert-shortcode-button" style="position:relative" class="button insert-shortcodes add_shortcodes" title="添加简码" data-editor="content" href="javascript:void(0)">短代码</a><div class="shortcodes-wrap">' . gdk_shortcode_list() . '</div>';
+    return $context;
+}
+add_action('media_buttons_context', 'gdk_shortcode_button');

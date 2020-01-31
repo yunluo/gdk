@@ -810,6 +810,28 @@ function get_qqv_mp4($vid){
     return $mp4;
 }
 
-
-
+//字符串转数组,默认分隔符是:,
+function gdk_str2arr($data, $delimiter = ',') {
+	// 数组原样返回
+	if (is_array($data)) {
+		return $data;
+	}
+	// 字符串处理
+	$string = (string)$data;
+	if (empty($string)) {
+		$result = [];
+	} elseif (preg_match('/^{.*?}$/', $string) || preg_match('/^\[.*?]$/', $string)) {
+		$result = json_decode($string, true);
+	} elseif (preg_match('/^a:.*?(})$/', $string)) {
+		$result = unserialize($string, null);
+	} elseif (strpos($string, $delimiter) >= 1) {
+		$result = explode($delimiter, $string);
+	} else {
+		$result = [];
+	}
+	if (!is_array($result) || count($result) < 1) {
+		return [];
+	}
+	return $result;
+}
 
