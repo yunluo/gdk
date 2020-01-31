@@ -18,7 +18,7 @@ jQuery(function($) {
 		send_to_editor(" " + $(this).data("shortcodes") + " ");
 		$(".shortcodes-wrap").removeClass("is-active");
 		return false
-    })
+    });
     /**end**/
      
 });
