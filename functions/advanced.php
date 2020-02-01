@@ -113,7 +113,6 @@ function gdk_cdn_water($content) {
 }
 
 
-
 //自动替换媒体库图片的域名
 if (is_admin() && gdk_option('gdk_cdn')) {
     function attachment_replace($text) {
