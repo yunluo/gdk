@@ -1,7 +1,6 @@
 <?php
 
 if (gdk_option('gdk_cdn'))                  add_action('wp_loaded', 'gdk_cdn_start');//七牛CDN
-
 if (gdk_option('gdk_link_go'))     add_filter('the_content','gdk_link_go',999);// 外链GO跳转
 if (gdk_option('gdk_smtp'))         add_action('phpmailer_init', 'gdk_smtp');//SMTP
 if (gdk_option('gdk_cdn_water'))     add_filter('the_content', 'gdk_cdn_water');//CDN水印
@@ -21,8 +20,8 @@ add_filter('the_content', 'gdk_add_content');
 function gdk_switch_get_avatar( $avatar ) {
 	switch (gdk_option('gdk_switch_get_avatar')) {
 		case 1:
-		  $avatarsrc = 'https://cdn.jsdelivr.net/gh/yunluo/GitCafeApi/avatar/' . mt_rand(1, 1999) . '.jpg';
-		$avatar = "<img src=\"$avatarsrc\" class='avatar rand_avatar photo' />";
+		  $rand_avatar = 'https://cdn.jsdelivr.net/gh/yunluo/GitCafeApi/avatar/' . mt_rand(1, 1999) . '.jpg';
+		$avatar = "<img src=\"$rand_avatar\" class='avatar rand_avatar photo' />";
 		break;
 		case 2:
 		  $avatar = preg_replace("/http[s]{0,1}:\/\/(secure|www|\d).gravatar.com\/avatar\//","//cdn.v2ex.com/gravatar/",$avatar);
@@ -35,25 +34,23 @@ function gdk_switch_get_avatar( $avatar ) {
 add_filter('get_avatar', 'gdk_switch_get_avatar');
 
 //懒加载
-    function lazyload($content){
-        if (!is_feed() || !is_robots()) {
-            $content = preg_replace('/<img(.+)src=[\'"]([^\'"]+)[\'"](.*)>/i', "<img\$1data-original=\"\$2\" \$3>\n<noscript>\$0</noscript>", $content);
-        }
-        return $content;
-    }
-    add_filter('the_content', 'lazyload');
-
-
+function lazyload($content) {
+	if (!is_feed() || !is_robots()) {
+		$content = preg_replace('/<img(.+)src=[\'"]([^\'"]+)[\'"](.*)>/i', "<img\$1data-original=\"\$2\" \$3>\n<noscript>\$0</noscript>", $content);
+	}
+	return $content;
+}
+add_filter('the_content', 'lazyload');
 //fancybox图片灯箱效果
 function gdk_fancybox($content) {
-    $pattern = "/<a(.*?)href=('|\")([^>]*).(bmp|gif|jpeg|jpg|png|swf)('|\")(.*?)>(.*?)<\\/a>/i";
-    $replacement = '<a$1href=$2$3.$4$5 data-fancybox="gallery" rel="box" class="fancybox"$6>$7</a>';
-    $content = preg_replace($pattern, $replacement, $content);
-    return $content;
+	$pattern = "/<a(.*?)href=('|\")([^>]*).(bmp|gif|jpeg|jpg|png|swf)('|\")(.*?)>(.*?)<\\/a>/i";
+	$replacement = '<a$1href=$2$3.$4$5 data-fancybox="gallery" rel="box" class="fancybox"$6>$7</a>';
+	$content = preg_replace($pattern, $replacement, $content);
+	return $content;
 }
 add_filter('the_content', 'gdk_fancybox');
 
-
+//GO跳转
 function gdk_link_go($content) {
 	if(file_exists(ABSPATH.'go.php')) {
 		$gourl = home_url().'/go.php';
@@ -84,8 +81,7 @@ function gdk_smtp( $phpmailer ) {
 	$phpmailer->IsSMTP();
 }
 
-
-
+// CDN
 function gdk_cdn_start() {
 	ob_start('gdk_cdn_replace');
 }
