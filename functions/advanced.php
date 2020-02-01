@@ -8,6 +8,14 @@ if (gdk_option('gdk_cdn_water'))     add_filter('the_content', 'gdk_cdn_water');
 
 
 
+//文章首尾添加自定义内容
+function gdk_add_content($content) {
+	$before = gdk_option('gdk_artical_top');
+	$after = gdk_option('gdk_artical_bottom');
+	$content = $before.'<br>'.$content.'<br>'.$after;
+	return $content;
+}
+add_filter('the_content', 'gdk_add_content');
 
 //头像解决方案
 function gdk_switch_get_avatar( $avatar ) {
@@ -136,3 +144,5 @@ function mail_temp($mail_title,$mail_cotent,$link,$link_title){
 </div>
 	<?php
 }
+
+

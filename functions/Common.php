@@ -835,3 +835,29 @@ function gdk_str2arr($data, $delimiter = ',') {
 	return $result;
 }
 
+
+function gdk_panlinks($links) {
+    if(!filter_var($url, FILTER_VALIDATE_URL)) return false;
+    if(in_string($links,'baidu')){
+        $linknane = '百度网盘';
+    }elseif(in_string($links,'yunpan')){
+        $linknane = '360云盘';
+    }elseif(in_string($links,'lanzous')){
+        $linknane = '蓝奏网盘';
+    }elseif(in_string($links,'189')){
+        $linknane = '天翼云盘';
+    }elseif(in_string($links,'mega')){
+        $linknane = 'MEGA云盘';
+    }elseif(in_string($links,'yadi.sk')){
+        $linknane = '毛子云盘';
+    }elseif(in_string($links,'cdn')){
+        $linknane = 'CDN';
+    }elseif(in_string($links,'ctfile')){
+        $linknane = '360云盘';
+    }elseif(in_string($links,'weiyun')){
+        $linknane = '腾讯微云';
+    }else{
+        $linknane = '下载';
+    }
+    return $linknane;
+}

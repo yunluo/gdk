@@ -629,16 +629,30 @@ $gdk_options = [
 			'type'  => 'title'
 		],
 		[
-			'name'  => '头部自定义代码',
+			'name'  => '网站头部自定义代码',
 			'desc'  => '代码将插入到head区域',
 			'id'    => 'gdk_custom_head_code',
 			'type'  => 'textarea',
 			'std'   => ''
 		],
 		[
-			'name'  => '底部自定义代码',
+			'name'  => '网站底部自定义代码',
 			'desc'  => '代码将插入到foot区域',
 			'id'    => 'gdk_custom_foot_code',
+			'type'  => 'textarea',
+			'std'   => ''
+		],
+		[
+			'name'  => '文章顶部自定义内容',
+			'desc'  => '在文章顶部插入一个内容',
+			'id'    => 'gdk_artical_top',
+			'type'  => 'textarea',
+			'std'   => ''
+		],
+		[
+			'name'  => '文章底部自定义内容',
+			'desc'  => '在文章底部插入一个内容',
+			'id'    => 'gdk_artical_bottom',
 			'type'  => 'textarea',
 			'std'   => ''
 		]
