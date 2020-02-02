@@ -2,116 +2,115 @@
 
 //define('DISALLOW_FILE_MODS',true);
 
-//阻止乱七八糟的请求
-if(gdk_option('gdk_block_requst'))      add_action( 'wp', 'gdk_prevent_script_injection' );
+
+if(gdk_option('gdk_block_requst'))      add_action( 'wp', 'gdk_prevent_requst' );//阻止乱七八糟的请求
+if(gdk_option('gdk_maintenance_mode'))  add_action('get_header', 'gdk_maintenance_mode');//维护模式
 
 
-    function gdk_prevent_script_injection() {
-        global $user_ID;
-        if( ! current_user_can( 'level_10' )) {
-            if ( strlen( $_SERVER['REQUEST_URI'] ) > 255 ||
-                stripos( $_SERVER['REQUEST_URI'], 'eval(' ) ||
-                stripos( $_SERVER['REQUEST_URI'], 'CONCAT' ) ||
-                stripos( $_SERVER['REQUEST_URI'], 'UNION+SELECT' ) ||
-                stripos( $_SERVER['REQUEST_URI'], 'GLOBALS(' ) ||
-                stripos( $_SERVER['REQUEST_URI'], '_REQUEST' ) ||
-                stripos( $_SERVER['REQUEST_URI'], '/localhost' ) ||
-                stripos( $_SERVER['QUERY_STRING'], '127.0.0.1' ) ||
-                stripos( $_SERVER['REQUEST_URI'], '/config.' ) ||
-                stripos( $_SERVER['REQUEST_URI'], 'wp-config.' ) ||
-                stripos( $_SERVER['REQUEST_URI'], 'etc/passwd' ) ||
-                stripos( $_SERVER['REQUEST_URI'], '<' ) ||
-                stripos( $_SERVER['REQUEST_URI'], 'base64' ) ) {
-                @header( 'HTTP/1.1 403 Forbidden' );
-                @header( 'Status: 403 Forbidden') ;
-                @header( 'Connection: Close' );
-                @exit;
-            }
-        }
-    }
-
-
-
-
-    if ( ! class_exists( 'GDK_Limit_Login_Attempts' ) ) {
-        class GDK_Limit_Login_Attempts {
-            private $failed_login_limit;
-            //登录失败的次数限制
-            private $lockout_duration;
-            //暂停登陆时间
-            var $transient_name     = 'attempted_login';
-            //Transient used
-            public function __construct($config = null) {
-                $this->failed_login_limit = $config['failed_login_limit'];
-                $this->lockout_duration   = $config['lockout_duration'];
-                add_filter( 'authenticate', array( $this, 'check_attempted_login' ), 30, 3 );
-                add_action( 'wp_login_failed', array( $this, 'login_failed' ), 10, 1 );
-            }
-            /**
-            * Lock login attempts of failed login limit is reached
-            */
-            public function check_attempted_login( $user, $username, $password ) {
-                if ( get_transient( $this->transient_name ) ) {
-                    $datas = get_transient( $this->transient_name );
-                    if ( $datas['tried'] >= $this->failed_login_limit ) {
-                        $until = get_option( '_transient_timeout_' . $this->transient_name );
-                        $time = $this->when( $until );
-                        //Display error message to the user when limit is reached
-                        return new WP_Error( 'too_many_tried', sprintf( esc_attr( 'ERROR：您已触发登陆安全保护，请在 %1$s 后再次尝试.' ) , $time ) );
-                    }
-                }
-                return $user;
-            }
-            /**
-            * Add transient
-            */
-            public function login_failed( $username ) {
-                if ( get_transient( $this->transient_name ) ) {
-                    $datas = get_transient( $this->transient_name );
-                    $datas['tried']++;
-                    if ( $datas['tried'] <= $this->failed_login_limit )
-                        set_transient( $this->transient_name, $datas , $this->lockout_duration );
-                } else {
-                    $datas = array('tried' => 1 );
-                    set_transient( $this->transient_name, $datas , $this->lockout_duration );
-                }
-            }
-            /**
-            * Return difference between 2 given dates
-            * @param  int      $time   Date as Unix timestamp
-            * @return string           Return string
-            */
-            private function when( $time ) {
-                if ( ! $time )
-                   return;
-                $right_now = time();
-                $diff = abs( $right_now - $time );
-                $second = 1;
-                $minute = $second * 60;
-                $hour = $minute * 60;
-                $day = $hour * 24;
-                if ( $diff < $minute )
-                    return floor( $diff / $second ) . ' ' . esc_attr( '秒' );
-                if ( $diff < $minute * 2 )
-                    return esc_attr( 'about 1 minute ago' );
-                if ( $diff < $hour )
-                    return floor( $diff / $minute ) . ' ' . esc_attr( '分钟' );
-                if ( $diff < $hour * 2 )
-                    return esc_attr( 'about 1 hour');
-                return floor( $diff / $hour ) . ' ' . esc_attr( '小时' );
-            }
-        }
-    }
-    //Enable it:
-    $config = [
-		'failed_login_limit' => gdk_option('gdk_failed_login_limit'),   // 登录失败的次数限制
-		'lockout_duration'   => gdk_option('gdk_lockout_duration'),   // 暂停登陆时间
-    ];
-    
-if(gdk_option('gdk_lock_login')){
-    new GDK_Limit_Login_Attempts($config);
+//阻止异常请求
+function gdk_prevent_requst() {
+	global $user_ID;
+	if( ! current_user_can( 'level_10' )) {
+		if ( strlen( $_SERVER['REQUEST_URI'] ) > 255 ||
+		                stripos( $_SERVER['REQUEST_URI'], 'eval(' ) ||
+		                stripos( $_SERVER['REQUEST_URI'], 'CONCAT' ) ||
+		                stripos( $_SERVER['REQUEST_URI'], 'UNION+SELECT' ) ||
+		                stripos( $_SERVER['REQUEST_URI'], 'GLOBALS(' ) ||
+		                stripos( $_SERVER['REQUEST_URI'], '_REQUEST' ) ||
+		                stripos( $_SERVER['REQUEST_URI'], '/localhost' ) ||
+		                stripos( $_SERVER['QUERY_STRING'], '127.0.0.1' ) ||
+		                stripos( $_SERVER['REQUEST_URI'], '/config.' ) ||
+		                stripos( $_SERVER['REQUEST_URI'], 'wp-config.' ) ||
+		                stripos( $_SERVER['REQUEST_URI'], 'etc/passwd' ) ||
+		                stripos( $_SERVER['REQUEST_URI'], '<' ) ||
+		                stripos( $_SERVER['REQUEST_URI'], 'base64' ) ) {
+			@header( 'HTTP/1.1 403 Forbidden' );
+			@header( 'Status: 403 Forbidden') ;
+			@header( 'Connection: Close' );
+			@exit;
+		}
+	}
 }
 
+
+//登陆错误锁定
+if ( ! class_exists( 'GDK_Limit_Login_Attempts' ) ) {
+	class GDK_Limit_Login_Attempts {
+		private $failed_login_limit;
+		//登录失败的次数限制
+		private $lockout_duration;
+		//暂停登陆时间
+		var $transient_name     = 'attempted_login';
+		//Transient used
+		public function __construct($config = null) {
+			$this->failed_login_limit = $config['failed_login_limit'];
+			$this->lockout_duration   = $config['lockout_duration'];
+			add_filter( 'authenticate', array( $this, 'check_attempted_login' ), 30, 3 );
+			add_action( 'wp_login_failed', array( $this, 'login_failed' ), 10, 1 );
+		}
+		/**
+                * Lock login attempts of failed login limit is reached
+                */
+		public function check_attempted_login( $user, $username, $password ) {
+			if ( get_transient( $this->transient_name ) ) {
+				$datas = get_transient( $this->transient_name );
+				if ( $datas['tried'] >= $this->failed_login_limit ) {
+					$until = get_option( '_transient_timeout_' . $this->transient_name );
+					$time = $this->when( $until );
+					//Display error message to the user when limit is reached
+					return new WP_Error( 'too_many_tried', sprintf( esc_attr( 'ERROR：您已触发登陆安全保护，请在 %1$s 后再次尝试.' ) , $time ) );
+				}
+			}
+			return $user;
+		}
+		/**
+                * Add transient
+                */
+		public function login_failed( $username ) {
+			if ( get_transient( $this->transient_name ) ) {
+				$datas = get_transient( $this->transient_name );
+				$datas['tried']++;
+				if ( $datas['tried'] <= $this->failed_login_limit )
+				                                            set_transient( $this->transient_name, $datas , $this->lockout_duration );
+			} else {
+				$datas = array('tried' => 1 );
+				set_transient( $this->transient_name, $datas , $this->lockout_duration );
+			}
+		}
+		/**
+                * Return difference between 2 given dates
+                * @param  int      $time   Date as Unix timestamp
+                * @return string           Return string
+                */
+		private function when( $time ) {
+			if ( ! $time )
+			                                   return;
+			$right_now = time();
+			$diff = abs( $right_now - $time );
+			$second = 1;
+			$minute = $second * 60;
+			$hour = $minute * 60;
+			$day = $hour * 24;
+			if ( $diff < $minute )
+			                                    return floor( $diff / $second ) . ' ' . esc_attr( '秒' );
+			if ( $diff < $minute * 2 )
+			                                    return esc_attr( 'about 1 minute ago' );
+			if ( $diff < $hour )
+			                                    return floor( $diff / $minute ) . ' ' . esc_attr( '分钟' );
+			if ( $diff < $hour * 2 )
+			                                    return esc_attr( 'about 1 hour');
+			return floor( $diff / $hour ) . ' ' . esc_attr( '小时' );
+		}
+	}
+}
+//Enable it:
+$config = [
+            'failed_login_limit' => gdk_option('gdk_failed_login_limit'),   // 登录失败的次数限制
+'lockout_duration'   => gdk_option('gdk_lockout_duration'),   // 暂停登陆时间
+];
+if(gdk_option('gdk_lock_login')) {
+	new GDK_Limit_Login_Attempts($config);
+}
 
 //禁用登陆错误信息
 function gdk_disable_login_errors( $error ) {
@@ -133,7 +132,7 @@ function gdk_maintenance_mode() {
 	}
 }
 
-//add_action('get_header', 'gdk_maintenance_mode');
+
 
 
 

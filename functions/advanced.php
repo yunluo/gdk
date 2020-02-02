@@ -125,19 +125,50 @@ if (is_admin() && gdk_option('gdk_cdn')) {
     add_filter('wp_get_attachment_url', 'attachment_replace');
 }
 
-//一个简单可重复使用的邮件模板
-function mail_temp($mail_title,$mail_cotent,$link,$link_title){
-	?>
-	<div style="width:500px;margin:auto">
-    <div style="background:#2695f3;color:#FFF;padding:20px 10px;"><?php echo $mail_title;?></div>
-    <div style="padding:10px;margin:5px;border-bottom:dashed 1px #ddd;"><?php echo $mail_cotent;?></div>
-    <a href="<?php echo $link;?>" style="display:block;margin:auto;margin-top:40px;padding:10px;width:107px;outline:0;border:1px solid #2695f3;border-radius:25px;color:#2695f3;text-align:center;font-weight:700;font-size:14pxtext-decoration:none;" rel="noopener" target="_blank"><?php echo $link_title;?></a>
-    <br><br>
-    <div style="color:#cecece;font-size: 12px;">本邮件为系统自动发送，请勿回复。<br>
-    如果不想被此类邮件打扰,请前往 <a style="color: #cecece;" href="<?php echo home_url();?>" rel="noopener" target="_blank"><?php echo get_option('blogname');?></a> 留言说明,由我们来操作处理。
-    </div>
-</div>
-	<?php
+
+
+//压缩html代码
+if (git_get_option('git_compress')) {
+    function wp_compress_html(){
+        function wp_compress_html_main($buffer){
+            if ( substr( ltrim( $buffer ), 0, 5) == '<?xml' ) return $buffer;
+            $initial = strlen($buffer);
+            $buffer = explode("<!--wp-compress-html-->", $buffer);
+            $count = count($buffer);
+            for ($i = 0; $i <= $count; $i++) {
+                if (stristr($buffer[$i], '<!--wp-compress-html no compression-->')) {
+                    $buffer[$i] = str_replace("<!--wp-compress-html no compression-->", " ", $buffer[$i]);
+                } else {
+                    $buffer[$i] = str_replace("\t", " ", $buffer[$i]);
+                    $buffer[$i] = str_replace("\n\n", "\n", $buffer[$i]);
+                    $buffer[$i] = str_replace("\n", "", $buffer[$i]);
+                    $buffer[$i] = str_replace("\r", "", $buffer[$i]);
+                    while (stristr($buffer[$i], '  ')) {
+                        $buffer[$i] = str_replace("  ", " ", $buffer[$i]);
+                    }
+                }
+                $buffer_out .= $buffer[$i];
+            }
+            $final = strlen($buffer_out);
+            if ($initial !== 0) {
+                $savings = ($initial - $final) / $initial * 100;
+            } else {
+                $savings = 0;
+            }
+            $savings = round($savings, 2);
+            $buffer_out .= "\n<!--压缩前的大小: {$initial} bytes; 压缩后的大小: {$final} bytes; 节约：{$savings}% -->";
+            return $buffer_out;
+        }
+            ob_start("wp_compress_html_main");
+    }
+    add_action('get_header', 'wp_compress_html');
+    function git_unCompress($content)
+    {
+        if (preg_match_all('/(crayon-|<?xml|script|textarea|<\\/pre>)/i', $content, $matches)) {
+            $content = '<!--wp-compress-html--><!--wp-compress-html no compression-->' . $content;
+            $content .= '<!--wp-compress-html no compression--><!--wp-compress-html-->';
+        }
+        return $content;
+    }
+    add_filter('the_content', 'git_unCompress');
 }
-
-

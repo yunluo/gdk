@@ -72,18 +72,17 @@ function nc_comment_add_at($comment_text, $comment = '')
     return $comment_text;
 }
 
-function nc_record_visitors()
-{
-    if (is_singular()) {
-        global $post;
-        $post_ID = $post->ID;
-        if ($post_ID) {
-            $post_views = (int)get_post_meta($post_ID, 'views', true);
-            if (!update_post_meta($post_ID, 'views', ($post_views+1))) {
-                add_post_meta($post_ID, 'views', 1, true);
-            }
-        }
-    }
+function nc_record_visitors() {
+	if (is_singular()) {
+		global $post;
+		$post_ID = $post->ID;
+		if ($post_ID) {
+			$post_views = (int)get_post_meta($post_ID, 'views', true);
+			if (!update_post_meta($post_ID, 'views', ($post_views+1))) {
+				add_post_meta($post_ID, 'views', 1, true);
+			}
+		}
+	}
 }
 
 function nc_post_views($before = '(点击 ', $after = ' 次)', $echo = 1)
@@ -334,6 +333,7 @@ function nc_the_meta($key, $placeholder = '') {
     echo nc_get_meta($key, true) ?: $placeholder;
 }
 
+//判定是否是手机
 function gdk_is_mobile() {
     $ua = $_SERVER['HTTP_USER_AGENT'];
     if (empty($ua)) {
@@ -399,119 +399,107 @@ function in_string($text,$find) {
 	}
 }
 
+//获取浏览器信息
 function getBrowser() {
-    $u_agent = $_SERVER['HTTP_USER_AGENT'];
-    $bname = $u_agent;
-    $platform = '';
-    $version= '';
-
-    //First get the platform?
-    if ( preg_match( '/linux/i', $u_agent ) ) {
-        $platform = 'Linux';
-    }
-    elseif ( preg_match( '/macintosh|mac os x/i', $u_agent ) ) {
-        $platform = 'Mac';
-    }
-    elseif ( preg_match( '/windows|win32/i', $u_agent ) ) {
-        $platform = 'Windows';
-    }
-
-    // Next get the name of the useragent yes seperately and for good reason
-    if ( preg_match( '/MSIE/i',$u_agent) && ! preg_match( '/Opera/i',$u_agent ) ) {
-        $bname = 'Internet Explorer';
-        $ub = "MSIE";
-    } elseif( preg_match( '/Firefox/i',$u_agent ) ) {
-        $bname = 'Mozilla Firefox';
-        $ub = "Firefox";
-    } elseif( preg_match( '/Chrome/i',$u_agent ) ) {
-        $bname = 'Google Chrome';
-        $ub = "Chrome";
-    } elseif( preg_match( '/Safari/i',$u_agent ) ) {
-        $bname = 'Apple Safari';
-        $ub = "Safari";
-    } elseif( preg_match( '/Opera/i',$u_agent ) ) {
-        $bname = 'Opera';
-        $ub = "Opera";
-    } elseif( preg_match( '/Netscape/i',$u_agent ) ) {
-        $bname = 'Netscape';
-        $ub = "Netscape";
-    }
-
-    // finally get the correct version number
-    $known = array( 'Version', $ub, 'other');
-    $pattern = '#( ?<browser>' . join( '|', $known) .
-    ')[/ ]+( ?<version>[0-9.|a-zA-Z.]*)#';
-
-    if ( ! preg_match_all( $pattern, $u_agent, $matches ) ) {
-        // we have no matching number just continue
-    }
-
-    if ( isset( $matches['browser'] ) && is_array($matches['browser'])  ) {
-        // see how many we have
-        $i = count( $matches['browser'] );
-
-        if ( $i != 1) {
-
-            //we will have two since we are not using 'other' argument yet
-            //see if version is before or after the name
-            if ( strripos( $u_agent,"Version") < strripos( $u_agent,$ub ) ){
-                $version = $matches['version'][0];
-            } else {
-                $version = $matches['version'][1];
-            }
-        } else {
-            $version = $matches['version'][0];
-        }
-    } else {
-        $version="?";
-    }
-
-    return array(
-        'userAgent' => $u_agent,
-        'name'      => $bname,
-        'version'   => $version,
-        'platform'  => $platform,
-        'pattern'   => $pattern
-    );
+	$u_agent = $_SERVER['HTTP_USER_AGENT'];
+	$bname = $u_agent;
+	$platform = '';
+	$version= '';
+	//First get the platform?
+	if ( preg_match( '/linux/i', $u_agent ) ) {
+		$platform = 'Linux';
+	} elseif ( preg_match( '/macintosh|mac os x/i', $u_agent ) ) {
+		$platform = 'Mac';
+	} elseif ( preg_match( '/windows|win32/i', $u_agent ) ) {
+		$platform = 'Windows';
+	}
+	// Next get the name of the useragent yes seperately and for good reason
+	if ( preg_match( '/MSIE/i',$u_agent) && ! preg_match( '/Opera/i',$u_agent ) ) {
+		$bname = 'Internet Explorer';
+		$ub = "MSIE";
+	} elseif( preg_match( '/Firefox/i',$u_agent ) ) {
+		$bname = 'Mozilla Firefox';
+		$ub = "Firefox";
+	} elseif( preg_match( '/Chrome/i',$u_agent ) ) {
+		$bname = 'Google Chrome';
+		$ub = "Chrome";
+	} elseif( preg_match( '/Safari/i',$u_agent ) ) {
+		$bname = 'Apple Safari';
+		$ub = "Safari";
+	} elseif( preg_match( '/Opera/i',$u_agent ) ) {
+		$bname = 'Opera';
+		$ub = "Opera";
+	} elseif( preg_match( '/Netscape/i',$u_agent ) ) {
+		$bname = 'Netscape';
+		$ub = "Netscape";
+	}
+	// finally get the correct version number
+	$known = array( 'Version', $ub, 'other');
+	$pattern = '#( ?<browser>' . join( '|', $known) .
+	    ')[/ ]+( ?<version>[0-9.|a-zA-Z.]*)#';
+	if ( ! preg_match_all( $pattern, $u_agent, $matches ) ) {
+		// we have no matching number just continue
+	}
+	if ( isset( $matches['browser'] ) && is_array($matches['browser'])  ) {
+		// see how many we have
+		$i = count( $matches['browser'] );
+		if ( $i != 1) {
+			//we will have two since we are not using 'other' argument yet
+			//see if version is before or after the name
+			if ( strripos( $u_agent,"Version") < strripos( $u_agent,$ub ) ) {
+				$version = $matches['version'][0];
+			} else {
+				$version = $matches['version'][1];
+			}
+		} else {
+			$version = $matches['version'][0];
+		}
+	} else {
+		$version="?";
+	}
+	return array(
+	        'userAgent' => $u_agent,
+	        'name'      => $bname,
+	        'version'   => $version,
+	        'platform'  => $platform,
+	        'pattern'   => $pattern
+	    );
 }
 
-
+//获取IP地址
 function get_ip_address( ) {
-    // check for shared internet/ISP IP
-    if ( ! empty( $_SERVER['HTTP_CLIENT_IP'] ) && validate_ip( $_SERVER['HTTP_CLIENT_IP'] ) ) {
-        return $_SERVER['HTTP_CLIENT_IP'];
-    }
-
-    // check for IPs passing through proxies
-    if ( ! empty( $_SERVER['HTTP_X_FORWARDED_FOR'] ) ) {
-
-        // check if multiple ips exist in var
-        if ( in_string( $_SERVER['HTTP_X_FORWARDED_FOR'], ',')) {
-            $iplist = explode( ',', $_SERVER['HTTP_X_FORWARDED_FOR']);
-            foreach ( $iplist as $ip) {
-                if ( validate_ip( $ip ) )
-                    return $ip;
-            }
-        } else {
-            if ( validate_ip( $_SERVER['HTTP_X_FORWARDED_FOR'] ) )
-                return $_SERVER['HTTP_X_FORWARDED_FOR'];
-        }
-    }
-    if ( ! empty( $_SERVER['HTTP_X_FORWARDED']) && validate_ip( $_SERVER['HTTP_X_FORWARDED'] ) ) {
-        return $_SERVER['HTTP_X_FORWARDED'];
-    }
-    if ( ! empty( $_SERVER['HTTP_X_CLUSTER_CLIENT_IP']) && validate_ip( $_SERVER['HTTP_X_CLUSTER_CLIENT_IP'] ) ) {
-        return $_SERVER['HTTP_X_CLUSTER_CLIENT_IP'];
-    }
-    if ( ! empty( $_SERVER['HTTP_FORWARDED_FOR']) && validate_ip( $_SERVER['HTTP_FORWARDED_FOR'] ) ) {
-        return $_SERVER['HTTP_FORWARDED_FOR'];
-    }
-    if ( ! empty( $_SERVER['HTTP_FORWARDED']) && validate_ip( $_SERVER['HTTP_FORWARDED'] ) ) {
-        return $_SERVER['HTTP_FORWARDED'];
-    }
-
-    // return unreliable ip since all else failed
-    return $_SERVER['REMOTE_ADDR'];
+	// check for shared internet/ISP IP
+	if ( ! empty( $_SERVER['HTTP_CLIENT_IP'] ) && validate_ip( $_SERVER['HTTP_CLIENT_IP'] ) ) {
+		return $_SERVER['HTTP_CLIENT_IP'];
+	}
+	// check for IPs passing through proxies
+	if ( ! empty( $_SERVER['HTTP_X_FORWARDED_FOR'] ) ) {
+		// check if multiple ips exist in var
+		if ( in_string( $_SERVER['HTTP_X_FORWARDED_FOR'], ',')) {
+			$iplist = explode( ',', $_SERVER['HTTP_X_FORWARDED_FOR']);
+			foreach ( $iplist as $ip) {
+				if ( validate_ip( $ip ) )
+				                    return $ip;
+			}
+		} else {
+			if ( validate_ip( $_SERVER['HTTP_X_FORWARDED_FOR'] ) )
+			                return $_SERVER['HTTP_X_FORWARDED_FOR'];
+		}
+	}
+	if ( ! empty( $_SERVER['HTTP_X_FORWARDED']) && validate_ip( $_SERVER['HTTP_X_FORWARDED'] ) ) {
+		return $_SERVER['HTTP_X_FORWARDED'];
+	}
+	if ( ! empty( $_SERVER['HTTP_X_CLUSTER_CLIENT_IP']) && validate_ip( $_SERVER['HTTP_X_CLUSTER_CLIENT_IP'] ) ) {
+		return $_SERVER['HTTP_X_CLUSTER_CLIENT_IP'];
+	}
+	if ( ! empty( $_SERVER['HTTP_FORWARDED_FOR']) && validate_ip( $_SERVER['HTTP_FORWARDED_FOR'] ) ) {
+		return $_SERVER['HTTP_FORWARDED_FOR'];
+	}
+	if ( ! empty( $_SERVER['HTTP_FORWARDED']) && validate_ip( $_SERVER['HTTP_FORWARDED'] ) ) {
+		return $_SERVER['HTTP_FORWARDED'];
+	}
+	// return unreliable ip since all else failed
+	return $_SERVER['REMOTE_ADDR'];
 }
 
 /**
@@ -519,35 +507,34 @@ function get_ip_address( ) {
  * a private network range.
  */
 function validate_ip( $ip) {
-    if ( strtolower( $ip) === 'unknown') {
-        return false;
-    }
-
-    // generate ipv4 network address
-    $ip = ip2long( $ip);
-
-    // if the ip is set and not equivalent to 255.255.255.255
-    if ( $ip !== false && $ip !== -1) {
-        // make sure to get unsigned long representation of ip
-        // due to discrepancies between 32 and 64 bit OSes and
-        // signed numbers ( ints default to signed in PHP)
-        $ip = sprintf( '%u', $ip);
-        // do private network range checking
-        if ( $ip >= 0 && $ip <= 50331647) return false;
-        if ( $ip >= 167772160 && $ip <= 184549375) return false;
-        if ( $ip >= 2130706432 && $ip <= 2147483647) return false;
-        if ( $ip >= 2851995648 && $ip <= 2852061183) return false;
-        if ( $ip >= 2886729728 && $ip <= 2887778303) return false;
-        if ( $ip >= 3221225984 && $ip <= 3221226239) return false;
-        if ( $ip >= 3232235520 && $ip <= 3232301055) return false;
-        if ( $ip >= 4294967040) return false;
-    }
-    return true;
+	if ( strtolower( $ip) === 'unknown') {
+		return false;
+	}
+	// generate ipv4 network address
+	$ip = ip2long( $ip);
+	// if the ip is set and not equivalent to 255.255.255.255
+	if ( $ip !== false && $ip !== -1) {
+		// make sure to get unsigned long representation of ip
+		// due to discrepancies between 32 and 64 bit OSes and
+		// signed numbers ( ints default to signed in PHP)
+		$ip = sprintf( '%u', $ip);
+		// do private network range checking
+		if ( $ip >= 0 && $ip <= 50331647) return false;
+		if ( $ip >= 167772160 && $ip <= 184549375) return false;
+		if ( $ip >= 2130706432 && $ip <= 2147483647) return false;
+		if ( $ip >= 2851995648 && $ip <= 2852061183) return false;
+		if ( $ip >= 2886729728 && $ip <= 2887778303) return false;
+		if ( $ip >= 3221225984 && $ip <= 3221226239) return false;
+		if ( $ip >= 3232235520 && $ip <= 3232301055) return false;
+		if ( $ip >= 4294967040) return false;
+	}
+	return true;
 }
 
 //Ajax报错方式
 function gdk_die($ErrMsg) {
     header('HTTP/1.1 405 Method Not Allowed');
+    header('Content-Type: text/plain;charset=UTF-8');
     echo $ErrMsg;
     exit;
 }
@@ -581,7 +568,6 @@ function gdk_plain_text($text) {
 	return trim($text);
 }
 
-
 // 获取第一段
 function gdk_first_p($text) {
 	if($text) {
@@ -603,142 +589,107 @@ function gdk_get_current_url(){
 }
 
 //黑名单检测
-function gdk_blacklist_check($str){
-    $moderation_keys	= trim(get_option('moderation_keys'));
-    $blacklist_keys		= trim(get_option('blacklist_keys'));
-
-    $words = explode("\n", $moderation_keys ."\n".$blacklist_keys);
-
-    foreach ((array)$words as $word){
-        $word = trim($word);
-
-        // Skip empty linesgdk_
-        if ( empty($word) ) continue;
-
-        // Do some escaping magic so that '#' chars in the
-        // spam words don't break things:
-        $word	= preg_quote($word, '#');
-        if ( preg_match("#$word#i", $str) ) return true;
-    }
-
-    return false;
+function gdk_blacklist_check($str) {
+	$moderation_keys	= trim(get_option('moderation_keys'));
+	$blacklist_keys		= trim(get_option('blacklist_keys'));
+	$words = explode("\n", $moderation_keys ."\n".$blacklist_keys);
+	foreach ((array)$words as $word) {
+		$word = trim($word);
+		// Skip empty linesgdk_
+		if ( empty($word) ) continue;
+		// Do some escaping magic so that '#' chars in the
+		// spam words don't break things:
+		$word	= preg_quote($word, '#');
+		if ( preg_match("#$word#i", $str) ) return true;
+	}
+	return false;
 }
 
-
-//
-function gdk_http_request($url, $args=array(), $err_args=array()){
-    $args = wp_parse_args( $args, array(
-        'timeout'			=> 5,
-        'method'			=> '',
-        'body'				=> array(),
-        'sslverify'			=> false,
-        'blocking'			=> true,	// 如果不需要立刻知道结果，可以设置为 false
-        'stream'			=> false,	// 如果是保存远程的文件，这里需要设置为 true
-        'filename'			=> null,	// 设置保存下来文件的路径和名字
-        'need_json_decode'	=> true,
-        'need_json_encode'	=> false,
-        // 'headers'		=> array('Accept-Encoding'=>'gzip;'),	//使用压缩传输数据
-        // 'headers'		=> array('Accept-Encoding'=>''),
-        // 'compress'		=> false,
-        'decompress'		=> true,
-    ));
-
-    if(isset($_GET['debug'])){
-        print_r($args);	
-    }
-
-    $need_json_decode	= $args['need_json_decode'];
-    $need_json_encode	= $args['need_json_encode'];
-
-    $method				= ($args['method'])?strtoupper($args['method']):($args['body']?'POST':'GET');
-
-    unset($args['need_json_decode']);
-    unset($args['need_json_encode']);
-    unset($args['method']);
-
-    if($method == 'GET'){
-        $response = wp_remote_get($url, $args);
-    }elseif($method == 'POST'){
-        if($need_json_encode && is_array($args['body'])){
-            $args['body']	= json_encode($args['body']);
-        }
-        $response = wp_remote_post($url, $args);
-    }elseif($method == 'FILE'){	// 上传文件
-        $args['method'] = ($args['body'])?'POST':'GET';
-        $args['sslcertificates']	= isset($args['sslcertificates'])?$args['sslcertificates']: ABSPATH.WPINC.'/certificates/ca-bundle.crt';
-        $args['user-agent']			= isset($args['user-agent'])?$args['user-agent']:'WordPress';
-        $wp_http_curl	= new WP_Http_Curl();
-        $response		= $wp_http_curl->request($url, $args);
-    }elseif($method == 'HEAD'){
-        if($need_json_encode && is_array($args['body'])){
-            $args['body']	= json_encode($args['body']);
-        }
-
-        $response = wp_remote_head($url, $args);
-    }else{
-        if($need_json_encode && is_array($args['body'])){
-            $args['body']	= json_encode($args['body']);
-        }
-
-        $response = wp_remote_request($url, $args);
-    }
-
-    if(is_wp_error($response)){
-        trigger_error($url."\n".$response->get_error_code().' : '.$response->get_error_message()."\n".var_export($args['body'],true));
-        return $response;
-    }
-
-    $headers	= $response['headers'];
-    $response	= $response['body'];
-
-    if($need_json_decode || isset($headers['content-type']) && strpos($headers['content-type'], '/json')){
-        if($args['stream']){
-            $response	= file_get_contents($args['filename']);
-        }
-
-        $response	= json_decode($response);
-
-        if(get_current_blog_id() == 339){
-            // print_r($response);
-        }
-
-        if(is_wp_error($response)){
-            return $response;
-        }
-    }
-    
-    extract(wp_parse_args($err_args,  array(
-        'errcode'	=>'errcode',
-        'errmsg'	=>'errmsg',
-        'detail'	=>'detail',
-        'success'	=>0,
-    )));
-
-    if(isset($response[$errcode]) && $response[$errcode] != $success){
-        $errcode	= $response[$errcode];
-        $errmsg		= isset($response[$errmsg])?$response[$errmsg]:'';
-
-        if(isset($response[$detail])){
-            $detail	= $response[$detail];
-
-            trigger_error($url."\n".$errcode.' : '.$errmsg."\n".var_export($detail,true)."\n".var_export($args['body'],true));
-            return new WP_Error($errcode, $errmsg, $detail);
-        }else{
-
-            trigger_error($url."\n".$errcode.' : '.$errmsg."\n".var_export($args['body'],true));
-            return new WP_Error($errcode, $errmsg);
-        }	
-    }
-
-    if(isset($_GET['debug'])){
-        echo $url;
-        print_r($response);
-    }
-
-    return $response;
+//发起HTTP请求
+function gdk_http_request($url, $args=array(), $err_args=array()) {
+	$args = wp_parse_args( $args, array(
+	        'timeout'			=> 20,
+            'method'			=> '',
+	        'body'				=> array(),
+	        'sslverify'			=> false,
+	        'blocking'			=> true,	// 如果不需要立刻知道结果，可以设置为 false
+	        'stream'			=> false,	// 如果是保存远程的文件，这里需要设置为 true
+	        'filename'			=> null,	// 设置保存下来文件的路径和名字
+	        'need_json_decode'	=> true,
+	        'need_json_encode'	=> false,
+	        // 'headers'		=> array('Accept-Encoding'=>'gzip;'),	//使用压缩传输数据
+	        // 'headers'		=> array('Accept-Encoding'=>''),
+	        // 'compress'		=> false,
+	        'decompress'		=> true,
+	    ));
+	if(isset($_GET['debug'])) {
+		print_r($args);
+	}
+	$need_json_decode	= $args['need_json_decode'];
+	$need_json_encode	= $args['need_json_encode'];
+	$method				= ($args['method'])?strtoupper($args['method']):($args['body']?'POST':'GET');
+	unset($args['need_json_decode']);
+	unset($args['need_json_encode']);
+	unset($args['method']);
+	if($method == 'GET') {
+		$response = wp_remote_get($url, $args);
+	} elseif($method == 'POST') {
+		if($need_json_encode && is_array($args['body'])) {
+			$args['body']	= json_encode($args['body']);
+		}
+		$response = wp_remote_post($url, $args);
+	} elseif($method == 'HEAD') {
+		if($need_json_encode && is_array($args['body'])) {
+			$args['body']	= json_encode($args['body']);
+		}
+		$response = wp_remote_head($url, $args);
+	} else {
+		if($need_json_encode && is_array($args['body'])) {
+			$args['body']	= json_encode($args['body']);
+		}
+		$response = wp_remote_request($url, $args);
+	}
+	if(is_wp_error($response)) {
+		trigger_error($url."\n".$response->get_error_code().' : '.$response->get_error_message()."\n".var_export($args['body'],true));
+		return $response;
+	}
+	$headers	= $response['headers'];
+	$response	= $response['body'];
+	if($need_json_decode || isset($headers['content-type']) && strpos($headers['content-type'], '/json')) {
+		if($args['stream']) {
+			$response	= file_get_contents($args['filename']);
+		}
+		$response	= json_decode($response);
+		if(is_wp_error($response)) {
+			return $response;
+		}
+	}
+	extract(wp_parse_args($err_args,  array(
+	        'errcode'	=>'errcode',
+	        'errmsg'	=>'errmsg',
+	        'detail'	=>'detail',
+	        'success'	=>0,
+	    )));
+	if(isset($response[$errcode]) && $response[$errcode] != $success) {
+		$errcode	= $response[$errcode];
+		$errmsg		= isset($response[$errmsg])?$response[$errmsg]:'';
+		if(isset($response[$detail])) {
+			$detail	= $response[$detail];
+			trigger_error($url."\n".$errcode.' : '.$errmsg."\n".var_export($detail,true)."\n".var_export($args['body'],true));
+			return new WP_Error($errcode, $errmsg, $detail);
+		} else {
+			trigger_error($url."\n".$errcode.' : '.$errmsg."\n".var_export($args['body'],true));
+			return new WP_Error($errcode, $errmsg);
+		}
+	}
+	if(isset($_GET['debug'])) {
+		echo $url;
+		print_r($response);
+	}
+	return $response;
 }
 
-//
+//根据腾讯视频网址或者ID互相转化
 function gdk_get_qq_vid($id_or_url){
     if(filter_var($id_or_url, FILTER_VALIDATE_URL)){ 
         if(preg_match('#https://v.qq.com/x/page/(.*?).html#i',$id_or_url, $matches)){
@@ -753,6 +704,7 @@ function gdk_get_qq_vid($id_or_url){
     }
 }
 
+//根据秒拍id或者网站获取视频直连
 function get_video_mp4($id_or_url){
     if(filter_var($id_or_url, FILTER_VALIDATE_URL)){ 
         if(preg_match('#http://www.miaopai.com/show/(.*?).htm#i',$id_or_url, $matches)){
@@ -769,45 +721,36 @@ function get_video_mp4($id_or_url){
     }
 }
 
-
-function get_qqv_mp4($vid){
-    if(strlen($vid) > 20){
-        return new WP_Error('invalid_qqv_vid', '非法的腾讯视频 ID');
-    }
-
-    $mp4 = wp_cache_get($vid, 'qqv_mp4');
-    if($mp4 === false){
-        $response	= gdk_http_request('http://vv.video.qq.com/getinfo?otype=json&platform=11001&vid='.$vid, array(
-            'timeout'			=>4,
-            'need_json_decode'	=>false
-        ));
-
-        if(is_wp_error($response)){
-            return $response;
-        }
-
-        $response	= trim(substr($response, strpos($response, '{')),';');
-        $response	= json_decode($response);
-
-        if(is_wp_error($response)){
-            return $response;
-        }
-
-        if(empty($response['vl'])){
-            return new WP_Error('illegal_qqv', '该腾讯视频不存在或者为收费视频！');
-        }
-
-        $u		= $response['vl']['vi'][0];
-        $p0		= $u['ul']['ui'][0]['url'];
-        $p1		= $u['fn'];
-        $p2		= $u['fvkey'];
-
-        $mp4	= $p0.$p1.'?vkey='.$p2;
-
-        wp_cache_set($vid, $mp4, 'qqv_mp4', HOUR_IN_SECONDS*6);
-    }
-
-    return $mp4;
+//获取腾讯视频
+function get_qqv_mp4($vid) {
+	if(strlen($vid) > 20) {
+		return new WP_Error('invalid_qqv_vid', '非法的腾讯视频 ID');
+	}
+	$mp4 = wp_cache_get($vid, 'qqv_mp4');
+	if($mp4 === false) {
+		$response	= gdk_http_request('http://vv.video.qq.com/getinfo?otype=json&platform=11001&vid='.$vid, array(
+		            'timeout'			=>4,
+		            'need_json_decode'	=>false
+		        ));
+		if(is_wp_error($response)) {
+			return $response;
+		}
+		$response	= trim(substr($response, strpos($response, '{')),';');
+		$response	= json_decode($response);
+		if(is_wp_error($response)) {
+			return $response;
+		}
+		if(empty($response['vl'])) {
+			return new WP_Error('illegal_qqv', '该腾讯视频不存在或者为收费视频！');
+		}
+		$u		= $response['vl']['vi'][0];
+		$p0		= $u['ul']['ui'][0]['url'];
+		$p1		= $u['fn'];
+		$p2		= $u['fvkey'];
+		$mp4	= $p0.$p1.'?vkey='.$p2;
+		wp_cache_set($vid, $mp4, 'qqv_mp4', HOUR_IN_SECONDS*6);
+	}
+	return $mp4;
 }
 
 //字符串转数组,默认分隔符是:,
@@ -835,7 +778,7 @@ function gdk_str2arr($data, $delimiter = ',') {
 	return $result;
 }
 
-
+//根据连接特征获取网盘连接来源
 function gdk_panlinks($links) {
     if(!filter_var($url, FILTER_VALIDATE_URL)) return false;
     if(in_string($links,'baidu')){
@@ -861,3 +804,19 @@ function gdk_panlinks($links) {
     }
     return $linknane;
 }
+
+//一个简单可重复使用的邮件模板
+function mail_temp($mail_title,$mail_cotent,$link,$link_title){
+	?>
+	<div style="width:500px;margin:auto">
+    <div style="background:#2695f3;color:#FFF;padding:20px 10px;"><?php echo $mail_title;?></div>
+    <div style="padding:10px;margin:5px;border-bottom:dashed 1px #ddd;"><?php echo $mail_cotent;?></div>
+    <a href="<?php echo $link;?>" style="display:block;margin:auto;margin-top:40px;padding:10px;width:107px;outline:0;border:1px solid #2695f3;border-radius:25px;color:#2695f3;text-align:center;font-weight:700;font-size:14pxtext-decoration:none;" rel="noopener" target="_blank"><?php echo $link_title;?></a>
+    <br><br>
+    <div style="color:#cecece;font-size: 12px;">本邮件为系统自动发送，请勿回复。<br>
+    如果不想被此类邮件打扰,请前往 <a style="color: #cecece;" href="<?php echo home_url();?>" rel="noopener" target="_blank"><?php echo get_option('blogname');?></a> 留言说明,由我们来操作处理。
+    </div>
+</div>
+	<?php
+}
+

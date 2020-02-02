@@ -256,6 +256,12 @@ $gdk_options = [
 			'std'   => '1'
 		],
 		[
+			'name'  => '网站维护模式',
+			'desc'  => '开启 【启用后，未登录用户将看到一个简陋的维护页面】',
+			'id'    => 'gdk_maintenance_mode',
+			'type'  => 'checkbox'
+		],
+		[
 			'name'  => '保护用户暴露用户名',
 			'desc'  => '开启 【启用后，将隐藏掉用户的登录名,起到保护作用】',
 			'id'    => 'gdk_hide_user_name',
