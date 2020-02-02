@@ -255,9 +255,13 @@ switch ( $type ) {
 	font-size: 15px;
 }
 
-.filter-links .current {
+.filter-links .current,.filter-links.current:focus {
+	color:#6b48ff!important;
     border-bottom: 4px solid #6b48ff;
 }
+
+.filter-links li>a:hover{color:#666}
+.filter-links a:focus{color:#6b48ff;box-shadow:none}
 
 .gdk_option input[type=radio]:checked::before {
     background-color: #6b48ff;
