@@ -361,8 +361,9 @@ depend('gdk_lock_login','#row-gdk_failed_login_limit,#row-gdk_lockout_duration')
 depend('gdk_smtp','#row-gdk_smtp_username,#row-gdk_smtp_host,#row-gdk_smtp_port,#row-gdk_smtp_mail,#row-gdk_smtp_password');
 depend('gdk_baidu_push','#row-gdk_baidu_api');
 depend('gdk_tag_link','#row-gdk_tag_num');
-depend('gdk_cdn','#row-gdk_cdn_host,#row-gdk_cdn_ext,#row-gdk_cdn_dir,#row-gdk_cdn_style,#row-git_cdn_water');
+depend('gdk_cdn','#row-gdk_cdn_host,#row-gdk_cdn_ext,#row-gdk_cdn_dir,#row-gdk_cdn_style,#row-gdk_cdn_water');
 depend('gdk_h5notice','#row-git_notification_title,#row-git_notification_days,#row-git_notification_cookie,#row-git_notification_icon,#row-git_notification_link,#row-git_notification_body');
+depend('gdk_payjs','#row-gdk_rate,#row-git_payjs_rate,#row-gdk_payjs_id,#row-gdk_payjs_key');
 
 });
 </script>

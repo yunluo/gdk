@@ -261,6 +261,43 @@ function git_list_shortcode_handler($atts, $content = '') {
 add_shortcode('list', 'git_list_shortcode_handler');
 
 
+//表格短代码
+function table_shortcode_handler( $atts, $content='' ) {
+    extract( shortcode_atts( ['width' => '100%'], $atts ) );
+    $output = '';
+    $content = trim($content);
+    $trs = explode("\r\n", $content);
+    $ths = explode("  ", $trs[0]);//表头数组
+    $output .= '<thead><tr>';
+    //var_dump($ths);
+    foreach($ths as $th){
+        $output .= '<th>'.$th.'</th>';
+    }
+    $output .= '</tr></thead>';
+    $output .= '<tbody>';
+    unset($trs[0]);
+    foreach($trs as $tr){
+        $tr = trim($tr);
+        if($tr){
+            $tds = explode("  ", $tr);
+            $output .= '<tr>';
+            foreach($tds as $td){
+                $td = trim($td);
+                if($td){
+                    $output .= '<td>'.$td.'</td>';
+                }
+            }
+            $output .= '</tr>';
+        }
+    }
+    $output .= '</tbody>';
+    $width = ' width="'.$width.'"';
+    $output = '<table class="gdk-table"'.$width.' >'.$output.'</table>';
+
+    return $output;
+}
+add_shortcode( 'table', 'table_shortcode_handler' );
+
 //WordPress 段代码按钮集合
 function gdk_shortcode_list() {
     $wpshortcodes = [

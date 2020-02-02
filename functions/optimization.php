@@ -44,6 +44,7 @@ add_action('login_head', 'gdk_wps_login_error');
 add_filter('pre_option_link_manager_enabled', '__return_true');
 
 add_filter('show_admin_bar', '__return_false');
+add_filter('run_wptexturize', '__return_false');
 
 //移除 WP_Head 无关紧要的代码
 if(gdk_option('gdk_diasble_head_useless')){

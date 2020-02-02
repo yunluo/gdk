@@ -302,7 +302,7 @@ $gdk_options = [
 		],
 		[
 			'name'  => '关键词，IP，邮箱屏蔽',
-			'desc'  => '开启 【启用后，在WordPress-设置-讨论-黑名单中添加想要屏蔽的关键词，邮箱，网址，IP地址，每行一个】<a class="key_word" target="_blank" href="https://img.alicdn.com/imgextra/i4/1597576229/TB2FnxnlpXXXXcDXXXXXXXXXXXX_!!1597576229.png">如图设置</a>',
+			'desc'  => '开启 【启用后，在WordPress-设置-讨论-黑名单中添加想要屏蔽的关键词，邮箱，网址，IP地址，每行一个】<a class="key_word" target="_blank" href="https://ae03.alicdn.com/kf/U146356e193b14a6da3f7cbb9cf507ea3D.png">点击查看如图设置</a>',
 			'id'    => 'git_spam_keywords',
 			'type'  => 'checkbox'
 		],
@@ -317,82 +317,69 @@ $gdk_options = [
 			'desc'  => '开启 【启用后，屏蔽含有过长网址(超过50个字符)的评论，当然如果你已经选择了上面的选项的话，就不用选择了】',
 			'id'    => 'git_spam_long',
 			'type'  => 'checkbox'
-		],
-		[
-			'name'  => '文章版权声明',
-			'desc'  => '此处输入的文字将出现在每篇文章最底部，你可以使用：{{title}}表示文章标题，{{link}}表示文章链接',
-			'id'    => 'git_copyright_b',
-			'type'  => 'textarea',
-			'std'   => '极客公园 , 版权所有丨如未注明 , 均为原创丨本网站采用<a href="http://creativecommons.org/licenses/by-nc-sa/3.0/" rel="nofollow" target="_blank" title="BY-NC-SA授权协议">BY-NC-SA</a>协议进行授权 <br >转载请注明原文链接：<a href="{{link}}" target="_blank" title="{{title}}">{{title}}</a>'
-		]
-	],
-	'支付设置' => [
-		[
-			'title' => '统一支付设置',
-			'type'  => 'title'
-		],
-		[
-			'name'  => '金币和RMB兑换关系',
-			'desc'  => '请输入兑换关系，比如1RMB=10金币，请慎重选择，一旦设置好后面不能修改的',
-			'id'    => 'git_payjs_rate',
-			'type'  => 'number',
-			'std'   => 10
-		],
-		[
-			'name'  => '选择一个支付方式',
-			'desc'  => '两种方案选择其中一种，必须选择一个哦',
-			'id'    => 'git_payjs',
-			'type'  => 'radio',
-			'options' => [
-				'0' => '禁用',
-				'1' => '开启'
-			],
-			'std'   => '1'
-		],
-		[
-			'title' => 'PayJs支付设置&nbsp;&nbsp;&nbsp;<a href="https://payjs.cn/ref/ZVEMKD" target="_blank" >注册PayJs</a>&nbsp;&nbsp;&nbsp;【微信官方，微信正规渠道，强烈推荐】',
-			'type'  => 'title'
-		],
-		[
-			'name'  => 'PayJs商户号',
-			'desc'  => '',
-			'id'    => 'git_payjs_id',
-			'type'  => 'text',
-			'std'   => 2333333333
-		],
-		[
-			'name'  => 'PayJs密钥',
-			'desc'  => '',
-			'id'    => 'git_payjs_secret',
-			'type'  => 'text',
-			'std'   => 444444444
 		]
 	],
 	'高级设置' => [
 			[
-				'name'  => 'jQuery来源设置',
-				'desc'  => '选择一个适合自己的jQuery公共库来源',
-				'id'    => 'git_jq',
+				'title' => '统一支付设置',
+				'type'  => 'title'
+			],
+			[
+				'name'  => '网站支付功能',
+				'desc'  => '开启网站支付功能需要HTTPS支持,需要开通Payjs使用,<a class="key_word" href="https://payjs.cn/ref/ZVEMKD" target="_blank" >点击注册Payjs</a>',
+				'id'    => 'gdk_payjs',
 				'type'  => 'radio',
 				'options' => [
-					'1' => '远程jQuery库【底部加载，速度快，兼容差】',
-					'0' => '本地jQuery库【头部加载，速度慢，兼容好】'
+					'0' => '禁用',
+					'1' => '开启'
+				],
+				'std'   => '0'
+			],
+			[
+				'name'  => '金币和RMB兑换关系',
+				'desc'  => '请输入兑换关系，默认1RMB=10金币，请慎重选择，一旦设置好后面不能修改的,本选项仅对会员金币支付生效,游客免登陆支持不受影响',
+				'id'    => 'gdk_rate',
+				'type'  => 'number',
+				'std'   => 10
+			],
+			[
+				'name'  => 'PayJs商户号',
+				'desc'  => '',
+				'id'    => 'gdk_payjs_id',
+				'type'  => 'text',
+				'std'   => 2333333333
+			],
+			[
+				'name'  => 'PayJs密钥',
+				'desc'  => '',
+				'id'    => 'gdk_payjs_key',
+				'type'  => 'text',
+				'std'   => 444444444
+			],
+			[
+				'name'  => 'jQuery加载位置设置',
+				'desc'  => '选择一个适合自己网站的jQuery加载位置,默认是底部加载',
+				'id'    => 'gdk_jq',
+				'type'  => 'radio',
+				'options' => [
+					'1' => '底部加载,速度快',
+					'0' => '头部加载,兼容好'
 				],
 				'std'   => '1'
 			],
 			[
-			'name'  => 'HTML代码压缩',
-			'desc'  => '启用 【开启后，将压缩网页HTML代码，可读性会降低，但是性能略有提升】',
-			'id'    => 'git_compress',
-			'type'  => 'checkbox'
-		],
+				'name'  => 'HTML代码压缩',
+				'desc'  => '启用 【开启后，将压缩网页HTML代码，可读性会降低，但是性能略有提升】',
+				'id'    => 'gdk_compress',
+				'type'  => 'checkbox'
+			],
 			[
-			'name'  => '图片懒加载',
-			'desc'  => '启用 【开启后，网站图片将进行懒加载】',
-			'id'    => 'git_lazyload',
-			'type'  => 'checkbox'
-		],
-		[
+				'name'  => '图片懒加载',
+				'desc'  => '启用 【开启后，网站图片将进行懒加载】',
+				'id'    => 'gdk_lazyload',
+				'type'  => 'checkbox'
+			],
+			[
 			'name'  => '侧边栏缓存',
 			'desc'  => '启用 【开启后，将会自动缓存小工具，如果想禁止缓存某个小工具，可以去小工具页面排除】',
 			'id'    => 'git_sidebar_cache',

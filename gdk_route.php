@@ -26,7 +26,7 @@ define('GDK_BASE_URL', plugin_dir_url( __FILE__ ) );//插件目录url
 define('GDK_ROOT_PATH', plugin_dir_path( __FILE__ ) );//插件目录路径
 
 //加载各种资源
-include('class/class_load.php');//加载各种类
 include('framework/frame_load.php');//加载后台框架
+include('class/class_load.php');//加载各种类
 include('functions/func_load.php');//加载函数
 include('assets/assets_load.php');//加载静态资源
