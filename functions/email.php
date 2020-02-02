@@ -67,11 +67,8 @@ function git_notify_postauthor($notify_message,$comment_ID) {
     return $notify;
 }
 add_filter('comment_notification_text', 'git_notify_postauthor', 10, 2);
-add_filter('wp_password_change_notification_email', '__return_false'); //关闭密码修改站长邮件
-add_filter('password_change_email', '__return_false'); //关闭密码修改用户邮件
 
-    add_filter('wp_new_user_notification_email_admin', '__return_false');
- //关闭新用户注册站长邮件
+
 //欢迎新用户邮件
 
     function git_register_mail($user_id) {
@@ -83,7 +80,7 @@ add_filter('password_change_email', '__return_false'); //关闭密码修改用�
         wp_mail($user->user_email, '[' . $blogname . ']欢迎注册' . $blogname, $message, $headers);
     }
     add_action('user_register', 'git_register_mail');
-    add_filter('wp_new_user_notification_email', '__return_false'); //关闭新用户注册用户邮件
+    
 
 
 //登录失败提醒

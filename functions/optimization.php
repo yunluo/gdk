@@ -39,12 +39,81 @@ function gdk_wps_login_error() {
 }
 add_action('login_head', 'gdk_wps_login_error');
 
+//清除wp_footer带入的embed.min.js
+function gdk_deregister_embed_script() {
+    wp_deregister_script('wp-embed');
+}
+add_action('wp_footer', 'gdk_deregister_embed_script');
+
+//禁用默认的附件页面
+function gdk_disable_attachment_pages() {
+    global $post;
+    if (is_attachment()) {
+        if (!empty($post->post_parent)) {
+            wp_redirect(get_permalink($post->post_parent) , 301);
+            exit;
+        } else {
+            wp_redirect(home_url());
+            exit;
+        }
+    }
+}
+add_action('template_redirect', 'gdk_disable_attachment_pages', 1);
 
 // 友情链接扩展
 add_filter('pre_option_link_manager_enabled', '__return_true');
-
+//隐藏顶部工具栏
 add_filter('show_admin_bar', '__return_false');
+//关闭格式化
 add_filter('run_wptexturize', '__return_false');
+//禁用找回密码
+add_filter('allow_password_reset', '__return_false' );
+add_filter('wp_password_change_notification_email', '__return_false'); //关闭密码修改站长邮件
+add_filter('password_change_email', '__return_false'); //关闭密码修改用户邮件
+add_filter('wp_new_user_notification_email', '__return_false'); //关闭新用户注册用户邮件
+//使链接自动可点击
+add_filter('the_content', 'make_clickable');
+//分类，标签描述添加图片
+remove_filter('pre_term_description', 'wp_filter_kses');
+remove_filter('pre_link_description', 'wp_filter_kses');
+remove_filter('pre_link_notes', 'wp_filter_kses');
+remove_filter('term_description', 'wp_kses_data');
+
+//自动中英文空格
+if (gdk_option('gdk_auto_space')) {
+    function gdk_auto_space($data){
+        $data = preg_replace('/([\\x{4e00}-\\x{9fa5}]+)([A-Za-z0-9_]+)/u', '${1} ${2}', $data);
+        $data = preg_replace('/([A-Za-z0-9_]+)([\\x{4e00}-\\x{9fa5}]+)/u', '${1} ${2}', $data);
+        return $data;
+    }
+    add_filter('the_content', 'gdk_auto_space');
+}
+
+function gdk_after_init_theme() {
+	update_option( 'image_default_align', 'center' );//居中显示
+	update_option( 'image_default_link_type', 'file' );//连接到媒体文件本身
+    update_option( 'image_default_size', 'full' );//完整尺寸
+
+    update_option( 'large_size_h', '0' );//关闭默认缩略图
+    update_option( 'large_size_w', '0' );//关闭默认缩略图
+    update_option( 'medium_large_size_h', '0' );//关闭默认缩略图
+    update_option( 'medium_large_size_w', '0' );//关闭默认缩略图
+    update_option( 'medium_size_h', '0' );//关闭默认缩略图
+    update_option( 'medium_size_w', '0' );//关闭默认缩略图
+    if(get_option('permalink_structure') == ''){//如果是默认连接格式
+    update_option( 'permalink_structure', '/archives/%post_id%.html' );//固定链接格式
+    }
+    update_option( 'posts_per_page', '30' );//每页文章数目
+}
+add_action( 'after_setup_theme', 'gdk_after_init_theme' );
+
+//新标签打开顶部网站链接
+function gdk_blank_site_bar( $wp_admin_bar ) {
+    $node = $wp_admin_bar->get_node('view-site');
+    $node->meta['target'] = '_blank';
+    $wp_admin_bar->add_node($node);
+}
+add_action( 'admin_bar_menu', 'gdk_blank_site_bar', 80 );
 
 //移除 WP_Head 无关紧要的代码
 if(gdk_option('gdk_diasble_head_useless')){
@@ -98,21 +167,21 @@ remove_filter( 'the_content', 'wpautop' );
 add_filter( 'the_content', 'wpautop' , 12);
 
 // 禁止后台加载谷歌字体
-function gdk_remove_open_sans_from_wp_core() {
+function gdk_remove_open_sans() {
 	wp_deregister_style( 'open-sans' );
 	wp_register_style( 'open-sans', false );
 	wp_enqueue_style('open-sans','');
 }
-add_action( 'init', 'gdk_remove_open_sans_from_wp_core' );
+add_action( 'init', 'gdk_remove_open_sans' );
 
 // 禁止dns-prefetch
-function gdk_remove_dns_prefetch( $hints, $relation_type ) {
+function gdk_remove_dns( $hints, $relation_type ) {
 	if ( 'dns-prefetch' === $relation_type ) {
 		return array_diff( wp_dependencies_unique_hosts(), $hints );
 	}
 	return $hints;
 }
-add_filter( 'wp_resource_hints', 'gdk_remove_dns_prefetch', 10, 2 );
+add_filter( 'wp_resource_hints', 'gdk_remove_dns', 10, 2 );
 
 //强制阻止WordPress代码转义
 function gdk_esc_html($content) {
@@ -166,8 +235,6 @@ if (gdk_option('gdk_disable_xmlrpc')) {
 	add_filter('xmlrpc_enabled', '__return_false');
 	remove_action('xmlrpc_rsd_apis', 'rest_output_rsd');
 }
-
-
 //禁用日志修订功能
 if (gdk_option('gdk_disable_revision')) {
 	add_filter( 'wp_revisions_to_keep', 'gdk_revisions_to_keep', 10, 2 );
@@ -188,12 +255,28 @@ if (gdk_option('gdk_disable_trackbacks')) {
 		$methods['pingback.ping']                    = '__return_false';
 		$methods['pingback.extensions.getPingbacks'] = '__return_false';
 		return $methods;
-	}
-	//禁用 pingbacks, enclosures, trackbacks
-	remove_action('do_pings', 'do_all_pings', 10);
-	//去掉 _encloseme 和 do_ping 操作。
-	remove_action('publish_post', '_publish_post_hook', 5);
+    }
+    
+//阻止站内PingBack
+function gdk_noself_ping(&$links) {
+	$home = home_url();
+	foreach ($links as $l => $link) if (0 === strpos($link, $home)) unset($links[$l]);
 }
+add_action('pre_ping', 'gdk_noself_ping');
+//禁用 pingbacks, enclosures, trackbacks
+remove_action('do_pings', 'do_all_pings', 10);
+//去掉 _encloseme 和 do_ping 操作。
+remove_action('publish_post', '_publish_post_hook', 5);
+}
+
+
+//禁用WordPress活动
+function gdk_dweandw_remove() {
+	remove_meta_box('dashboard_primary', get_current_screen() , 'side');
+}
+add_action('wp_network_dashboard_setup', 'gdk_dweandw_remove', 20);
+add_action('wp_user_dashboard_setup', 'gdk_dweandw_remove', 20);
+add_action('wp_dashboard_setup', 'gdk_dweandw_remove', 20);
 
 //国内更新word press加速
 if (gdk_option('gdk_porxy_update') && !gdk_option('gdk_diasble_wp_update')) {
@@ -236,31 +319,24 @@ if(gdk_option('gdk_upload_rename')) {
 }
 
 // 禁用自动生成的图片尺寸
-function shapeSpace_disable_image_sizes($sizes) {
-	
-	unset($sizes['thumbnail']);    // disable thumbnail size
-	unset($sizes['medium']);       // disable medium size
-	unset($sizes['large']);        // disable large size
-	unset($sizes['medium_large']); // disable medium-large size
-	unset($sizes['1536x1536']);    // disable 2x medium-large size
-	unset($sizes['2048x2048']);    // disable 2x large size
-	
+function gdk_disable_image_sizes($sizes) {
+	unset($sizes['thumbnail']);// disable thumbnail size
+	unset($sizes['medium']);// disable medium size
+	unset($sizes['large']);// disable large size
+	unset($sizes['medium_large']);// disable medium-large size
+	unset($sizes['1536x1536']);// disable 2x medium-large size
+	unset($sizes['2048x2048']);// disable 2x large size
 	return $sizes;
-	
 }
-add_action('intermediate_image_sizes_advanced', 'shapeSpace_disable_image_sizes');
-
+add_action('intermediate_image_sizes_advanced', 'gdk_disable_image_sizes');
 // 禁用缩放尺寸
 add_filter('big_image_size_threshold', '__return_false');
-
 // 禁用其他图片尺寸
-function shapeSpace_disable_other_image_sizes() {
-	
-	remove_image_size('post-thumbnail'); // disable images added via set_post_thumbnail_size() 
-	remove_image_size('another-size');   // disable any other added image sizes
-	
+function gdk_disable_other_image_sizes() {
+	remove_image_size('post-thumbnail');// disable images added via set_post_thumbnail_size() 
+	remove_image_size('another-size');// disable any other added image sizes
 }
-add_action('init', 'shapeSpace_disable_other_image_sizes');
+add_action('init', 'gdk_disable_other_image_sizes');
 
 // 搜索结果为1时候自动跳转到对应页面
 function gdk_redirect_single_search_result() {
@@ -273,6 +349,7 @@ function gdk_redirect_single_search_result() {
 	}
 }
 add_action('template_redirect', 'gdk_redirect_single_search_result');
+
 //搜索链接伪静态
 function gdk_redirect_search() {
 	if ( is_search() && ! empty( $_GET['s'] ) ) {
@@ -281,7 +358,6 @@ function gdk_redirect_search() {
 	}
 }
 add_action('template_redirect', 'gdk_redirect_search' );
-
 
 //小工具运行短代码
 add_filter( 'widget_text', 'shortcode_unautop' );
@@ -347,7 +423,6 @@ function log_login( $username, $password ) {
             }
 
             $contact_errors = false;
-
             // get the posted data
             $name = "WordPress " . get_bloginfo( 'name' );
             $email_address = get_bloginfo('admin_email' );
@@ -370,11 +445,8 @@ function log_login( $username, $password ) {
 
             $subject = "Failed login attempt - " . $name;
             $subject = "=?utf-8?B?" . base64_encode($subject) . "?=";
-
             $to = $email_address;
-
             if ( ! empty( $to ) ) {
-
                 // send the email using wp_mail()
                 if ( ! wp_mail( $to, $subject, $message, $header ) ) {
                     $contact_errors = true;
@@ -491,7 +563,207 @@ if(gdk_option('gdk_no_category')){
 }
 
 
+//站长评论邮件添加评论链接
+function gdk_notify_postauthor($notify_message,$comment_ID) {
+    $notify = $notify_message;
+    $notify.= '<br/> 快速回复此评论: ' . admin_url("edit-comments.php").'#comment-'.$comment_ID;
+    return $notify;
+}
+add_filter('comment_notification_text', 'gdk_notify_postauthor', 10, 2);
 
 
 
+//添加后台个人信息
+function gdk_contact_fields($contactmethods) {
+    $contactmethods['qq'] = 'QQ';
+    $contactmethods['sina_weibo'] = '新浪微博';
+    $contactmethods['weixin'] = '微信';
+    unset($contactmethods['yim']);
+    unset($contactmethods['aim']);
+    unset($contactmethods['jabber']);
+    return $contactmethods;
+}
+add_filter('user_contactmethods', 'gdk_contact_fields');
 
+
+//支持中文名注册，来自肚兜
+function git_sanitize_user($username, $raw_username, $strict) {
+    $username = wp_strip_all_tags($raw_username);
+    $username = remove_accents($username);
+    $username = preg_replace('|%([a-fA-F0-9][a-fA-F0-9])|', '', $username);
+    $username = preg_replace('/&.+?;/', '', $username); // Kill entities
+    if ($strict) {
+        $username = preg_replace('|[^a-z\p{Han}0-9 _.\-@]|iu', '', $username);
+    }
+    $username = trim($username);
+    $username = preg_replace('|\s+|', ' ', $username);
+    return $username;
+}
+add_filter('sanitize_user', 'git_sanitize_user', 10, 3);
+
+//仅显示作者自己的文章
+function mypo_query_useronly($wp_query) {
+    if (strpos($_SERVER['REQUEST_URI'], '/wp-admin/edit.php') !== false) {
+        if (!current_user_can('manage_options')) {
+            $wp_query->set('author', get_current_user_id());
+        }
+    }
+}
+add_filter('parse_query', 'mypo_query_useronly');
+//在文章编辑页面的[添加媒体]只显示用户自己上传的文件
+function only_my_upload_media($wp_query_obj) {
+    global $pagenow;
+    if (!is_a(wp_get_current_user(), 'WP_User')) return;
+    if ('admin-ajax.php' != $pagenow || $_REQUEST['action'] != 'query-attachments') return;
+    if (!current_user_can('manage_options') && !current_user_can('manage_media_library')) $wp_query_obj->set('author', get_current_user_id());
+    return;
+}
+add_action('pre_get_posts', 'only_my_upload_media');
+//在[媒体库]只显示用户上传的文件
+function only_my_media_library($wp_query) {
+    if (strpos($_SERVER['REQUEST_URI'], '/wp-admin/upload.php') !== false) {
+        if (!current_user_can('manage_options') && !current_user_can('manage_media_library')) {
+            $wp_query->set('author', get_current_user_id());
+        }
+    }
+}
+add_filter('parse_query', 'only_my_media_library');
+
+// 添加一个新的列 ID
+function ssid_column($cols) {
+    $cols['ssid'] = 'ID';
+    return $cols;
+}
+add_action('manage_users_columns', 'ssid_column');
+function ssid_return_value($value, $column_name, $id) {
+    if ($column_name == 'ssid') $value = $id;
+    return $value;
+}
+add_filter('manage_users_custom_column', 'ssid_return_value', 10, 3);
+
+//用户列表显示积分
+add_filter('manage_users_columns', 'my_users_columns');
+function my_users_columns($columns) {
+    $columns['points'] = '金币';
+    return $columns;
+}
+function output_my_users_columns($value, $column_name, $user_id) {
+    if ($column_name == 'points') {
+        $jinbi = Points::get_user_total_points($user_id, POINTS_STATUS_ACCEPTED);
+        if ($jinbi != "") {
+            $ret = $jinbi;
+            return $ret;
+        } else {
+            $ret = '穷逼一个';
+            return $ret;
+        }
+    }
+    return $value;
+}
+add_action('manage_users_custom_column', 'output_my_users_columns', 10, 3);
+
+
+//后台登陆数学验证码
+if (gdk_option('gdk_login_verify')) {
+    function gdk_login_verify(){
+        $num1 = mt_rand(0, 20);
+        $num2 = mt_rand(0, 20);
+        echo "<p><label for='sum'> {$num1} + {$num2} = ?<br /><input type='text' name='sum' class='input' value='' size='25' tabindex='4'>" . "<input type='hidden' name='num1' value='{$num1}'>" . "<input type='hidden' name='num2' value='{$num2}'></label></p>";
+    }
+    add_action('login_form', 'gdk_login_verify');
+    add_action('register_form', 'gdk_login_verify');
+    function gdk_login_verify_val(){
+        $sum = $_POST['sum'];
+        switch ($sum) {
+            case $_POST['num1'] + $_POST['num2']:
+                break;
+            case null:
+                wp_die('错误: 请输入验证码&nbsp; <a href="javascript:;" onclick="javascript:history.back();">返回上页</a>');
+                break;
+            default:
+                wp_die('错误: 验证码错误,请重试&nbsp; <a href="javascript:;" onclick="javascript:history.back();">返回上页</a>');
+        }
+    }
+    add_action('login_form_login', 'gdk_login_verify_val');
+    add_action('register_post', 'gdk_login_verify_val');
+}
+
+
+//用户增加评论数量
+function gdk_users_comments($columns) {
+    $columns['comments'] = '评论';
+    return $columns;
+}
+add_filter('manage_users_columns', 'gdk_users_comments');
+function gdk_show_users_comments($value, $column_name, $user_id) {
+    if ($column_name == 'comments') {
+        $comments_counts = get_comments(array(
+            'status' => '1',
+            'user_id' => $user_id,
+            'count' => true
+        ));
+        if ($comments_counts != "") {
+            $ret = $comments_counts;
+            return $ret;
+        } else {
+            $ret = '暂未评论';
+            return $ret;
+        }
+    }
+    return $value;
+}
+add_action('manage_users_custom_column', 'gdk_show_users_comments', 10, 3);
+// 添加一个字段保存IP地址
+function gdk_log_ip($user_id) {
+    $ip = $_SERVER['REMOTE_ADDR'];
+    update_user_meta($user_id, 'signup_ip', $ip);
+}
+add_action('user_register', 'gdk_log_ip');
+// 添加“IP地址”这个栏目
+function gdk_signup_ip($column_headers) {
+    $column_headers['signup_ip'] = 'IP地址';
+    return $column_headers;
+}
+add_filter('manage_users_columns', 'gdk_signup_ip');
+function gdk_ripms_columns($value, $column_name, $user_id) {
+    if ($column_name == 'signup_ip') {
+        $ip = get_user_meta($user_id, 'signup_ip', true);
+        if ($ip != "") {
+            $ret = $ip;
+            return $ret;
+        } else {
+            $ret = '没有记录';
+            return $ret;
+        }
+    }
+    return $value;
+}
+add_action('manage_users_custom_column', 'gdk_ripms_columns', 10, 3);
+// 创建一个新字段存储用户登录时间
+function gdk_insert_last_login($login) {
+    $user = get_user_by('login', $login);
+    update_user_meta($user->ID, 'last_login', current_time('mysql'));
+}
+add_action('wp_login', 'gdk_insert_last_login');
+// 添加一个新栏目“上次登录”
+function gdk_add_last_login_column($columns) {
+    $columns['last_login'] = '上次登录';
+    unset($columns['name']);
+    return $columns;
+}
+add_filter('manage_users_columns', 'gdk_add_last_login_column');
+// 显示登录时间到新增栏目
+function gdk_add_last_login_column_value($value, $column_name, $user_id) {
+    if ($column_name == 'last_login') {
+        $login = get_user_meta($user_id, 'last_login', true);
+        if ($login != "") {
+            $ret = $login;
+            return $ret;
+        } else {
+            $ret = '暂未登录';
+            return $ret;
+        }
+    }
+    return $value;
+}
+add_action('manage_users_custom_column', 'gdk_add_last_login_column_value', 10, 3);

@@ -6,7 +6,7 @@ Description: 为WordPress主题开发提供底层支持
 Version: 0.0.1
 Author: 云落
 Author URI: https://gitcafe.net/
-Compatible:5.3
+Compatible:5.3.2
 */
 
 if ( ! defined( 'ABSPATH' ) ) { exit; }

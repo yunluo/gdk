@@ -126,8 +126,16 @@ function gdk_disable_login_errors( $error ) {
 add_filter( 'login_errors', 'gdk_disable_login_errors' );
 
 
-//禁用找回密码
-add_filter('allow_password_reset', '__return_false' );
+//网站维护代码
+function gdk_maintenance_mode() {
+	if (!current_user_can('edit_themes') || !is_user_logged_in()) {
+		wp_die('网站维护中ing,   没事儿您就别来啦……', 'Maintenance - Could you please not disturb me ', array('response' => '503'));
+	}
+}
+
+//add_action('get_header', 'gdk_maintenance_mode');
+
+
 
 //拦截无来路的评论
 add_action('check_comment_flood', 'gdk_comment_check_referrer');
@@ -148,24 +156,25 @@ function gdk_comment_lang($incoming_comment) {
 	$pattern = '/[一-龥]/u';
 	// 禁止全英文评论
 	if (!preg_match($pattern, $incoming_comment['comment_content'])) {
-		wp_die("您的评论中必须包含汉字!");
+		gdk_die("您的评论中必须包含汉字!");
 	}
 	$pattern = '/[あ-んア-ン]/u';
 	// 禁止日文评论
 	if (preg_match($pattern, $incoming_comment['comment_content'])) {
-		wp_die("评论禁止包含日文!");
+		gdk_die("评论禁止包含日文!");
 	}
 	return($incoming_comment);
 }
 add_filter('preprocess_comment', 'gdk_comment_lang');
 
+
 //禁止使用admin登录
 add_filter( 'wp_authenticate',  function ($user){
-    if($user == 'admin') exit;
+    if($user == 'admin') wp_die('Access Denied!');
 });
 add_filter('sanitize_user', function ($username, $raw_username, $strict){
     if($raw_username == 'admin' || $username == 'admin'){
-        exit;
+        wp_die('Access Denied!');
     }
     return $username;
 }, 10, 3);
