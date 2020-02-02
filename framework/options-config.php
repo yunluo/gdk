@@ -51,6 +51,23 @@ $gdk_options = [
 			'std'   => '1'
 		],
 		[
+			'name'  => '前台禁用dashicons字体和编辑器资源',
+			'desc'  => '一般前台不需要加载dashicons字体，默认开启',
+			'id'    => 'gdk_disable_dashicons',
+			'type'  => 'radio',
+			'options' => [
+				'0' => '禁用',
+				'1' => '开启'
+			],
+			'std'   => '1'
+		],
+		[
+			'name'  => '中英文自动空格',
+			'desc'  => '启用 【开启后，中文和英文之前将自动增加一个空格,比如:WordPress插件=>WordPress 插件】',
+			'id'    => 'gdk_auto_space',
+			'type'  => 'checkbox'
+			],
+		[
 			'name'  => '禁用XML-RPC功能',
 			'desc'  => '该功能有安全风险，如果不使用WordPress的手机客户端或者第三方编辑器软件，那么建议开启',
 			'id'    => 'gdk_disable_xmlrpc',
@@ -236,11 +253,10 @@ $gdk_options = [
 			'std'   => '0'
 		],
 		[
-			'name'  => '主动推送接口地址，填写本项即开启推送',
-			'desc'  => '在百度站长平台获取主动推送接口地址，比如：http://data.zz.baidu.com/urls?site=域名&token=一组字符, <a class="key_word" rel="nofollow" href="http://zhanzhang.baidu.com/linksubmit/index" target="_blank">主动推送接口地址</a>',
-			'id'    => 'gdk_baidu_api',
-			'type'  => 'text',
-			'hide'  => '1'
+			'name'  => '主动推送接口token',
+			'desc'  => '在百度站长平台获取主动推送token，比如：http://data.zz.baidu.com/urls?site=xxoo&token=<span class="key_word">一组字符</span>, 需要填写的是红色部分,<a class="key_word" rel="nofollow" href="http://zhanzhang.baidu.com/linksubmit/index" target="_blank">主动推送接口地址</a>',
+			'id'    => 'gdk_baidu_token',
+			'type'  => 'text'
 		]
 	],
 	'安全设置' => [
@@ -297,13 +313,19 @@ $gdk_options = [
 			'std'   => 60
 		],
 		[
+			'name'  => '登陆数学验证',
+			'desc'  => '启用 【开启后，将会登陆页面增加数学验证码】',
+			'id'    => 'gdk_login_verify',
+			'type'  => 'checkbox'
+		],
+		[
 			'title' => '垃圾评论屏蔽',
 			'type'  => 'title'
 		],
 		[
 			'name'  => '垃圾评论拦截',
-			'desc'  => '该功能会默认屏蔽垃圾评论,支持纯外语拦截,日语拦截[外贸站慎用],',
-			'id'    => 'gdk_lock_login',
+			'desc'  => '该功能会默认屏蔽垃圾评论,支持纯外语拦截,日语拦截[外贸站慎用],关键词黑名单拦截,请务必选择对应主题的评论方式,关键词黑名单如图设置<a class="key_word" target="_blank" href="https://ae03.alicdn.com/kf/U146356e193b14a6da3f7cbb9cf507ea3D.png">点击查看如图设置</a>',
+			'id'    => 'gdk_fuck_spam',
 			'type'  => 'radio',
 			'options' => [
 				'1' => '开启',
@@ -312,31 +334,52 @@ $gdk_options = [
 			'std'   => '1'
 		],
 		[
-			'name'  => '过滤外语评论',
-			'desc'  => '开启 【启用后，将屏蔽所有含有日文以及英语的评论，外贸站慎用】',
-			'id'    => 'git_spam_lang',
-			'type'  => 'checkbox'
-		],
-		[
-			'name'  => '关键词，IP，邮箱屏蔽',
-			'desc'  => '开启 【启用后，在WordPress-设置-讨论-黑名单中添加想要屏蔽的关键词，邮箱，网址，IP地址，每行一个】<a class="key_word" target="_blank" href="https://ae03.alicdn.com/kf/U146356e193b14a6da3f7cbb9cf507ea3D.png">点击查看如图设置</a>',
-			'id'    => 'git_spam_keywords',
-			'type'  => 'checkbox'
-		],
-		[
-			'name'  => '屏蔽含有链接的评论',
-			'desc'  => '开启 【启用后，屏蔽内容或者评论昵称含有链接的评论，如果您的评论需要输入链接或者图片的话，请慎选！！！】',
-			'id'    => 'git_spam_url',
-			'type'  => 'checkbox'
-		],
-		[
-			'name'  => '屏蔽长链接评论',
-			'desc'  => '开启 【启用后，屏蔽含有过长网址(超过50个字符)的评论，当然如果你已经选择了上面的选项的话，就不用选择了】',
-			'id'    => 'git_spam_long',
-			'type'  => 'checkbox'
+			'name'  => '我的网站评论方式',
+			'desc'  => '拦截垃圾评论需要区分是否是Ajax评论,Ajax评论就是<span class="key_word">无刷新直接显示评论内容的</span>,传统有刷新评论是需要浏览器刷新之后才能看到评论内容的,目前国内很多基本都是Ajax评论,所以默认为Ajax评论',
+			'id'    => 'gdk_ajax',
+			'type'  => 'radio',
+			'options' => [
+				'1' => '我的是Ajax无刷新评论',
+				'0' => '我的是传统有刷新评论'
+			],
+			'std'   => '1'
 		]
 	],
 	'高级设置' => [
+			[
+				'name'  => '图片懒加载',
+				'desc'  => '该功能会降低因为图片而导致的打开速度慢问题，建议开启',
+				'id'    => 'gdk_lazyload',
+				'type'  => 'radio',
+				'options' => [
+					'0' => '禁用',
+					'1' => '开启'
+				],
+				'std'   => '1'
+			],
+			[
+				'name'  => 'jQuery加载位置设置',
+				'desc'  => '选择一个适合自己网站的jQuery加载位置,默认是底部加载',
+				'id'    => 'gdk_jq',
+				'type'  => 'radio',
+				'options' => [
+					'1' => '底部加载,速度快',
+					'0' => '头部加载,兼容好'
+				],
+				'std'   => '1'
+			],
+			[
+				'name'  => 'HTML代码压缩',
+				'desc'  => '启用 【开启后，将压缩网页HTML代码，可读性会降低，但是性能略有提升】',
+				'id'    => 'gdk_compress',
+				'type'  => 'checkbox'
+			],
+			[
+			'name'  => '侧边栏缓存',
+			'desc'  => '启用 【开启后，将会自动缓存小工具，如果想禁止缓存某个小工具，可以去小工具页面排除】',
+			'id'    => 'git_sidebar_cache',
+			'type'  => 'checkbox'
+			],
 			[
 				'title' => '统一支付设置',
 				'type'  => 'title'
@@ -373,41 +416,6 @@ $gdk_options = [
 				'type'  => 'text',
 				'std'   => 444444444
 			],
-			[
-				'name'  => 'jQuery加载位置设置',
-				'desc'  => '选择一个适合自己网站的jQuery加载位置,默认是底部加载',
-				'id'    => 'gdk_jq',
-				'type'  => 'radio',
-				'options' => [
-					'1' => '底部加载,速度快',
-					'0' => '头部加载,兼容好'
-				],
-				'std'   => '1'
-			],
-			[
-				'name'  => 'HTML代码压缩',
-				'desc'  => '启用 【开启后，将压缩网页HTML代码，可读性会降低，但是性能略有提升】',
-				'id'    => 'gdk_compress',
-				'type'  => 'checkbox'
-			],
-			[
-				'name'  => '图片懒加载',
-				'desc'  => '启用 【开启后，网站图片将进行懒加载】',
-				'id'    => 'gdk_lazyload',
-				'type'  => 'checkbox'
-			],
-			[
-			'name'  => '侧边栏缓存',
-			'desc'  => '启用 【开启后，将会自动缓存小工具，如果想禁止缓存某个小工具，可以去小工具页面排除】',
-			'id'    => 'git_sidebar_cache',
-			'type'  => 'checkbox'
-		],
-		[
-			'name'  => '开启前台弹窗登录',
-			'desc'  => '如果启用UM插件,最好开启',
-			'id'    => 'git_fancylogin',
-			'type'  => 'checkbox'
-		],
 		[
 			'title' => 'CDN镜像加速',
 			'type'  => 'title'

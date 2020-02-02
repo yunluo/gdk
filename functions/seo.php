@@ -210,59 +210,61 @@ if(gdk_option('gdk_tag_link')){
 }
 
 // 自动添加nofloow
-if(gdk_option('gdk_nofollow')){
-    add_filter('the_content', 'gdk_nofollow');
-    add_filter('the_excerpt', 'gdk_nofollow');
-        
-    function gdk_nofollow($content)
-    {
-        return preg_replace_callback('/<a[^>]+/', 'gdk_nofollow_callback', $content);
-    }
-        
-    function gdk_nofollow_callback($matches)
-    {
-        $link = $matches[0];
-        $site_link = get_bloginfo('url');
-        
-        if (strpos($link, 'rel') === false) {
-            $link = preg_replace("%(href=\S(?!$site_link))%i", 'rel="nofollow" $1', $link);
-        } elseif (preg_match("%href=\S(?!$site_link)%i", $link)) {
-            $link = preg_replace('/rel=\S(?!nofollow)\S*/i', 'rel="nofollow"', $link);
+if(gdk_option('gdk_nofollow')) {
+	add_filter('the_content', 'gdk_nofollow');
+	add_filter('the_excerpt', 'gdk_nofollow');
+	function gdk_nofollow($content) {
+		return preg_replace_callback('/<a[^>]+/', 'gdk_nofollow_callback', $content);
+	}
+	function gdk_nofollow_callback($matches) {
+		$link = $matches[0];
+		$site_link = get_bloginfo('url');
+		if (strpos($link, 'rel') === false) {
+			$link = preg_replace("%(href=\S(?!$site_link))%i", 'rel="nofollow" $1', $link);
+		} elseif (preg_match("%href=\S(?!$site_link)%i", $link)) {
+			$link = preg_replace('/rel=\S(?!nofollow)\S*/i', 'rel="nofollow"', $link);
+		}
+		return $link;
+	}
+}
+
+
+//百度主动推送
+if (gdk_option('gdk_baidu_push')) {
+    function gdk_baidu_submit($post_ID) {
+        global $post;
+        $bd_submit_site = get_bloginfo('url');
+        $bd_submit_token = gdk_option('gdk_baidu_token');
+        if (empty($post_ID) || empty($bd_submit_site) || empty($bd_submit_token))  return;
+        if (get_post_meta($post_ID, 'gdk_baidu_submit', true) == 1) return;
+        $url = get_permalink($post_ID);
+        $api = $api = 'http://data.zz.baidu.com/urls?site='.$bd_submit_site.'&token='.$bd_submit_token;
+        $status = $post->post_status;
+        if ($status != '' && $status != 'publish') {
+            $request = new WP_Http;
+            $result = $request->request($api, array(
+                'method' => 'POST',
+                'body' => $url,
+                'headers' => 'Content-Type: text/plain'
+            ));
+            if ( is_array( $result ) && !is_wp_error($result) && $result['response']['code'] == '200' ) {
+                error_log('baidu_submit_result：'.$result['body']);
+                $result = json_decode($result['body'], true);
+            }
+            if (array_key_exists('success', $result)) {
+                add_post_meta($post_ID, 'gdk_baidu_submit', 1, true);
+            }
         }
-        return $link;
+
     }
+    add_action('publish_post', 'gdk_baidu_submit', 0);
 }
 
 
 
 
-    add_action('post_updated', 'nc_baidu_submit');
-    function nc_baidu_submit($post_ID)
-    {
-        global $post;
-        $bd_submit_site = get_bloginfo('url');
-        $bd_submit_token = gdk_option('gdk_baidu_api');
-        if (empty($post_ID) || empty($bd_submit_site) || empty($bd_submit_token)) {
-            return;
-        }
-        $api = 'http://data.zz.baidu.com/urls?site='.$bd_submit_site.'&token='.$bd_submit_token;
-        $status = $post->post_status;
-        if ($status != '' && $status != 'publish') {
-            $url = get_permalink($post_ID);
-            $ch = curl_init();
-            $options =  array(
-                CURLOPT_URL => $api,
-                CURLOPT_POST => true,
-                CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_POSTFIELDS => $url,
-                CURLOPT_HTTPHEADER => array('Content-Type: text/plain')
-            );
-            curl_setopt_array($ch, $options);
-        }
-    }
-
-    function nc_baidu_auto_code(){
-        echo '<script>
+function gdk_baidu_auto_push() {
+	echo '<script>
         (function(){
             var bp = document.createElement(\'script\');
             var curProtocol = window.location.protocol.split(\':\')[0];
@@ -276,9 +278,8 @@ if(gdk_option('gdk_nofollow')){
             s.parentNode.insertBefore(bp, s);
         })();
             </script>';
-    }
-
-add_action('wp_footer', 'nc_baidu_auto_code', 500);
+}
+add_action('wp_footer', 'gdk_baidu_auto_push', 500);
 
 
 if(gdk_option('gdk_seo_img')) {

@@ -220,7 +220,7 @@ function php_include($attr) {
 add_shortcode('phpcode', 'php_include');
 
 //给文章加内链短代码
-function git_insert_posts($atts, $content = null) {
+function gdk_insert_posts($atts, $content = null) {
     extract(shortcode_atts(array(
         'ids' => ''
     ) , $atts));
@@ -243,7 +243,17 @@ function git_insert_posts($atts, $content = null) {
     wp_reset_postdata();
     return $content;
 }
-add_shortcode('neilian', 'git_insert_posts');
+add_shortcode('neilian', 'gdk_insert_posts');
+
+
+//给文章加内链短代码
+function gdk_insert_temp($atts, $content = null) {
+    extract(shortcode_atts(array( 'id' => '' ) , $atts));
+    $data = get_post($id);
+    $content = $data->post_content;
+    return $content;
+}
+add_shortcode('temp', 'gdk_insert_temp');
 
 
 //快速插入列表

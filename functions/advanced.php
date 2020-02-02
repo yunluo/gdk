@@ -1,11 +1,11 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) { exit; }
+
 
 if (gdk_option('gdk_cdn'))                  add_action('wp_loaded', 'gdk_cdn_start');//七牛CDN
 if (gdk_option('gdk_link_go'))     add_filter('the_content','gdk_link_go',999);// 外链GO跳转
 if (gdk_option('gdk_smtp'))         add_action('phpmailer_init', 'gdk_smtp');//SMTP
 if (gdk_option('gdk_cdn_water'))     add_filter('the_content', 'gdk_cdn_water');//CDN水印
-
-
 
 //文章首尾添加自定义内容
 function gdk_add_content($content) {
@@ -34,14 +34,17 @@ function gdk_switch_get_avatar( $avatar ) {
 add_filter('get_avatar', 'gdk_switch_get_avatar');
 
 //懒加载
-function lazyload($content) {
+if(gdk_option('gdk_lazyload')){
+function gdk_lazyload($content) {
 	if (!is_feed() || !is_robots()) {
 		$content = preg_replace('/<img(.+)src=[\'"]([^\'"]+)[\'"](.*)>/i', "<img\$1data-original=\"\$2\" \$3>\n<noscript>\$0</noscript>", $content);
 	}
 	return $content;
 }
-add_filter('the_content', 'lazyload');
+add_filter('the_content', 'gdk_lazyload');
+}
 //fancybox图片灯箱效果
+if(gdk_option('gdk_lazyload')){
 function gdk_fancybox($content) {
 	$pattern = "/<a(.*?)href=('|\")([^>]*).(bmp|gif|jpeg|jpg|png|swf)('|\")(.*?)>(.*?)<\\/a>/i";
 	$replacement = '<a$1href=$2$3.$4$5 data-fancybox="gallery" rel="box" class="fancybox"$6>$7</a>';
@@ -49,6 +52,7 @@ function gdk_fancybox($content) {
 	return $content;
 }
 add_filter('the_content', 'gdk_fancybox');
+}
 
 //GO跳转
 function gdk_link_go($content) {
@@ -128,13 +132,14 @@ if (is_admin() && gdk_option('gdk_cdn')) {
 
 
 //压缩html代码
-if (git_get_option('git_compress')) {
-    function wp_compress_html(){
-        function wp_compress_html_main($buffer){
+if (gdk_option('gdk_compress')) {
+    function gdk_compress_html(){
+        function gdk_compress_html_callback($buffer){
             if ( substr( ltrim( $buffer ), 0, 5) == '<?xml' ) return $buffer;
             $initial = strlen($buffer);
             $buffer = explode("<!--wp-compress-html-->", $buffer);
-            $count = count($buffer);
+			$count = count($buffer);
+			$i = '';
             for ($i = 0; $i <= $count; $i++) {
                 if (stristr($buffer[$i], '<!--wp-compress-html no compression-->')) {
                     $buffer[$i] = str_replace("<!--wp-compress-html no compression-->", " ", $buffer[$i]);
@@ -159,10 +164,11 @@ if (git_get_option('git_compress')) {
             $buffer_out .= "\n<!--压缩前的大小: {$initial} bytes; 压缩后的大小: {$final} bytes; 节约：{$savings}% -->";
             return $buffer_out;
         }
-            ob_start("wp_compress_html_main");
+            ob_start("gdk_compress_html_callback");
     }
-    add_action('get_header', 'wp_compress_html');
-    function git_unCompress($content)
+	add_action('get_header', 'gdk_compress_html');
+	
+    function gdk_unCompress($content)
     {
         if (preg_match_all('/(crayon-|<?xml|script|textarea|<\\/pre>)/i', $content, $matches)) {
             $content = '<!--wp-compress-html--><!--wp-compress-html no compression-->' . $content;
@@ -170,5 +176,5 @@ if (git_get_option('git_compress')) {
         }
         return $content;
     }
-    add_filter('the_content', 'git_unCompress');
+    add_filter('the_content', 'gdk_unCompress');
 }

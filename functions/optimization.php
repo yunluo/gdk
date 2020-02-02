@@ -139,6 +139,22 @@ if(gdk_option('gdk_diasble_head_useless')){
 	remove_action( 'wp_head', 'wp_oembed_add_host_js' );
 }
 
+//去掉后台帮助
+add_action('in_admin_header', function(){
+	global $current_screen;
+	$current_screen->remove_help_tabs();
+});
+//清理菜单类
+add_filter( 'nav_menu_css_class', function ( $var ) {
+	return is_array( $var ) ? array_intersect( $var, [ 'current-menu-item', 'menu-item', 'menu-item-has-children' ] ) : '';
+}
+, 100, 1 );
+
+//移除 WordPress 标记
+add_filter( 'the_generator', function () { return '';});
+
+//移除标题中的空字符
+add_filter( 'wp_title', function ( $title ) { return trim( $title );});
 
 /**  开始关闭WordPress更新  **/
 if (gdk_option('gdk_diasble_wp_update')) {
@@ -161,6 +177,16 @@ if (gdk_option('gdk_diasble_wp_update')) {
     add_filter( 'pre_site_transient_update_plugins', function (){return null;} );
     add_filter( 'pre_site_transient_update_themes', function (){return null;} );
 }
+
+add_action( 'wp_before_admin_bar_render', function () {
+	global $wp_admin_bar;
+	$wp_admin_bar->remove_menu( 'wp-logo' );
+	$wp_admin_bar->remove_menu( 'about' );
+	$wp_admin_bar->remove_menu( 'wporg' );
+	$wp_admin_bar->remove_menu( 'documentation' );
+	$wp_admin_bar->remove_menu( 'support-forums' );
+	$wp_admin_bar->remove_menu( 'feedback' );
+} );
 
 //禁用自带p标签的
 remove_filter( 'the_content', 'wpautop' );
@@ -197,6 +223,7 @@ function gdk_esc_callback($matches) {
 }
 add_filter('the_content', 'gdk_esc_html', 2);
 add_filter('comment_text', 'gdk_esc_html', 2);
+
 //强制兼容<pre>
 function gdk_prettify_replace($text) {
     $replace = array(
@@ -206,8 +233,6 @@ function gdk_prettify_replace($text) {
     return $text;
 }
 add_filter('the_content', 'gdk_prettify_replace');
-
-
 
 //禁用emoji功能
 if (gdk_option('gdk_disable_emojis')) {
@@ -245,6 +270,26 @@ if (gdk_option('gdk_disable_revision')) {
 	function gdk_disable_autosave() {
 		wp_deregister_script('autosave');
 	}
+}
+
+//文章最多保存 5 个版本,默认的
+if ( ! defined( 'WP_POST_REVISIONS' ) ) {
+	define( 'WP_POST_REVISIONS', 5 );
+}
+
+//前台禁用dashicon和editor
+if (gdk_option('gdk_disable_dashicons')) {
+	add_action( 'init', function () {
+		if ( ! is_user_logged_in() ) {
+			wp_deregister_style( 'dashicons' );
+			wp_register_style( 'dashicons', false );
+			wp_enqueue_style( 'dashicons', '' );
+			wp_deregister_style( 'editor-buttons' );
+			wp_register_style( 'editor-buttons', false );
+			wp_enqueue_style( 'editor-buttons', '' );
+		}
+	}
+	);
 }
 
 //彻底关闭 pingback
@@ -300,7 +345,6 @@ function gdk_page_permalink() {
 	}
 }
 add_action('init', 'gdk_page_permalink', -1);
-
 
 //文件自动重命名
 if(gdk_option('gdk_upload_rename')) {
@@ -398,9 +442,6 @@ function deactivate_rest_api() {
 remove_action( 'rest_api_init', 'wp_oembed_register_route' );
 
 
-
-
-
 //记录登陆失败发邮件
 add_action( 'wp_authenticate', 'log_login', 10, 2 );
 function log_login( $username, $password ) {
@@ -433,8 +474,8 @@ function log_login( $username, $password ) {
             $header .= "From: $name <$email_address>\n";
 
             $message = "Failed login attempt on <a href='" . get_site_url() . "/" . $ref . "' target='_blank'>" . $name . "</a><br>" . PHP_EOL;
-            $message .= 'IP: <a href="http://whatismyipaddress.com/ip/' . get_ip_address() . '" target="_blank">' . get_ip_address() . "</a><br>" . PHP_EOL;
-            $message .= 'WhoIs: <a href="https://who.is/whois-ip/ip-address/' . get_ip_address() . '" target="_blank">' . get_ip_address() . "</a><br>" . PHP_EOL;
+            $message .= 'IP: <a href="http://whatismyipaddress.com/ip/' . gdk_get_ip() . '" target="_blank">' . gdk_get_ip() . "</a><br>" . PHP_EOL;
+            $message .= 'WhoIs: <a href="https://who.is/whois-ip/ip-address/' . gdk_get_ip() . '" target="_blank">' . gdk_get_ip() . "</a><br>" . PHP_EOL;
             $message .= "Browser: " . $agent . "<br>" . PHP_EOL;
             $message .= "OS: " . $ua['platform'] . "<br>" . PHP_EOL;
             $message .= "Date: " . date('Y-m-d H:i:s') . "<br>" . PHP_EOL;
@@ -601,34 +642,6 @@ function git_sanitize_user($username, $raw_username, $strict) {
 }
 add_filter('sanitize_user', 'git_sanitize_user', 10, 3);
 
-//仅显示作者自己的文章
-function mypo_query_useronly($wp_query) {
-    if (strpos($_SERVER['REQUEST_URI'], '/wp-admin/edit.php') !== false) {
-        if (!current_user_can('manage_options')) {
-            $wp_query->set('author', get_current_user_id());
-        }
-    }
-}
-add_filter('parse_query', 'mypo_query_useronly');
-//在文章编辑页面的[添加媒体]只显示用户自己上传的文件
-function only_my_upload_media($wp_query_obj) {
-    global $pagenow;
-    if (!is_a(wp_get_current_user(), 'WP_User')) return;
-    if ('admin-ajax.php' != $pagenow || $_REQUEST['action'] != 'query-attachments') return;
-    if (!current_user_can('manage_options') && !current_user_can('manage_media_library')) $wp_query_obj->set('author', get_current_user_id());
-    return;
-}
-add_action('pre_get_posts', 'only_my_upload_media');
-//在[媒体库]只显示用户上传的文件
-function only_my_media_library($wp_query) {
-    if (strpos($_SERVER['REQUEST_URI'], '/wp-admin/upload.php') !== false) {
-        if (!current_user_can('manage_options') && !current_user_can('manage_media_library')) {
-            $wp_query->set('author', get_current_user_id());
-        }
-    }
-}
-add_filter('parse_query', 'only_my_media_library');
-
 // 添加一个新的列 ID
 function ssid_column($cols) {
     $cols['ssid'] = 'ID';
@@ -663,30 +676,6 @@ function output_my_users_columns($value, $column_name, $user_id) {
 add_action('manage_users_custom_column', 'output_my_users_columns', 10, 3);
 
 
-//后台登陆数学验证码
-if (gdk_option('gdk_login_verify')) {
-    function gdk_login_verify(){
-        $num1 = mt_rand(0, 20);
-        $num2 = mt_rand(0, 20);
-        echo "<p><label for='sum'> {$num1} + {$num2} = ?<br /><input type='text' name='sum' class='input' value='' size='25' tabindex='4'>" . "<input type='hidden' name='num1' value='{$num1}'>" . "<input type='hidden' name='num2' value='{$num2}'></label></p>";
-    }
-    add_action('login_form', 'gdk_login_verify');
-    add_action('register_form', 'gdk_login_verify');
-    function gdk_login_verify_val(){
-        $sum = $_POST['sum'];
-        switch ($sum) {
-            case $_POST['num1'] + $_POST['num2']:
-                break;
-            case null:
-                wp_die('错误: 请输入验证码&nbsp; <a href="javascript:;" onclick="javascript:history.back();">返回上页</a>');
-                break;
-            default:
-                wp_die('错误: 验证码错误,请重试&nbsp; <a href="javascript:;" onclick="javascript:history.back();">返回上页</a>');
-        }
-    }
-    add_action('login_form_login', 'gdk_login_verify_val');
-    add_action('register_post', 'gdk_login_verify_val');
-}
 
 
 //用户增加评论数量
@@ -715,7 +704,7 @@ function gdk_show_users_comments($value, $column_name, $user_id) {
 add_action('manage_users_custom_column', 'gdk_show_users_comments', 10, 3);
 // 添加一个字段保存IP地址
 function gdk_log_ip($user_id) {
-    $ip = $_SERVER['REMOTE_ADDR'];
+    $ip = gdk_get_ip();
     update_user_meta($user_id, 'signup_ip', $ip);
 }
 add_action('user_register', 'gdk_log_ip');

@@ -346,45 +346,6 @@ function gdk_is_mobile() {
     }
 }
 
-if (function_exists('curl_init')) {
-    function gdk_curl($url, $postfields = '', $headers = '', $timeout = 20, $file = 0) {
-        $ch = curl_init();
-        $options = array(
-            CURLOPT_URL => $url,
-            CURLOPT_HEADER => false,
-            CURLOPT_NOBODY => false,
-            CURLOPT_POST => true,
-            CURLOPT_MAXREDIRS => 20,
-            CURLOPT_USERAGENT => 'User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36',
-            CURLOPT_TIMEOUT => $timeout,
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_SSL_VERIFYHOST => 0,
-            CURLOPT_SSL_VERIFYPEER => 0
-        );
-        if (is_array($postfields) && $file == 0) {
-            $options[CURLOPT_POSTFIELDS] = http_build_query($postfields);
-        } else {
-            $options[CURLOPT_POSTFIELDS] = $postfields;
-        }
-        curl_setopt_array($ch, $options);
-        if (is_array($headers)) {
-            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-        }
-        $result = curl_exec($ch);
-        $code = curl_errno($ch);
-        $msg = curl_error($ch);
-        $info = curl_getinfo($ch);
-        curl_close($ch);
-        return array(
-            'data' => $result,
-            'code' => $code,
-            'msg' => $msg,
-            'info' => $info
-        );
-    }
-}
-
 //判断是否是登陆页面
 function is_login() {
     return in_array($GLOBALS['pagenow'], array('wp-login.php', 'wp-register.php'));
@@ -467,9 +428,9 @@ function getBrowser() {
 }
 
 //获取IP地址
-function get_ip_address( ) {
+function gdk_get_ip( ) {
 	// check for shared internet/ISP IP
-	if ( ! empty( $_SERVER['HTTP_CLIENT_IP'] ) && validate_ip( $_SERVER['HTTP_CLIENT_IP'] ) ) {
+	if ( ! empty( $_SERVER['HTTP_CLIENT_IP'] ) && gdk_validate_ip( $_SERVER['HTTP_CLIENT_IP'] ) ) {
 		return $_SERVER['HTTP_CLIENT_IP'];
 	}
 	// check for IPs passing through proxies
@@ -478,24 +439,24 @@ function get_ip_address( ) {
 		if ( in_string( $_SERVER['HTTP_X_FORWARDED_FOR'], ',')) {
 			$iplist = explode( ',', $_SERVER['HTTP_X_FORWARDED_FOR']);
 			foreach ( $iplist as $ip) {
-				if ( validate_ip( $ip ) )
-				                    return $ip;
+				if ( gdk_validate_ip( $ip ) )
+				    return $ip;
 			}
 		} else {
-			if ( validate_ip( $_SERVER['HTTP_X_FORWARDED_FOR'] ) )
-			                return $_SERVER['HTTP_X_FORWARDED_FOR'];
+			if ( gdk_validate_ip( $_SERVER['HTTP_X_FORWARDED_FOR'] ) )
+			        return $_SERVER['HTTP_X_FORWARDED_FOR'];
 		}
 	}
-	if ( ! empty( $_SERVER['HTTP_X_FORWARDED']) && validate_ip( $_SERVER['HTTP_X_FORWARDED'] ) ) {
+	if ( ! empty( $_SERVER['HTTP_X_FORWARDED']) && gdk_validate_ip( $_SERVER['HTTP_X_FORWARDED'] ) ) {
 		return $_SERVER['HTTP_X_FORWARDED'];
 	}
-	if ( ! empty( $_SERVER['HTTP_X_CLUSTER_CLIENT_IP']) && validate_ip( $_SERVER['HTTP_X_CLUSTER_CLIENT_IP'] ) ) {
+	if ( ! empty( $_SERVER['HTTP_X_CLUSTER_CLIENT_IP']) && gdk_validate_ip( $_SERVER['HTTP_X_CLUSTER_CLIENT_IP'] ) ) {
 		return $_SERVER['HTTP_X_CLUSTER_CLIENT_IP'];
 	}
-	if ( ! empty( $_SERVER['HTTP_FORWARDED_FOR']) && validate_ip( $_SERVER['HTTP_FORWARDED_FOR'] ) ) {
+	if ( ! empty( $_SERVER['HTTP_FORWARDED_FOR']) && gdk_validate_ip( $_SERVER['HTTP_FORWARDED_FOR'] ) ) {
 		return $_SERVER['HTTP_FORWARDED_FOR'];
 	}
-	if ( ! empty( $_SERVER['HTTP_FORWARDED']) && validate_ip( $_SERVER['HTTP_FORWARDED'] ) ) {
+	if ( ! empty( $_SERVER['HTTP_FORWARDED']) && gdk_validate_ip( $_SERVER['HTTP_FORWARDED'] ) ) {
 		return $_SERVER['HTTP_FORWARDED'];
 	}
 	// return unreliable ip since all else failed
@@ -506,7 +467,7 @@ function get_ip_address( ) {
  * Ensures an ip address is both a valid IP and does not fall within
  * a private network range.
  */
-function validate_ip( $ip) {
+function gdk_validate_ip( $ip) {
 	if ( strtolower( $ip) === 'unknown') {
 		return false;
 	}
@@ -533,12 +494,122 @@ function validate_ip( $ip) {
 
 //Ajax报错方式
 function gdk_die($ErrMsg) {
-    header('HTTP/1.1 405 Method Not Allowed');
-    header('Content-Type: text/plain;charset=UTF-8');
-    echo $ErrMsg;
-    exit;
+    if(gdk_option('gdk_ajax') || GDK_IAM_AJAX ){//define( 'GDK_IAM_AJAX', true );  由主题插入functiom 自己声明是Ajax,防止用户搞错
+        header('HTTP/1.1 405 Method Not Allowed');
+        header('Content-Type: text/plain;charset=UTF-8');
+        exit($ErrMsg);
+    }else{
+        wp_die($ErrMsg);
+    }
 }
 
+//面包屑导航
+function gdk_breadcrumbs($delimiter = '»',$hometitle = 'Home') {
+    $before = '<span class="current">';
+    // 在当前链接前插入
+    $after = '</span>';
+    // 在当前链接后插入
+    if ( !is_home() && !is_front_page() || is_paged() ) {
+        echo '<div itemscope itemtype="http://schema.org/WebPage" id="crumbs">'.__( 'You are here:' , 'cmp' );
+        global $post;
+        $homeLink = home_url();
+        echo ' <a itemprop="breadcrumb" href="' . $homeLink . '">' . $hometitle . '</a> ' . $delimiter . ' ';
+        if ( is_category() ) {
+            // 分类 存档
+            global $wp_query;
+            $cat_obj = $wp_query->get_queried_object();
+            $thisCat = $cat_obj->term_id;
+            $thisCat = get_category($thisCat);
+            $parentCat = get_category($thisCat->parent);
+            if ($thisCat->parent != 0) {
+                $cat_code = get_category_parents($parentCat, TRUE, ' ' . $delimiter . ' ');
+                echo $cat_code = str_replace ('<a','<a itemprop="breadcrumb"', $cat_code );
+            }
+            echo $before . '' . single_cat_title('', false) . '' . $after;
+        } elseif ( is_day() ) {
+            // 天 存档
+            echo '<a itemprop="breadcrumb" href="' . get_year_link(get_the_time('Y')) . '">' . get_the_time('Y') . '</a> ' . $delimiter . ' ';
+            echo '<a itemprop="breadcrumb"  href="' . get_month_link(get_the_time('Y'),get_the_time('m')) . '">' . get_the_time('F') . '</a> ' . $delimiter . ' ';
+            echo $before . get_the_time('d') . $after;
+        } elseif ( is_month() ) {
+            // 月 存档
+            echo '<a itemprop="breadcrumb" href="' . get_year_link(get_the_time('Y')) . '">' . get_the_time('Y') . '</a> ' . $delimiter . ' ';
+            echo $before . get_the_time('F') . $after;
+        } elseif ( is_year() ) {
+            // 年 存档
+            echo $before . get_the_time('Y') . $after;
+        } elseif ( is_single() && !is_attachment() ) {
+            // 文章
+            if ( get_post_type() != 'post' ) {
+                // 自定义文章类型
+                $post_type = get_post_type_object(get_post_type());
+                $slug = $post_type->rewrite;
+                echo '<a itemprop="breadcrumb" href="' . $homeLink . '/' . $slug['slug'] . '/">' . $post_type->labels->singular_name . '</a> ' . $delimiter . ' ';
+                echo $before . get_the_title() . $after;
+            } else {
+                // 文章 post
+                $cat = get_the_category();
+                $cat = $cat[0];
+                $cat_code = get_category_parents($cat, TRUE, ' ' . $delimiter . ' ');
+                echo $cat_code = str_replace ('<a','<a itemprop="breadcrumb"', $cat_code );
+                echo $before . get_the_title() . $after;
+            }
+        } elseif ( !is_single() && !is_page() && get_post_type() != 'post' ) {
+            $post_type = get_post_type_object(get_post_type());
+            echo $before . $post_type->labels->singular_name . $after;
+        } elseif ( is_attachment() ) {
+            // 附件
+            $parent = get_post($post->post_parent);
+            $cat = get_the_category($parent->ID);
+            $cat = $cat[0];
+            echo '<a itemprop="breadcrumb" href="' . get_permalink($parent) . '">' . $parent->post_title . '</a> ' . $delimiter . ' ';
+            echo $before . get_the_title() . $after;
+        } elseif ( is_page() && !$post->post_parent ) {
+            // 页面
+            echo $before . get_the_title() . $after;
+        } elseif ( is_page() && $post->post_parent ) {
+            // 父级页面
+            $parent_id  = $post->post_parent;
+            $breadcrumbs = array();
+            while ($parent_id) {
+                $page = get_page($parent_id);
+                $breadcrumbs[] = '<a itemprop="breadcrumb" href="' . get_permalink($page->ID) . '">' . get_the_title($page->ID) . '</a>';
+                $parent_id  = $page->post_parent;
+            }
+            $breadcrumbs = array_reverse($breadcrumbs);
+            foreach ($breadcrumbs as $crumb) echo $crumb . ' ' . $delimiter . ' ';
+            echo $before . get_the_title() . $after;
+        } elseif ( is_search() ) {
+            // 搜索结果
+            echo $before ;
+            printf( __( 'Search Results for: %s', 'cmp' ),  get_search_query() );
+            echo  $after;
+        } elseif ( is_tag() ) {
+            //标签 存档
+            echo $before ;
+            printf( __( 'Tag Archives: %s', 'cmp' ), single_tag_title( '', false ) );
+            echo  $after;
+        } elseif ( is_author() ) {
+            // 作者存档
+            global $author;
+            $userdata = get_userdata($author);
+            echo $before ;
+            printf( __( 'Author Archives: %s', 'cmp' ),  $userdata->display_name );
+            echo  $after;
+        } elseif ( is_404() ) {
+            // 404 页面
+            echo $before;
+            _e( 'Not Found', 'cmp' );
+            echo  $after;
+        }
+        if ( get_query_var('paged') ) {
+            // 分页
+            if ( is_category() || is_day() || is_month() || is_year() || is_search() || is_tag() || is_author() )
+                            echo sprintf( __( '( Page %s )', 'cmp' ), get_query_var('paged') );
+        }
+        echo '</div>';
+    }
+}
 
 //设置cookie数据
 function gdk_set_cookie($key, $value, $expire){
@@ -588,43 +659,23 @@ function gdk_get_current_url(){
     return $protocol . '://' . $host . $port . $_SERVER['REQUEST_URI'];
 }
 
-//黑名单检测
-function gdk_blacklist_check($str) {
-	$moderation_keys	= trim(get_option('moderation_keys'));
-	$blacklist_keys		= trim(get_option('blacklist_keys'));
-	$words = explode("\n", $moderation_keys ."\n".$blacklist_keys);
-	foreach ((array)$words as $word) {
-		$word = trim($word);
-		// Skip empty linesgdk_
-		if ( empty($word) ) continue;
-		// Do some escaping magic so that '#' chars in the
-		// spam words don't break things:
-		$word	= preg_quote($word, '#');
-		if ( preg_match("#$word#i", $str) ) return true;
-	}
-	return false;
-}
-
 //发起HTTP请求
 function gdk_http_request($url, $args=array(), $err_args=array()) {
 	$args = wp_parse_args( $args, array(
-	        'timeout'			=> 20,
+	        'timeout'			=> 3,
             'method'			=> '',
 	        'body'				=> array(),
 	        'sslverify'			=> false,
 	        'blocking'			=> true,	// 如果不需要立刻知道结果，可以设置为 false
 	        'stream'			=> false,	// 如果是保存远程的文件，这里需要设置为 true
 	        'filename'			=> null,	// 设置保存下来文件的路径和名字
-	        'need_json_decode'	=> true,
-	        'need_json_encode'	=> false,
+	        'need_json_decode'	=> true,//对结果进行解码,一般都需要
+	        'need_json_encode'	=> false,//对发起参数编码
 	        // 'headers'		=> array('Accept-Encoding'=>'gzip;'),	//使用压缩传输数据
 	        // 'headers'		=> array('Accept-Encoding'=>''),
 	        // 'compress'		=> false,
 	        'decompress'		=> true,
 	    ));
-	if(isset($_GET['debug'])) {
-		print_r($args);
-	}
 	$need_json_decode	= $args['need_json_decode'];
 	$need_json_encode	= $args['need_json_encode'];
 	$method				= ($args['method'])?strtoupper($args['method']):($args['body']?'POST':'GET');
@@ -659,7 +710,7 @@ function gdk_http_request($url, $args=array(), $err_args=array()) {
 		if($args['stream']) {
 			$response	= file_get_contents($args['filename']);
 		}
-		$response	= json_decode($response);
+		$response	= json_decode($response,true);
 		if(is_wp_error($response)) {
 			return $response;
 		}
@@ -681,10 +732,6 @@ function gdk_http_request($url, $args=array(), $err_args=array()) {
 			trigger_error($url."\n".$errcode.' : '.$errmsg."\n".var_export($args['body'],true));
 			return new WP_Error($errcode, $errmsg);
 		}
-	}
-	if(isset($_GET['debug'])) {
-		echo $url;
-		print_r($response);
 	}
 	return $response;
 }
@@ -820,3 +867,22 @@ function mail_temp($mail_title,$mail_cotent,$link,$link_title){
 	<?php
 }
 
+//获取所有站点分类id,带缓存
+function gdk_category(){
+    $cat_ids = get_transient('gdk_category');
+    if (false === $cat_ids) {
+        $categories = get_terms('category', 'hide_empty=0');
+        $k = [];
+        foreach ($categories as $categorie) {
+            $k[] = $categorie->term_id;
+        }
+        $cat_ids = implode(",", $k);
+        set_transient('gdk_category', $cat_ids, 60*60*24*5);//缓存5天
+    }
+    $cat_ids = explode(",", $cat_ids);
+    foreach ($cat_ids as $catid) {
+        $cat_name = get_cat_name($catid);
+        $output = '<span>' . $cat_name . "=(<b>" . $catid . '</b>)</span>&nbsp;&nbsp;';
+        echo $output;
+    }
+}
