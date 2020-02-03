@@ -100,7 +100,11 @@ function gdk_after_init_theme() {
     update_option( 'medium_large_size_w', '0' );//关闭默认缩略图
     update_option( 'medium_size_h', '0' );//关闭默认缩略图
     update_option( 'medium_size_w', '0' );//关闭默认缩略图
-    if(get_option('permalink_structure') == ''){//如果是默认连接格式
+    update_option( 'thumbnail_size_w', '0' );//关闭默认缩略图
+    update_option( 'thumbnail_size_h', '0' );//关闭默认缩略图
+    update_option( 'default_ping_status', 'closed' );//关闭默认ping状态
+    update_option( 'comment_order', 'desc' );//关闭默认评论显示顺序
+    if(get_option('permalink_structure') == ''|| define( 'GDK_HTML_LINK', true ) ){//如果是默认连接格式或者主题声明 define( 'GDK_HTML_LINK', true ); 
     update_option( 'permalink_structure', '/archives/%post_id%.html' );//固定链接格式
     }
     update_option( 'posts_per_page', '30' );//每页文章数目
@@ -149,6 +153,17 @@ add_filter( 'nav_menu_css_class', function ( $var ) {
 	return is_array( $var ) ? array_intersect( $var, [ 'current-menu-item', 'menu-item', 'menu-item-has-children' ] ) : '';
 }
 , 100, 1 );
+
+//移除前台加载jquery-migrate
+function dequeue_jquery_migrate( $scripts ) {
+    if ( ! is_admin() && ! empty( $scripts->registered['jquery'] ) ) {
+        $scripts->registered['jquery']->deps = array_diff(
+            $scripts->registered['jquery']->deps,
+            [ 'jquery-migrate' ]
+        );
+    }
+}
+add_action( 'wp_default_scripts', 'dequeue_jquery_migrate' );
 
 //移除 WordPress 标记
 add_filter( 'the_generator', function () { return '';});
@@ -200,6 +215,21 @@ function gdk_remove_open_sans() {
 }
 add_action( 'init', 'gdk_remove_open_sans' );
 
+//WordPress 彻底移除后台“隐私”设置功能
+add_filter( 'map_meta_cap', 'ds_disable_core_privacy_tools', 10, 2 );
+remove_action( 'init', 'wp_schedule_delete_old_privacy_export_files' );
+remove_action( 'wp_privacy_delete_old_export_files', 'wp_privacy_delete_old_export_files' );
+function ds_disable_core_privacy_tools( $caps, $cap ) {
+	switch ( $cap ) {
+		case 'export_others_personal_data':
+		case 'erase_others_personal_data':
+		case 'manage_privacy_options':
+			$caps[] = 'do_not_allow';
+			break;
+	}
+	return $caps;
+}
+
 // 禁止dns-prefetch
 function gdk_remove_dns( $hints, $relation_type ) {
 	if ( 'dns-prefetch' === $relation_type ) {
@@ -208,6 +238,18 @@ function gdk_remove_dns( $hints, $relation_type ) {
 	return $hints;
 }
 add_filter( 'wp_resource_hints', 'gdk_remove_dns', 10, 2 );
+
+
+
+//强制兼容<pre>
+function gdk_prettify_replace($text) {
+    $replace = array(
+        '<pre>' => '<pre class="prettyprint linenums">'
+    );
+    $text = str_replace(array_keys($replace) , $replace, $text);
+    return $text;
+}
+add_filter('the_content', 'gdk_prettify_replace');
 
 //强制阻止WordPress代码转义
 function gdk_esc_html($content) {
@@ -223,16 +265,6 @@ function gdk_esc_callback($matches) {
 }
 add_filter('the_content', 'gdk_esc_html', 2);
 add_filter('comment_text', 'gdk_esc_html', 2);
-
-//强制兼容<pre>
-function gdk_prettify_replace($text) {
-    $replace = array(
-        '<pre>' => '<pre class="prettyprint linenums">'
-    );
-    $text = str_replace(array_keys($replace) , $replace, $text);
-    return $text;
-}
-add_filter('the_content', 'gdk_prettify_replace');
 
 //禁用emoji功能
 if (gdk_option('gdk_disable_emojis')) {
@@ -431,16 +463,16 @@ if ( ! function_exists( 'security_stop_user_enumeration' ) ) {
 
 
 //禁用REST API功能
+if(gdk_option('gdk_disable_restapi')) {
 add_action( 'rest_pre_dispatch', 'deactivate_rest_api' );
 add_action( 'rest_authentication_errors', 'deactivate_rest_api' );
 function deactivate_rest_api() {
     status_header( 405 );
-    die( '{"code":"rest_api_disabled","message":"REST API services are disabled on this site.","data":{"status":405}}' );
+    wp_die( '{"code":"rest_api_disabled","message":"REST API services are disabled on this site.","data":{"status":405}}' );
 }
-
 // Remove the REST API endpoint.
 remove_action( 'rest_api_init', 'wp_oembed_register_route' );
-
+}
 
 //记录登陆失败发邮件
 add_action( 'wp_authenticate', 'log_login', 10, 2 );
@@ -516,27 +548,17 @@ add_filter('login_headertext', function (){
 });
 
 
+function gdk_custom_head_code() {
+	$gdk_custom_head_code = gdk_option('gdk_custom_head_code');
+	echo $gdk_custom_head_code;
+}
+add_action('wp_head', 'gdk_custom_head_code');
 
-
-    
-    function gdk_custom_head_code() {
-        $gdk_option = get_option('gdk_option');
-        $site = $gdk_option['site'];
-        echo $site['custom_head_code'];
-    }
-    add_action('wp_head', 'gdk_custom_head_code');
-
-
-
-    function gdk_custom_footer_code() {
-        $gdk_option = get_option('gdk_option');
-        $site = $gdk_option['site'];
-        echo $site['custom_footer_code'];
-    }
-    add_action('wp_footer', 'gdk_custom_footer_code');
-
-
-
+function gdk_custom_footer_code() {
+	$gdk_custom_footer_code = gdk_option('gdk_custom_foot_code');
+	echo $gdk_custom_footer_code;
+}
+add_action('wp_footer', 'gdk_custom_footer_code',400);
 
 if(gdk_option('gdk_no_category')){
     if (!function_exists('gdk_no_category_base_refresh_rules')):

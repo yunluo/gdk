@@ -186,29 +186,19 @@ function login_to_read($atts, $content = null) {
     return $notice;
 }
 add_shortcode('vip', 'login_to_read');
+
 // 部分内容输入密码可见
 function e_secret($atts, $content = null) {
-    if (!isset($_COOKIE['weixin_fensi']) && isset($_POST['e_secret_key']) && $_POST['e_secret_key'] == git_get_option('git_mp_code')) {
-        setcookie('weixin_fensi', 10086, time() + 2592000, COOKIEPATH, COOKIE_DOMAIN, false); //30天时间
-        return '<script type="text/javascript">window.location = document.referrer;</script>';
-    }
-    extract(shortcode_atts(array(
-        'wx' => null
-    ) , $atts));
-    if ($_COOKIE['weixin_fensi'] == '10086' || strpos($_SERVER['HTTP_USER_AGENT'], 'MicroMessenger') !== false) {
-        return '<div class="e-secret"><fieldset><legend>隐藏的内容</legend>
-	' . $content . '<div class="clear"></div></fieldset></div>';
-    } else {
-        if ($wx == '1') {
-            return '<div class="wxbox"><img class="wxpic" src="' . git_get_option('git_mp_qr') . '" alt="' . git_get_option('git_mp_name') . '" title="' . git_get_option('git_mp_name') . '" align="right"><form method="post" name="e-secret" action="' . $_SERVER["REQUEST_URI"] . '"><span class="yzts" style="font-size:18px;">验证码：</span><input name="e_secret_key" id="verifycode" value="" type="text"><input id="verifybtn" name="" value="提交查看" type="submit"></form><div class="wxtips">' . git_get_option('git_mp_tips') . '</div><div class="cl"></div></div>';
-        } else {
-            return '<form class="e-secret" method="post" name="e-secret" action="' . $_SERVER["REQUEST_URI"] . '"><label>输入密码查看加密内容：</label><input type="password" name="e_secret_key" class="euc-y-i" maxlength="50"><input type="submit" class="euc-y-s" value="确定"><div class="euc-clear"></div></form>';
-        }
-    }
+    extract(shortcode_atts(array('wx' => null) , $atts));
+    $pid = get_the_ID();
+    add_post_meta($pid, '_pass_content', $content, true) or update_post_meta($pid, '_pass_content', $content);
+    if ( current_user_can( 'administrator' ) || gdk_is_weixin()) { return $content; }//admin show
+        return '<div class="pass_viewbox"><input id="pass_view" type="text">    <input id="start_view" data-action="gdk_pass_view" data-id="'.$pid.'" type="button" value="提交"></div>';
+
 }
 add_shortcode('secret', 'e_secret');
 
-// 支持文章和页面运行PHP代码
+// 支持文章和页面运行PHP代码id
 function php_include($attr) {
     $file = $attr['file'];
     $upload_dir = wp_upload_dir();
@@ -245,7 +235,6 @@ function gdk_insert_posts($atts, $content = null) {
 }
 add_shortcode('neilian', 'gdk_insert_posts');
 
-
 //给文章加内链短代码
 function gdk_insert_temp($atts, $content = null) {
     extract(shortcode_atts(array( 'id' => '' ) , $atts));
@@ -254,7 +243,6 @@ function gdk_insert_temp($atts, $content = null) {
     return $content;
 }
 add_shortcode('temp', 'gdk_insert_temp');
-
 
 //快速插入列表
 function git_list_shortcode_handler($atts, $content = '') {
@@ -270,7 +258,6 @@ function git_list_shortcode_handler($atts, $content = '') {
 }
 add_shortcode('list', 'git_list_shortcode_handler');
 
-
 //表格短代码
 function table_shortcode_handler( $atts, $content='' ) {
     extract( shortcode_atts( ['width' => '100%'], $atts ) );
@@ -281,6 +268,7 @@ function table_shortcode_handler( $atts, $content='' ) {
     $output .= '<thead><tr>';
     //var_dump($ths);
     foreach($ths as $th){
+        $th = trim($th);
         $output .= '<th>'.$th.'</th>';
     }
     $output .= '</tr></thead>';
@@ -307,6 +295,70 @@ function table_shortcode_handler( $atts, $content='' ) {
     return $output;
 }
 add_shortcode( 'table', 'table_shortcode_handler' );
+
+add_shortcode('youku', function( $atts, $content='') {
+	extract( shortcode_atts( array( 
+		'width'		=> '510', 
+		'height'	=> '498'
+	), $atts ) );
+
+	$width 	= (isset($_GET['width']) && intval($_GET['width']))?intval($_GET['width']):$width;	// 用于 JSON 接口
+	$height	= round($width/4*3);
+
+	if(preg_match('#http://v.youku.com/v_show/id_(.*?).html#i',$content,$matches)){
+		return '<iframe class="wpjam_video" height='.esc_attr($height).' width='.esc_attr($width).' src="http://player.youku.com/embed/'.esc_attr($matches[1]).'" frameborder=0 allowfullscreen></iframe>';
+	}
+});
+
+
+add_shortcode('qqv',  function($atts, $content='') {
+	extract( shortcode_atts( array( 
+		'width'		=> '510', 
+		'height'	=> '498'
+	), $atts ) );
+
+
+	$width 	= (isset($_GET['width']) && intval($_GET['width']))?intval($_GET['width']):$width;	// 用于 JSON 接口
+	$height	= round($width/4*3);
+
+	if(preg_match('#//v.qq.com/iframe/player.html\?vid=(.+)#i',$content,$matches)){
+		//var_dump($matches);exit();
+		return '<iframe class="wpjam_video" height='.esc_attr($height).' width='.esc_attr($width).' src="http://v.qq.com/iframe/player.html?vid='.esc_attr($matches[1]).'" frameborder=0 allowfullscreen></iframe>';
+	}elseif(preg_match('#//v.qq.com/iframe/preview.html\?vid=(.+)#i',$content,$matches)){
+		//var_dump($matches);exit();
+		return '<iframe class="wpjam_video" height='.esc_attr($height).' width='.esc_attr($width).' src="http://v.qq.com/iframe/player.html?vid='.esc_attr($matches[1]).'" frameborder=0 allowfullscreen></iframe>';
+	}
+});
+
+add_shortcode('tudou', function($atts, $content=''){
+	extract( shortcode_atts( array(
+		'width'		=> '480', 
+		'height'	=> '400'
+	), $atts ) );
+
+	$width 	= (isset($_GET['width']) && intval($_GET['width']))?intval($_GET['width']):$width;	// 用于 JSON 接口
+	$height	= round($width/4*3);
+
+	if(preg_match('#http://www.tudou.com/programs/view/(.*?)#i',$content, $matches)){
+		return '<iframe class="wpjam_video" width='. esc_attr($width) .' height='. esc_attr($height) .' src="http://www.tudou.com/programs/view/html5embed.action?code='. esc_attr($matches[1]) .'" frameborder=0 allowfullscreen></iframe>';
+	}
+});
+
+add_shortcode('sohutv', function($atts, $content=''){
+	extract( shortcode_atts( array( 
+		'width'		=> '510', 
+		'height'	=> '498'
+	), $atts ) );
+
+
+	$width 	= (isset($_GET['width']) && intval($_GET['width']))?intval($_GET['width']):$width;	// 用于 JSON 接口
+	$height	= round($width/4*3);
+
+	if(preg_match('#http://tv.sohu.com/upload/static/share/share_play.html\#(.+)#i',$content,$matches)){
+		//var_dump($matches);exit();
+		return '<iframe class="wpjam_video" height='.esc_attr($height).' width='.esc_attr($width).' src="http://tv.sohu.com/upload/static/share/share_play.html#'.esc_attr($matches[1]).'" frameborder=0 allowfullscreen></iframe>';
+	}
+});
 
 //WordPress 段代码按钮集合
 function gdk_shortcode_list() {

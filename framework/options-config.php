@@ -278,6 +278,12 @@ $gdk_options = [
 			'type'  => 'checkbox'
 		],
 		[
+			'name'  => '禁用REST API功能',
+			'desc'  => '禁用 【启用后，REST API功能将关闭,如果没不使用该功能的话,建议关闭】',
+			'id'    => 'gdk_disable_restapi',
+			'type'  => 'checkbox'
+		],
+		[
 			'name'  => '保护用户暴露用户名',
 			'desc'  => '开启 【启用后，将隐藏掉用户的登录名,起到保护作用】',
 			'id'    => 'gdk_hide_user_name',

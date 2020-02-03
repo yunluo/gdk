@@ -18,8 +18,7 @@ add_action('wp_ajax_gdk_test_email', 'gdk_test_email');
 
 //粘贴上传图片
 function gdk_pasteup_imag() {
-    if( !isset( $_POST['pui_nonce'] ) || !wp_verify_nonce($_POST['pui_nonce'], 'pui-nonce') )
-	exit('Permissions check failed');
+    if( !isset( $_POST['pui_nonce'] ) || !wp_verify_nonce($_POST['pui_nonce'], 'pui-nonce') ) exit('Permissions check failed');
 	if($_FILES) {
 		global $post;
 		$post_ID = $post->ID;
@@ -60,3 +59,20 @@ function gdk_pasteup_imag() {
 }
 add_action('wp_ajax_nopriv_gdk_pasteup_imag', 'gdk_pasteup_imag');
 add_action('wp_ajax_gdk_pasteup_imag', 'gdk_pasteup_imag');
+
+
+function gdk_pass_view() {
+	if( !isset( $_POST['pass_nonce'] ) || !wp_verify_nonce($_POST['pass_nonce'], 'pass_nonce') ) return;
+	$action = $_POST['action'];
+	$post_id = $_POST['id'];
+	$pass = $_POST['pass'];
+	if(!isset( $action )  ||  !isset( $post_id )  ||  !isset( $pass )   ) return;
+	if($pass == '2233') {
+	$pass_content = get_post_meta($post_id, '_pass_content')[0];
+	exit($pass_content);
+	}else{
+		exit('0');
+	}
+}
+add_action('wp_ajax_nopriv_gdk_pass_view', 'gdk_pass_view');
+add_action('wp_ajax_gdk_pass_view', 'gdk_pass_view');

@@ -360,6 +360,14 @@ function in_string($text,$find) {
 	}
 }
 
+//判断是否是微信
+function gdk_is_weixin(){
+    if(in_string($_SERVER['HTTP_USER_AGENT'], 'MicroMessenger')){
+        return true;
+    }else{
+        return false;
+    }
+}
 //获取浏览器信息
 function getBrowser() {
 	$u_agent = $_SERVER['HTTP_USER_AGENT'];

@@ -9,12 +9,19 @@ Author URI: https://gitcafe.net/
 Compatible:5.3.2
 */
 
+//万能的开头
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 
+//版本和兼容检查
 function deactivate_myself() {
 	deactivate_plugins( plugin_basename( __FILE__ ) );
-	wp_die('启动失败，GDK插件需要运行在 PHP 7.2 版本及更高的环境下。');
+	wp_die('启动失败，GDK插件不兼容Git主题且需要运行在 PHP 7.2 版本及更高的环境下。');
 }
+
+if (defined('GIT_URL')) {
+	add_action('update_option_active_plugins', 'deactivate_myself');
+}
+
 if (!version_compare(PHP_VERSION, '7.2', '>=')) {
   add_action('update_option_active_plugins', 'deactivate_myself');
 }
