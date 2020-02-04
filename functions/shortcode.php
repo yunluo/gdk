@@ -2,7 +2,9 @@
 
 //短代码集合 
 
-
+//小工具运行短代码
+add_filter( 'widget_text', 'shortcode_unautop' );
+add_filter( 'widget_text', 'do_shortcode' );
 
 //添加钮Download
 function DownloadUrl($atts, $content = null) {

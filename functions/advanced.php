@@ -43,6 +43,32 @@ function gdk_lazyload($content) {
 }
 add_filter('the_content', 'gdk_lazyload');
 }
+
+//强制兼容<pre>,和下面转义代码搭配使用
+function gdk_prettify_replace($text) {
+    $replace = array(
+        '<pre>' => '<pre class="prettyprint linenums">'
+    );
+    $text = str_replace(array_keys($replace) , $replace, $text);
+    return $text;
+}
+add_filter('content_save_pre', 'gdk_prettify_replace');
+
+//强制阻止WordPress代码转义,适用于<pre class="prettyprint linenums"> </pre>
+function gdk_esc_html($content) {
+    $regex = '/(<pre\s+[^>]*?class\s*?=\s*?[",\'].*?prettyprint.*?[",\'].*?>)(.*?)(<\/pre>)/sim';
+    return preg_replace_callback($regex, 'gdk_esc_callback', $content);
+}
+function gdk_esc_callback($matches) {
+    $tag_open = $matches[1];
+    $content = $matches[2];
+    $tag_close = $matches[3];
+    $content = esc_html($content);
+    return $tag_open . $content . $tag_close;
+}
+add_filter('the_content', 'gdk_esc_html', 2);
+add_filter('comment_text', 'gdk_esc_html', 2);
+
 //fancybox图片灯箱效果
 if(gdk_option('gdk_lazyload')){
 function gdk_fancybox($content) {
@@ -177,4 +203,68 @@ if (gdk_option('gdk_compress')) {
         return $content;
     }
     add_filter('the_content', 'gdk_unCompress');
+}
+
+//只搜索文章标题
+function git_search_by_title($search, $wp_query) {
+    if (!empty($search) && !empty($wp_query->query_vars['search_terms'])) {
+        global $wpdb;
+        $q = $wp_query->query_vars;
+        $n = !empty($q['exact']) ? '' : '%';
+        $search = array();
+        foreach ((array)$q['search_terms'] as $term) {
+            $search[] = $wpdb->prepare("{$wpdb->posts}.post_title LIKE %s", $n . $wpdb->esc_like($term) . $n);
+        }
+        if (!is_user_logged_in()) {
+            $search[] = "{$wpdb->posts}.post_password = ''";
+        }
+        $search = ' AND ' . implode(' AND ', $search);
+    }
+    return $search;
+}
+add_filter('posts_search', 'git_search_by_title', 10, 2);
+
+//评论地址更换
+function git_comment_author( $query_vars ) {
+	if ( array_key_exists( 'author_name', $query_vars ) ) {
+		global $wpdb;
+		$author_id = $wpdb->get_var( $wpdb->prepare( "SELECT user_id FROM {$wpdb->usermeta} WHERE meta_key='first_name' AND meta_value = %s", $query_vars['author_name'] ) );
+		if ( $author_id ) {
+			$query_vars['author'] = $author_id;
+			unset( $query_vars['author_name'] );
+		}
+	}
+	return $query_vars;
+}
+add_filter( 'request', 'git_comment_author' );
+
+function git_comment_author_link( $link, $author_id, $author_nicename ) {
+	$my_name = get_user_meta( $author_id, 'first_name', true );
+	if ( $my_name ) {
+		$link = str_replace( $author_nicename, $my_name, $link );
+	}
+	return $link;
+}
+add_filter( 'author_link', 'git_comment_author_link', 10, 3 );
+
+//文章目录,来自露兜,云落修改
+if (git_get_option('git_article_list')) {
+    function article_index($content) {
+        $matches = array();
+        $ul_li = '';
+        $r = "/<h2>([^<]+)<\/h2>/im";
+        if (is_single() && preg_match_all($r, $content, $matches)) {
+            foreach ($matches[1] as $num => $title) {
+                $title = trim(strip_tags($title));
+                $content = str_replace($matches[0][$num], '<h2 id="title-' . $num . '">' . $title . '</h2>', $content);
+                $ul_li.= '<li><a href="#title-' . $num . '">' . $title . "</a></li>\n";
+            }
+            $content = '<div id="article-index">
+                            <strong>文章目录<a class="hidetoc">[隐藏]</a></strong>
+                            <ul id="index-ul">' . $ul_li . '</ul>
+                        </div>' . $content;
+        }
+        return $content;
+    }
+    add_filter('the_content', 'article_index');
 }

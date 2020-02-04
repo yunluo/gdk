@@ -894,3 +894,129 @@ function gdk_category(){
         echo $output;
     }
 }
+
+
+/*使用字符串转数组分类标签获取信息
+*$term 分类还是标签, tag是标签,cat是分类
+*$meta 需要获取的具体项目,参数des=描述,参数keyword=关键词,参数img=图片
+*$id 分类还是标签的id,为空显示当前分类或者标签数据
+*数据来源于分类/标签的图片描述
+*/
+function gdk_term_meta($term,$meta,$id) {
+	if($term == 'cat') {
+		$term_meta = gdk_str2arr(category_description($id),'<br />');
+	} elseif($term == 'tag') {
+		$term_meta = gdk_str2arr(tag_description($id),'<br />');
+	} else {
+		return false;
+	}
+	switch ($meta) {
+		case 'des':
+		    $result = $term_meta[0];
+		break;
+		case 'keyword':
+		    $result = $term_meta[1];
+		break;
+		case 'img':
+		    $result = $term_meta[2];
+		break;
+		default:
+            return false;
+	}
+	return $result;
+}
+
+
+//输出缩略图地址
+function gdk_thumbnail_src() {
+    global $post;
+    $gdk_thumbnail_src = '';
+    if ($values = get_post_custom_values('git_thumb')) { //输出自定义域图片地址
+        $values = get_post_custom_values('git_thumb');
+        $gdk_thumbnail_src = $values[0];
+    } elseif (has_post_thumbnail()) { //如果有特色缩略图，则输出缩略图地址
+        $thumbnail_src = wp_get_attachment_image_src(get_post_thumbnail_id($post->ID) , 'full');
+        $gdk_thumbnail_src = $thumbnail_src[0];
+    } else {
+        ob_start();
+        ob_end_clean();
+        $output = preg_match_all('/<img.+src=[\'"]([^\'"]+)[\'"].*>/i', $post->post_content, $matches);
+        $gdk_thumbnail_src = $matches[1][0]; //获取该图片 src
+        if (empty($gdk_thumbnail_src)) { //如果日志中没有图片，则显示随机图片
+            $random = mt_rand(1, 12);
+            echo GDK_BASE_URL.'assets/img/thumb/' . $random . '.jpg';
+        }
+    };
+    echo $gdk_thumbnail_src;
+}
+
+
+//生成订单号编码
+function git_order_id(){
+	date_default_timezone_set('Asia/Shanghai');
+	$order_id = 'E' . date("YmdHis") . mt_rand(10000, 99999);
+	return $order_id;
+}
+
+
+//获取云落的远程通知，加入缓存，1天一次
+function get_Yunluo_Notice(){
+	$Yunluo_Notice = get_transient('Yunluo_Notice');
+	if(false === $Yunluo_Notice){
+        $Yunluo_Notice = wp_remote_get('https://u.gitcafe.net/api/notice.txt')['body'];
+		if ( is_array( $Yunluo_Notice ) && !is_wp_error($Yunluo_Notice) && $Yunluo_Notice['response']['code'] == '200' ) {
+			set_transient('Yunluo_Notice', $Yunluo_Notice, 60*60*12);//缓存12小时
+		}else{
+			set_transient('Yunluo_Notice', '有点小尴尬哈啊，服务器菌暂时有点累了呢，先休息一会儿~，', 60*60*2);//缓存2小时
+		}
+    }
+    return $Yunluo_Notice;
+}
+
+//获取页面id，并且不可重用
+function git_page_id( $pagephp ) {
+    global $wpdb;
+    $pagephp = esc_sql($pagephp);
+    $pageid = $wpdb->get_row("SELECT `post_id` FROM `{$wpdb->postmeta}` WHERE `meta_value` = 'pages/{$pagephp}.php'", ARRAY_A) ['post_id'];
+    return $pageid;
+}
+
+//根据订单描述金币数据，d=订单号 u=用户id
+function git_check( $d , $u = null) {
+	global $wpdb;
+	$des = " WHERE `description` = '" . $d . "'";
+	$userid = "";
+	if ( isset( $u ) && ( $u !== null ) ) {
+		$userid = " AND `user_id` = '" . $u . "'";
+	}
+	$result = $wpdb->query("SELECT `point_id` FROM " . Points_Database::points_get_table("users") . $des . $userid . " AND `status` = 'accepted' LIMIT 3", ARRAY_A);
+	return $result;//0=无订单结果，1=有订单结果，>1均为异常数据
+}
+
+//导航单页函数
+function get_the_link_items($id = null) {
+    $bookmarks = get_bookmarks('orderby=date&category=' . $id);
+    $output = '';
+    if (!empty($bookmarks)) {
+        $output.= '<div class="link_items fontSmooth">';
+        foreach ($bookmarks as $bookmark) {
+            $output.= '<div class="link_item"><a class="link_item_inner apollo_' . $bookmark->link_rating . '" rel="nofollow" href="' . $bookmark->link_url . '" title="' . $bookmark->link_description . '" target="_blank" ><span class="sitename sitecolor_' . mt_rand(1, 14) . '">' . $bookmark->link_name . '</span></a></div>';
+        }
+        $output.= '</div>';
+    }
+    return $output;
+}
+
+function get_link_items() {
+    $linkcats = get_terms('link_category', 'orderby=count&hide_empty=1&exclude=' . git_get_option('git_linkpage_cat'));
+    if (!empty($linkcats)) {
+        foreach ($linkcats as $linkcat) {
+            $result.= '<h2 class="link_title">' . $linkcat->name . '</h2>';
+            if ($linkcat->description) $result.= '<div class="link_description">' . $linkcat->description . '</div>';
+            $result.= get_the_link_items($linkcat->term_id);
+        }
+    } else {
+        $result = get_the_link_items();
+    }
+    return $result;
+}

@@ -30,6 +30,49 @@ if(gdk_option('gdk_block_requst')) {
 	add_action( 'wp', 'gdk_prevent_requst' );//阻止乱七八糟的请求
 }
 
+//禁用 XML-RPC 接口
+if (gdk_option('gdk_disable_xmlrpc')) {
+	add_filter('xmlrpc_enabled', '__return_false');
+	remove_action('xmlrpc_rsd_apis', 'rest_output_rsd');
+}
+
+//彻底关闭 pingback
+if (gdk_option('gdk_disable_trackbacks')) {
+	add_filter('xmlrpc_methods', 'gdk_xmlrpc_methods');
+	function gdk_xmlrpc_methods($methods) {
+		unset($methods['system.multicall']);
+		$methods['pingback.ping']                    = '__return_false';
+		$methods['pingback.extensions.getPingbacks'] = '__return_false';
+		return $methods;
+    }
+    
+//阻止站内PingBack
+function gdk_noself_ping(&$links) {
+	$home = home_url();
+	foreach ($links as $l => $link) if (0 === strpos($link, $home)) unset($links[$l]);
+}
+add_action('pre_ping', 'gdk_noself_ping');
+//禁用 pingbacks, enclosures, trackbacks
+remove_action('do_pings', 'do_all_pings', 10);
+//去掉 _encloseme 和 do_ping 操作。
+remove_action('publish_post', '_publish_post_hook', 5);
+}
+
+
+//隐藏用户昵称
+add_filter('redirect_canonical', 'security_stop_user_enumeration', 10, 2);
+if ( ! function_exists( 'security_stop_user_enumeration' ) ) {
+    function security_stop_user_enumeration( $redirect, $request ) {
+        if ( preg_match( '/\?author=([0-9]*)(\/*)/i', $request ) ) {
+            wp_redirect( get_site_url(), 301 );
+            die();
+        } else {
+            return $redirect;
+        }
+    }
+}
+
+
 //登陆错误锁定
 if ( ! class_exists( 'GDK_Limit_Login_Attempts' ) ) {
 	class GDK_Limit_Login_Attempts {
@@ -285,3 +328,60 @@ function gdk_show_myupload_library($wp_query) {
     }
 }
 add_filter('parse_query', 'gdk_show_myupload_library');
+
+
+//记录登陆失败发邮件
+add_action( 'wp_authenticate', 'log_login', 10, 2 );
+function log_login( $username, $password ) {
+
+    if ( ! empty( $username ) && ! empty( $password ) ) {
+
+        $check = wp_authenticate_username_password( NULL, $username, $password );
+        if ( is_wp_error( $check ) ) {
+
+            $ua = getBrowser();
+            $agent = $ua['name'] . " " . $ua['version'];
+
+            $referrer = ( isset( $_SERVER['HTTP_REFERER'] ) ) ? $_SERVER['HTTP_REFERER'] : $_SERVER['PHP_SELF'];
+            if ( strstr( $referrer, 'wp-login' ) ) {
+                $ref = 'wp-login.php';
+            }
+
+            if ( strstr( $referrer, 'wp-admin' ) ) {
+                $ref = 'wp-admin/';
+            }
+
+            $contact_errors = false;
+            // get the posted data
+            $name = "WordPress " . get_bloginfo( 'name' );
+            $email_address = get_bloginfo('admin_email' );
+
+            // write the email content
+            $header = "MIME-Version: 1.0\n";
+            $header .= "Content-Type: text/html; charset=utf-8\n";
+            $header .= "From: $name <$email_address>\n";
+
+            $message = "Failed login attempt on <a href='" . get_site_url() . "/" . $ref . "' target='_blank'>" . $name . "</a><br>" . PHP_EOL;
+            $message .= 'IP: <a href="http://whatismyipaddress.com/ip/' . gdk_get_ip() . '" target="_blank">' . gdk_get_ip() . "</a><br>" . PHP_EOL;
+            $message .= 'WhoIs: <a href="https://who.is/whois-ip/ip-address/' . gdk_get_ip() . '" target="_blank">' . gdk_get_ip() . "</a><br>" . PHP_EOL;
+            $message .= "Browser: " . $agent . "<br>" . PHP_EOL;
+            $message .= "OS: " . $ua['platform'] . "<br>" . PHP_EOL;
+            $message .= "Date: " . date('Y-m-d H:i:s') . "<br>" . PHP_EOL;
+            $message .= "Referrer: " . $referrer . "<br>" . PHP_EOL;
+            $message .= "User Agent: " . $ua['userAgent'] . "<br>" . PHP_EOL;
+            $message .= "Username: " . $username . "<br>" . PHP_EOL;
+            $message .= "Password: " . $password . "<br>" . PHP_EOL;
+
+            $subject = "Failed login attempt - " . $name;
+            $subject = "=?utf-8?B?" . base64_encode($subject) . "?=";
+            $to = $email_address;
+            if ( ! empty( $to ) ) {
+                // send the email using wp_mail()
+                if ( ! wp_mail( $to, $subject, $message, $header ) ) {
+                    $contact_errors = true;
+                }
+            }
+
+        }
+    }
+}

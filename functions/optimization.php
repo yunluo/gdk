@@ -1,15 +1,15 @@
 <?php
 
 
-function wpjam_feed_disabled() {
+function gdk_feed_disabled() {
     wp_die('Feed已经关闭, 请访问网站<a href="'.get_bloginfo('url').'">首页</a>！');
 }
 
-add_action('do_feed',		'wpjam_feed_disabled', 1);
-add_action('do_feed_rdf',	'wpjam_feed_disabled', 1);
-add_action('do_feed_rss',	'wpjam_feed_disabled', 1);
-add_action('do_feed_rss2',	'wpjam_feed_disabled', 1);
-add_action('do_feed_atom',	'wpjam_feed_disabled', 1);
+add_action('do_feed',		'gdk_feed_disabled', 1);
+add_action('do_feed_rdf',	'gdk_feed_disabled', 1);
+add_action('do_feed_rss',	'gdk_feed_disabled', 1);
+add_action('do_feed_rss2',	'gdk_feed_disabled', 1);
+add_action('do_feed_atom',	'gdk_feed_disabled', 1);
 
 //禁用新版编辑器
 if(gdk_option('gdk_diasble_gutenberg')){
@@ -78,6 +78,8 @@ remove_filter('pre_term_description', 'wp_filter_kses');
 remove_filter('pre_link_description', 'wp_filter_kses');
 remove_filter('pre_link_notes', 'wp_filter_kses');
 remove_filter('term_description', 'wp_kses_data');
+//关闭WordPress欢迎
+remove_action('welcome_panel', 'wp_welcome_panel');
 
 //自动中英文空格
 if (gdk_option('gdk_auto_space')) {
@@ -93,7 +95,6 @@ function gdk_after_init_theme() {
 	update_option( 'image_default_align', 'center' );//居中显示
 	update_option( 'image_default_link_type', 'file' );//连接到媒体文件本身
     update_option( 'image_default_size', 'full' );//完整尺寸
-
     update_option( 'large_size_h', '0' );//关闭默认缩略图
     update_option( 'large_size_w', '0' );//关闭默认缩略图
     update_option( 'medium_large_size_h', '0' );//关闭默认缩略图
@@ -155,7 +156,7 @@ add_filter( 'nav_menu_css_class', function ( $var ) {
 , 100, 1 );
 
 //移除前台加载jquery-migrate
-function dequeue_jquery_migrate( $scripts ) {
+function gdk_disable_migrate( $scripts ) {
     if ( ! is_admin() && ! empty( $scripts->registered['jquery'] ) ) {
         $scripts->registered['jquery']->deps = array_diff(
             $scripts->registered['jquery']->deps,
@@ -163,7 +164,7 @@ function dequeue_jquery_migrate( $scripts ) {
         );
     }
 }
-add_action( 'wp_default_scripts', 'dequeue_jquery_migrate' );
+add_action( 'wp_default_scripts', 'gdk_disable_migrate' );
 
 //移除 WordPress 标记
 add_filter( 'the_generator', function () { return '';});
@@ -240,31 +241,12 @@ function gdk_remove_dns( $hints, $relation_type ) {
 add_filter( 'wp_resource_hints', 'gdk_remove_dns', 10, 2 );
 
 
+//第一段
+function first_paragraph( $content ) {
+    return preg_replace( '/<p([^>]+)?>/', '<p$1 class="lead">', $content, 1 );
+}
+add_filter( 'the_content', 'first_paragraph' );
 
-//强制兼容<pre>
-function gdk_prettify_replace($text) {
-    $replace = array(
-        '<pre>' => '<pre class="prettyprint linenums">'
-    );
-    $text = str_replace(array_keys($replace) , $replace, $text);
-    return $text;
-}
-add_filter('the_content', 'gdk_prettify_replace');
-
-//强制阻止WordPress代码转义
-function gdk_esc_html($content) {
-    $regex = '/(<pre\s+[^>]*?class\s*?=\s*?[",\'].*?prettyprint.*?[",\'].*?>)(.*?)(<\/pre>)/sim';
-    return preg_replace_callback($regex, 'gdk_esc_callback', $content);
-}
-function gdk_esc_callback($matches) {
-    $tag_open = $matches[1];
-    $content = $matches[2];
-    $tag_close = $matches[3];
-    $content = esc_html($content);
-    return $tag_open . $content . $tag_close;
-}
-add_filter('the_content', 'gdk_esc_html', 2);
-add_filter('comment_text', 'gdk_esc_html', 2);
 
 //禁用emoji功能
 if (gdk_option('gdk_disable_emojis')) {
@@ -287,11 +269,6 @@ if (gdk_option('gdk_disable_emojis')) {
 }
 
 
-//禁用 XML-RPC 接口
-if (gdk_option('gdk_disable_xmlrpc')) {
-	add_filter('xmlrpc_enabled', '__return_false');
-	remove_action('xmlrpc_rsd_apis', 'rest_output_rsd');
-}
 //禁用日志修订功能
 if (gdk_option('gdk_disable_revision')) {
 	add_filter( 'wp_revisions_to_keep', 'gdk_revisions_to_keep', 10, 2 );
@@ -323,29 +300,6 @@ if (gdk_option('gdk_disable_dashicons')) {
 	}
 	);
 }
-
-//彻底关闭 pingback
-if (gdk_option('gdk_disable_trackbacks')) {
-	add_filter('xmlrpc_methods', 'gdk_xmlrpc_methods');
-	function gdk_xmlrpc_methods($methods) {
-		unset($methods['system.multicall']);
-		$methods['pingback.ping']                    = '__return_false';
-		$methods['pingback.extensions.getPingbacks'] = '__return_false';
-		return $methods;
-    }
-    
-//阻止站内PingBack
-function gdk_noself_ping(&$links) {
-	$home = home_url();
-	foreach ($links as $l => $link) if (0 === strpos($link, $home)) unset($links[$l]);
-}
-add_action('pre_ping', 'gdk_noself_ping');
-//禁用 pingbacks, enclosures, trackbacks
-remove_action('do_pings', 'do_all_pings', 10);
-//去掉 _encloseme 和 do_ping 操作。
-remove_action('publish_post', '_publish_post_hook', 5);
-}
-
 
 //禁用WordPress活动
 function gdk_dweandw_remove() {
@@ -435,31 +389,12 @@ function gdk_redirect_search() {
 }
 add_action('template_redirect', 'gdk_redirect_search' );
 
-//小工具运行短代码
-add_filter( 'widget_text', 'shortcode_unautop' );
-add_filter( 'widget_text', 'do_shortcode' );
-
-
 //替换后台默认的底部文字内容
 function gdk_replace_footer_admin() {
 	$result = apply_filters('gdk_filter_admin_footer_text', '由GDK插件提供底层支持');
 	echo $result;
 }
 add_filter('admin_footer_text', 'gdk_replace_footer_admin');
-
-
-//隐藏用户昵称
-add_filter('redirect_canonical', 'security_stop_user_enumeration', 10, 2);
-if ( ! function_exists( 'security_stop_user_enumeration' ) ) {
-    function security_stop_user_enumeration( $redirect, $request ) {
-        if ( preg_match( '/\?author=([0-9]*)(\/*)/i', $request ) ) {
-            wp_redirect( get_site_url(), 301 );
-            die();
-        } else {
-            return $redirect;
-        }
-    }
-}
 
 
 //禁用REST API功能
@@ -474,61 +409,6 @@ function deactivate_rest_api() {
 remove_action( 'rest_api_init', 'wp_oembed_register_route' );
 }
 
-//记录登陆失败发邮件
-add_action( 'wp_authenticate', 'log_login', 10, 2 );
-function log_login( $username, $password ) {
-
-    if ( ! empty( $username ) && ! empty( $password ) ) {
-
-        $check = wp_authenticate_username_password( NULL, $username, $password );
-        if ( is_wp_error( $check ) ) {
-
-            $ua = getBrowser();
-            $agent = $ua['name'] . " " . $ua['version'];
-
-            $referrer = ( isset( $_SERVER['HTTP_REFERER'] ) ) ? $_SERVER['HTTP_REFERER'] : $_SERVER['PHP_SELF'];
-            if ( strstr( $referrer, 'wp-login' ) ) {
-                $ref = 'wp-login.php';
-            }
-
-            if ( strstr( $referrer, 'wp-admin' ) ) {
-                $ref = 'wp-admin/';
-            }
-
-            $contact_errors = false;
-            // get the posted data
-            $name = "WordPress " . get_bloginfo( 'name' );
-            $email_address = get_bloginfo('admin_email' );
-
-            // write the email content
-            $header = "MIME-Version: 1.0\n";
-            $header .= "Content-Type: text/html; charset=utf-8\n";
-            $header .= "From: $name <$email_address>\n";
-
-            $message = "Failed login attempt on <a href='" . get_site_url() . "/" . $ref . "' target='_blank'>" . $name . "</a><br>" . PHP_EOL;
-            $message .= 'IP: <a href="http://whatismyipaddress.com/ip/' . gdk_get_ip() . '" target="_blank">' . gdk_get_ip() . "</a><br>" . PHP_EOL;
-            $message .= 'WhoIs: <a href="https://who.is/whois-ip/ip-address/' . gdk_get_ip() . '" target="_blank">' . gdk_get_ip() . "</a><br>" . PHP_EOL;
-            $message .= "Browser: " . $agent . "<br>" . PHP_EOL;
-            $message .= "OS: " . $ua['platform'] . "<br>" . PHP_EOL;
-            $message .= "Date: " . date('Y-m-d H:i:s') . "<br>" . PHP_EOL;
-            $message .= "Referrer: " . $referrer . "<br>" . PHP_EOL;
-            $message .= "User Agent: " . $ua['userAgent'] . "<br>" . PHP_EOL;
-            $message .= "Username: " . $username . "<br>" . PHP_EOL;
-            $message .= "Password: " . $password . "<br>" . PHP_EOL;
-
-            $subject = "Failed login attempt - " . $name;
-            $subject = "=?utf-8?B?" . base64_encode($subject) . "?=";
-            $to = $email_address;
-            if ( ! empty( $to ) ) {
-                // send the email using wp_mail()
-                if ( ! wp_mail( $to, $subject, $message, $header ) ) {
-                    $contact_errors = true;
-                }
-            }
-
-        }
-    }
-}
 
 //前台禁止加载语言包
 add_filter('locale', function($locale) {
@@ -572,13 +452,8 @@ if(gdk_option('gdk_no_category')){
         }
         add_action('init', 'gdk_no_category_base_permastruct');
         function gdk_no_category_base_permastruct() {
-            global $wp_rewrite, $wp_version;
-            if (version_compare($wp_version, '3.4', '<')) {
-                // For pre-3.4 support
-                $wp_rewrite -> extra_permastructs['category'][0] = '%category%';
-            } else {
+            global $wp_rewrite;
                 $wp_rewrite -> extra_permastructs['category']['struct'] = '%category%';
-            }
         }
         // Add our custom category rewrite rules
         add_filter('category_rewrite_rules', 'gdk_no_category_base_rewrite_rules');
@@ -587,24 +462,22 @@ if(gdk_option('gdk_no_category')){
             $category_rewrite = array();
             $categories = get_categories(array('hide_empty' => false));
             foreach ($categories as $category) {
-                $category_nicename = $category -> slug;
+                $gdk_category = $category -> slug;
                 if ($category -> parent == $category -> cat_ID)// recursive recursion
                     $category -> parent = 0;
                 elseif ($category -> parent != 0)
-                    $category_nicename = get_category_parents($category -> parent, false, '/', true) . $category_nicename;
-                $category_rewrite['(' . $category_nicename . ')/(?:feed/)?(feed|rdf|rss|rss2|atom)/?$'] = 'index.php?category_name=$matches[1]&feed=$matches[2]';
-                $category_rewrite['(' . $category_nicename . ')/page/?([0-9]{1,})/?$'] = 'index.php?category_name=$matches[1]&paged=$matches[2]';
-                $category_rewrite['(' . $category_nicename . ')/?$'] = 'index.php?category_name=$matches[1]';
+                    $gdk_category = get_category_parents($category -> parent, false, '/', true) . $gdk_category;
+                $category_rewrite['(' . $gdk_category . ')/(?:feed/)?(feed|rdf|rss|rss2|atom)/?$'] = 'index.php?category_name=$matches[1]&feed=$matches[2]';
+                $category_rewrite['(' . $gdk_category . ')/page/?([0-9]{1,})/?$'] = 'index.php?category_name=$matches[1]&paged=$matches[2]';
+                $category_rewrite['(' . $gdk_category . ')/?$'] = 'index.php?category_name=$matches[1]';
             }
             // Redirect support from Old Category Base
             global $wp_rewrite;
             $old_category_base = get_option('category_base') ? get_option('category_base') : 'category';
             $old_category_base = trim($old_category_base, '/');
             $category_rewrite[$old_category_base . '/(.*)$'] = 'index.php?category_redirect=$matches[1]';
-            
             return $category_rewrite;
         }
-            
         // Add 'category_redirect' query variable
         add_filter('query_vars', 'gdk_no_category_base_query_vars');
         function gdk_no_category_base_query_vars($public_query_vars) {
@@ -625,16 +498,13 @@ if(gdk_option('gdk_no_category')){
     endif;
 }
 
-
 //站长评论邮件添加评论链接
-function gdk_notify_postauthor($notify_message,$comment_ID) {
+function gdk_notify_admin($notify_message,$comment_ID) {
     $notify = $notify_message;
     $notify.= '<br/> 快速回复此评论: ' . admin_url("edit-comments.php").'#comment-'.$comment_ID;
     return $notify;
 }
-add_filter('comment_notification_text', 'gdk_notify_postauthor', 10, 2);
-
-
+add_filter('comment_notification_text', 'gdk_notify_admin', 10, 2);
 
 //添加后台个人信息
 function gdk_contact_fields($contactmethods) {
@@ -650,7 +520,7 @@ add_filter('user_contactmethods', 'gdk_contact_fields');
 
 
 //支持中文名注册，来自肚兜
-function git_sanitize_user($username, $raw_username, $strict) {
+function gdk_sanitize_user($username, $raw_username, $strict) {
     $username = wp_strip_all_tags($raw_username);
     $username = remove_accents($username);
     $username = preg_replace('|%([a-fA-F0-9][a-fA-F0-9])|', '', $username);
@@ -662,43 +532,40 @@ function git_sanitize_user($username, $raw_username, $strict) {
     $username = preg_replace('|\s+|', ' ', $username);
     return $username;
 }
-add_filter('sanitize_user', 'git_sanitize_user', 10, 3);
+add_filter('sanitize_user', 'gdk_sanitize_user', 10, 3);
 
 // 添加一个新的列 ID
-function ssid_column($cols) {
+function gdk_userid_column($cols) {
     $cols['ssid'] = 'ID';
     return $cols;
 }
-add_action('manage_users_columns', 'ssid_column');
-function ssid_return_value($value, $column_name, $id) {
+add_action('manage_users_columns', 'gdk_userid_column');
+function gdk_userid_value($value, $column_name, $id) {
     if ($column_name == 'ssid') $value = $id;
     return $value;
 }
-add_filter('manage_users_custom_column', 'ssid_return_value', 10, 3);
+add_filter('manage_users_custom_column', 'gdk_userid_value', 10, 3);
 
 //用户列表显示积分
-add_filter('manage_users_columns', 'my_users_columns');
-function my_users_columns($columns) {
+add_filter('manage_users_columns', 'gdk_points_columns');
+function gdk_points_columns($columns) {
     $columns['points'] = '金币';
     return $columns;
 }
-function output_my_users_columns($value, $column_name, $user_id) {
+function gdk_points_value($value, $column_name, $user_id) {
     if ($column_name == 'points') {
-        $jinbi = Points::get_user_total_points($user_id, POINTS_STATUS_ACCEPTED);
+        $jinbi = Points::get_user_total_points($user_id, 'accepted');
         if ($jinbi != "") {
             $ret = $jinbi;
             return $ret;
         } else {
-            $ret = '穷逼一个';
+            $ret = '暂无充值';
             return $ret;
         }
     }
     return $value;
 }
-add_action('manage_users_custom_column', 'output_my_users_columns', 10, 3);
-
-
-
+add_action('manage_users_custom_column', 'gdk_points_value', 10, 3);
 
 //用户增加评论数量
 function gdk_users_comments($columns) {
@@ -730,7 +597,7 @@ function gdk_log_ip($user_id) {
     update_user_meta($user_id, 'signup_ip', $ip);
 }
 add_action('user_register', 'gdk_log_ip');
-// 添加“IP地址”这个栏目
+// 添加IP地址这个栏目
 function gdk_signup_ip($column_headers) {
     $column_headers['signup_ip'] = 'IP地址';
     return $column_headers;
@@ -756,7 +623,7 @@ function gdk_insert_last_login($login) {
     update_user_meta($user->ID, 'last_login', current_time('mysql'));
 }
 add_action('wp_login', 'gdk_insert_last_login');
-// 添加一个新栏目“上次登录”
+// 添加一个新栏目上次登录
 function gdk_add_last_login_column($columns) {
     $columns['last_login'] = '上次登录';
     unset($columns['name']);
@@ -764,7 +631,7 @@ function gdk_add_last_login_column($columns) {
 }
 add_filter('manage_users_columns', 'gdk_add_last_login_column');
 // 显示登录时间到新增栏目
-function gdk_add_last_login_column_value($value, $column_name, $user_id) {
+function gdk_add_last_login($value, $column_name, $user_id) {
     if ($column_name == 'last_login') {
         $login = get_user_meta($user_id, 'last_login', true);
         if ($login != "") {
@@ -777,4 +644,22 @@ function gdk_add_last_login_column_value($value, $column_name, $user_id) {
     }
     return $value;
 }
-add_action('manage_users_custom_column', 'gdk_add_last_login_column_value', 10, 3);
+add_action('manage_users_custom_column', 'gdk_add_last_login', 10, 3);
+
+// 评论添加@，来自：http://www.ludou.org/wordpress-comment-reply-add-at.html
+function git_comment_add_at($comment_text, $comment = '') {
+    if ($comment->comment_parent > 0) {
+        $comment_text = '@<a href="#comment-' . $comment->comment_parent . '">' . get_comment_author($comment->comment_parent) . '</a> ' . $comment_text;
+    }
+    return $comment_text;
+}
+add_filter('comment_text', 'git_comment_add_at', 20, 2);
+
+//搜索结果排除所有页面
+function search_filter_page($query) {
+    if ($query->is_search && !$query->is_admin) {
+        $query->set('post_type', 'post');
+    }
+    return $query;
+}
+add_filter('pre_get_posts', 'search_filter_page');

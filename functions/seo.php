@@ -258,11 +258,10 @@ if (gdk_option('gdk_baidu_push')) {
 
     }
     add_action('publish_post', 'gdk_baidu_submit', 0);
+    add_action('wp_footer', 'gdk_baidu_auto_push', 500);
 }
 
-
-
-
+//百度自动推送
 function gdk_baidu_auto_push() {
 	echo '<script>
         (function(){
@@ -279,7 +278,6 @@ function gdk_baidu_auto_push() {
         })();
             </script>';
 }
-add_action('wp_footer', 'gdk_baidu_auto_push', 500);
 
 
 if(gdk_option('gdk_seo_img')) {
@@ -309,7 +307,7 @@ if(gdk_option('gdk_seo_img')) {
 
 
 //关键字
-function gdk_deel_keywords() {
+function gdk_keywords() {
     global $s, $post;
     $keywords = '';
     if (is_single()) {
@@ -318,8 +316,8 @@ function gdk_deel_keywords() {
         }
         foreach (get_the_category($post->ID) as $category) $keywords.= $category->cat_name . ', ';
         $keywords = substr_replace($keywords, '', -2);
-    } elseif (is_home()) {
-        //$keywords = git_get_option('git_keywords');
+    } elseif (is_home()||is_front_page()) {
+        $keywords = gdk_option('gdk_keywords');
     } elseif (is_tag()) {
         $keywords = single_tag_title('', false);
     } elseif (is_category()) {
@@ -335,17 +333,17 @@ function gdk_deel_keywords() {
 }
 
 
-    add_action('wp_head', 'gdk_deel_keywords');
+    add_action('wp_head', 'gdk_keywords');
 
 //网站描述
-function gdk_deel_description() {
+function gdk_description() {
     global $s, $post;
     $description = '';
     $blog_name = get_bloginfo('name');
-    $iexcerpt = $post->post_excerpt;
+    $excerpt = $post->post_excerpt;
     if (is_singular()) {
-        if (!empty($iexcerpt)) {
-            $text = $iexcerpt;
+        if (!empty($excerpt)) {
+            $text = $excerpt;
         } else {
             $text = strip_shortcodes($post->post_content);
         }
@@ -357,12 +355,12 @@ function gdk_deel_description() {
             " "
         ) , " ", str_replace("\"", "'", strip_tags($text))));
         if (!($description)) $description = $blog_name . "-" . trim(wp_title('', false));
-    } elseif (is_home()) {
-        //$description = git_get_option('git_description'); // 首頁要自己加
+    } elseif (is_home()||is_front_page()) {
+        $description = gdk_option('gdk_description'); // 首頁要自己加
     } elseif (is_tag()) {
-        $description = $blog_name . "'" . single_tag_title('', false) . "'";
+        $description = $blog_name . "'" . gdk_term_meta('tag','des') . "'";
     } elseif (is_category()) {
-        $description = trim(strip_tags(category_description()));
+        $description = trim(strip_tags(gdk_term_meta('cat','des')));
     } elseif (is_archive()) {
         $description = $blog_name . "'" . trim(wp_title('', false)) . "'";
     } elseif (is_search()) {
@@ -374,9 +372,41 @@ function gdk_deel_description() {
     echo "<meta name=\"description\" content=\"$description\">\n";
 }
 
-    add_action('wp_head', 'gdk_deel_description');
+    add_action('wp_head', 'gdk_description');
 
-
+//添加Open Graph Meta
+function meta_og() {
+	global $post;
+	if ( is_single() ) {
+		if( has_post_thumbnail( $post->ID ) ) {
+			$img_src = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'thumbnail' );
+		}
+		$excerpt = strip_tags( $post->post_content );
+		$excerpt_more = '';
+		if ( strlen($excerpt ) > 155) {
+			$excerpt = substr( $excerpt,0,155 );
+			$excerpt_more = ' ...';
+		}
+		$excerpt = str_replace( '"', '', $excerpt );
+		$excerpt = str_replace( "'", '', $excerpt );
+		$excerptwords = preg_split( '/[\n\r\t ]+/', $excerpt, -1, PREG_SPLIT_NO_EMPTY );
+		array_pop( $excerptwords );
+		$excerpt = implode( ' ', $excerptwords ) . $excerpt_more;
+		?>
+		    <meta name="author" content="Your Name">
+		    <meta name="description" content="<?php echo $excerpt; ?>">
+		    <meta property="og:title" content="<?php echo the_title(); ?>">
+		    <meta property="og:description" content="<?php echo $excerpt; ?>">
+		    <meta property="og:type" content="article">
+		    <meta property="og:url" content="<?php echo the_permalink(); ?>">
+		    <meta property="og:site_name" content="Your Site Name">
+		    <meta property="og:image" content="<?php echo $img_src[0]; ?>">
+		    <?php
+	} else {
+		return;
+	}
+}
+add_action('wp_head', 'meta_og', 5);
 
 
     //图片img标签添加alt，title属性
@@ -397,9 +427,6 @@ function gdk_deel_description() {
         return $content;
     }
     add_filter('the_content', 'aimagesalt');
-
-
-
 
 //评论分页的seo处理
 function gdk_canonical(){
