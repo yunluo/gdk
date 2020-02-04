@@ -253,7 +253,7 @@ function git_list_shortcode_handler($atts, $content = '') {
             $output.= "<li>{$li}</li>";
         }
     }
-    $output = "<ul>" . $output . "</ul>\n";
+    $output .= "<ul>" . $output . "</ul>\n";
     return $output;
 }
 add_shortcode('list', 'git_list_shortcode_handler');

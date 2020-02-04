@@ -44,18 +44,12 @@ add_action('admin_enqueue_scripts', 'gdk_admin_enqueue_script');
 
 function gdk_enqueue_script_frontend() {
     if (!is_admin()) {
-        wp_register_style( 'gdk_css', GDK_BASE_URL.'assets/css/gdk.css', [], GDK_PLUGIN_VER, 'all' );
-        wp_register_script('code_prettify_js', GDK_BASE_URL.'assets/js/prettify.min.js', array('jquery'), GDK_PLUGIN_VER, true);
-        wp_register_script('fancybox_js', GDK_BASE_URL.'assets/js/fancybox.min.js', array('jquery'), GDK_PLUGIN_VER, true);
-        wp_register_script('lazyload_js', GDK_BASE_URL.'assets/js/lazyload.min.js', array('jquery'), GDK_PLUGIN_VER, true);
-        wp_register_script('sweetalert','https://cdn.jsdelivr.net/npm/sweetalert@2.0.0/dist/sweetalert.min.js', [], GDK_PLUGIN_VER, true);
-        wp_register_script('gdk_js', GDK_BASE_URL.'assets/js/gdk.js', array('jquery'), GDK_PLUGIN_VER, true);
-        wp_enqueue_style( 'gdk_css' );
-        wp_enqueue_script('code_prettify_js');
-        wp_enqueue_script('fancybox_js');
-        wp_enqueue_script('lazyload_js');
-        wp_enqueue_script('sweetalert');
-        wp_enqueue_script('gdk_js');
+        wp_enqueue_style( 'gdk_css', GDK_BASE_URL.'assets/css/gdk.css', [], GDK_PLUGIN_VER, 'all' );
+        wp_enqueue_script('code_prettify_js', GDK_BASE_URL.'assets/js/prettify.min.js', array('jquery'), GDK_PLUGIN_VER, true);
+        wp_enqueue_script('fancybox_js', GDK_BASE_URL.'assets/js/fancybox.min.js', array('jquery'), GDK_PLUGIN_VER, true);
+        wp_enqueue_script('lazyload_js', GDK_BASE_URL.'assets/js/lazyload.min.js', array('jquery'), GDK_PLUGIN_VER, true);
+        wp_enqueue_script('sweetalert_js','https://cdn.jsdelivr.net/npm/sweetalert@2.0.0/dist/sweetalert.min.js', [], GDK_PLUGIN_VER, true);
+        wp_enqueue_script('gdk_js', GDK_BASE_URL.'assets/js/gdk.js', array('jquery'), GDK_PLUGIN_VER, true);
         wp_localize_script('gdk_js', 'ajax', [
             'url'=> admin_url('admin-ajax.php'), 
             'pass_nonce' => wp_create_nonce('pass_nonce')

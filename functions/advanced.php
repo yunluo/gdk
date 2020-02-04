@@ -59,7 +59,7 @@ function gdk_link_go($content) {
 	if(file_exists(ABSPATH.'go.php')) {
 		$gourl = home_url().'/go.php';
 	} else {
-		$gourl = GDK_BASE_URL.'class/go.php';
+		$gourl = GDK_BASE_URL.'public/go.php';
 	}
 	preg_match_all('/<a(.*?)href="(.*?)"(.*?)>/',$content,$matches);
 	if($matches) {

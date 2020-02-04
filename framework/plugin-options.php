@@ -343,7 +343,7 @@ jQuery(function ($) {
     $.post(ajaxurl, ajax_data,
         function(a) {
             if (a == '1') {
-				swal("测试成功", "您的SMTP邮箱邮件发送已成功,Enjoy it", "success");
+				alert("测试成功", "您的SMTP邮箱邮件发送已成功,Enjoy it");
             }else{
 				swal("测试失败", "您的SMTP邮箱邮件响应失败,请重试", "error");
 			}
