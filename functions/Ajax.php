@@ -4,12 +4,18 @@
 *Ajax操作文件
 */
 
+/**
+ * 200 ok
+ * 400 fail
+ */
+
+//后台邮箱检测
 function gdk_test_email() {
     $is_error = !wp_mail('donotreply@mywpku.com', '测试发信', 'WP 积木测试发信');
     if ($is_error) {
-        exit('0');
+        exit('500');
     }else{
-        exit('1');
+        exit('200');
     }
 }
 add_action('wp_ajax_nopriv_gdk_test_email', 'gdk_test_email');
@@ -18,7 +24,7 @@ add_action('wp_ajax_gdk_test_email', 'gdk_test_email');
 
 //粘贴上传图片
 function gdk_pasteup_imag() {
-    if( !isset( $_POST['pui_nonce'] ) || !wp_verify_nonce($_POST['pui_nonce'], 'pui-nonce') ) exit('Permissions check failed');
+    if( !isset( $_POST['pui_nonce'] ) || !wp_verify_nonce($_POST['pui_nonce'], 'pui-nonce') ) exit('400');
 	if($_FILES) {
 		global $post;
 		$post_ID = $post->ID;
@@ -47,11 +53,11 @@ function gdk_pasteup_imag() {
 					$attach_data = wp_generate_attachment_metadata( $attach_id, $file_path );
 					wp_update_attachment_metadata( $attach_id, $attach_data );
 				}
-				$result['success']= true;
-				$result['message']= $file_url;
+				$result['success'] = true;
+				$result['message'] = $file_url;
 			}
 		} else {
-			$result['message']="Invalid file";
+			$result['message'] = "400";
 		}
 		echo(json_encode($result));
 		exit();
@@ -60,22 +66,72 @@ function gdk_pasteup_imag() {
 add_action('wp_ajax_nopriv_gdk_pasteup_imag', 'gdk_pasteup_imag');
 add_action('wp_ajax_gdk_pasteup_imag', 'gdk_pasteup_imag');
 
-
+//密码可见
 function gdk_pass_view() {
-	if( !isset( $_POST['pass_nonce'] ) || !wp_verify_nonce($_POST['pass_nonce'], 'pass_nonce') ) return;
+	if( !isset( $_POST['pass_nonce'] ) || !wp_verify_nonce($_POST['pass_nonce'], 'pass_nonce') ) exit('400');
 	$action = $_POST['action'];
 	$post_id = $_POST['id'];
 	$pass = $_POST['pass'];
-	if(!isset( $action )  ||  !isset( $post_id )  ||  !isset( $pass )   ) return;
+	if(!isset( $action )  ||  !isset( $post_id )  ||  !isset( $pass )   ) exit('400');
 	if($pass == '2233') {
 	$pass_content = get_post_meta($post_id, '_pass_content')[0];
 	exit($pass_content);
 	}else{
-		exit('0');
+		exit('400');
 	}
 }
 add_action('wp_ajax_nopriv_gdk_pass_view', 'gdk_pass_view');
 add_action('wp_ajax_gdk_pass_view', 'gdk_pass_view');
+
+
+//在线充值
+function pay_points() {
+    if( !isset( $_POST['pay_points'] ) || !wp_verify_nonce($_POST['pay_points'], 'pay_points') ) exit('400');
+    if (!isset($_POST['money']) || !isset($_POST['way'])) exit('400');
+	if (isset($_POST['id']) && $_POST['action'] == 'pay_points') {
+		$config = [
+		        'mchid' => gdk_option('gdk_payjs_id'),   // 配置商户号
+				'key'   => gdk_option('gdk_payjs_key'),   // 配置通信密钥
+		];
+		// 初始化
+		$payjs = new Payjs($config);
+		$data = [
+		'body' => '积分充值',   // 订单标题
+		'attach' => $_POST['id'],   // 订单备注
+		'out_trade_no' => gdk_order_id(),       // 订单号
+		'total_fee' => intval($_POST['money'])*100,             // 金额,单位:分
+		'notify_url' => GDK_BASE_URL.'/public/push.php',
+		'hide' => '1'
+        ];
+		$result['money'] = intval($_POST['money']);//rmb金额
+        $result['trade_no'] = $data['out_trade_no'];
+
+		if( $_POST['way'] == 'alipay' ) {
+			$data['type'] = 'alipay';
+			$result['way'] = '支付宝';
+		} else {
+			$result['way'] = '微信';
+		}
+		if(gdk_is_mobile()) {
+			$rst = $payjs->cashier($data);//手机使用
+			$result['img'] = $rst;
+		} else {
+			$rst = $payjs->native($data);//电脑使用
+			$result['img'] = $rst['code_url'];
+		}
+        exit(implode('|',$result));
+	}
+}
+add_action( 'wp_ajax_pay_points', 'pay_points' );
+add_action( 'wp_ajax_nopriv_pay_points', 'pay_points' );
+
+
+
+
+
+
+
+/**END */
 
 //weauth自动登录
 function bind_email_check(){
@@ -236,44 +292,10 @@ add_action( 'wp_ajax_nopriv_addcode', 'addcode' );
 
 /*免登陆购买结束*/
 
-//在线充值
-function pay_chongzhi() {
-	if (isset($_POST['jine']) && $_POST['action'] == 'pay_chongzhi') {
-		$config = [
-		        'mchid' => gdk_option('gdk_payjs_id'),   // 配置商户号
-				'key'   => gdk_option('gdk_payjs_secret'),   // 配置通信密钥
-		];
-		// 初始化
-		$payjs = new Payjs($config);
-		$data = [
-		'body' => '积分充值',   // 订单标题
-		'attach' => get_current_user_id(),   // 订单备注
-		'out_trade_no' => gdk_order_id(),       // 订单号
-		'total_fee' => intval($_POST['jine'])*100,             // 金额,单位:分
-		'notify_url' => GDK_BASE_URL.'/public/push.php',
-		'hide' => '1'
-		];
-		$result_money = intval($_POST['jine']);
-		$result_trade_no = $data['out_trade_no'];
-		if( gdk_option('gdk_payjs_alipay') && $_POST['way'] =='alipay' ) {
-			$data['type'] = 'alipay';
-			$result_way = '支付宝';
-		} else {
-			$result_way = '微信';
-		}
-		if(gdk_is_mobile()) {
-			$rst = $payjs->cashier($data);//手机使用
-			$result_img = $rst;
-		} else {
-			$rst = $payjs->native($data);//电脑使用
-			$result_img = $rst['code_url'];
-		}
-		$result = $result_money.'|'.$result_way.'|'. $result_img.'|'. $result_trade_no;
-		exit($result);
-	}
-}
-add_action( 'wp_ajax_pay_chongzhi', 'pay_chongzhi' );
-add_action( 'wp_ajax_nopriv_pay_chongzhi', 'pay_chongzhi' );
+
+
+
+
 
 //检查付款情况
 function payrest(){

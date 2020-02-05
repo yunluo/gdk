@@ -1,6 +1,4 @@
 <?php 
-
-
 $t_url = preg_replace('/^url=(.*)$/i','$1',$_SERVER["QUERY_STRING"]);
 if(!empty($t_url)) {
 	preg_match('/(http|https):\/\//',$t_url,$matches);
@@ -20,75 +18,53 @@ if(!empty($t_url)) {
 <meta http-equiv="refresh" content="1;url='<?php echo $url;?>';">
 <title><?php echo $title;?></title>
 <style type="text/css">
-html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td,article,aside,canvas,details,embed,figure,figcaption,footer,header,hgroup,menu,nav,output,ruby,section,summary,time,mark,audio,video {
-	margin: 0;
-	padding: 0;
-	border: 0;
-	font-size: 100%;
-	font: inherit;
-	vertical-align: baseline
-}
-
-body {
-	background: #3498db;
-}
-
-#loader-container {
-	width: 188px;
-	height: 188px;
-	color: white;
-	margin: 0 auto;
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	margin-right: -50%;
-	transform: translate(-50%, -50%);
-	border: 5px solid #3498db;
-	border-radius: 50%;
-	-webkit-animation: borderScale 1s infinite ease-in-out;
-	animation: borderScale 1s infinite ease-in-out;
-}
-
-#loadingText {
-	font-family: 'Raleway', sans-serif;
-	font-size: 1.4em;
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	margin-right: -50%;
-	transform: translate(-50%, -50%);
-}
-
-@-webkit-keyframes borderScale {
-	0% {
-		border: 5px solid white;
-	}
-
-	50% {
-		border: 25px solid #3498db;
-	}
-
-	100% {
-		border: 5px solid white;
-	}
-}
-
-@keyframes borderScale {
-	0% {
-		border: 5px solid white;
-	}
-
-	50% {
-		border: 25px solid #3498db;
-	}
-
-	100% {
-		border: 5px solid white;
-	}
-}
+body{background:#F5F7FA;margin:0}
+.loader{-webkit-animation:fadein 2s;-moz-animation:fadein 2s;-o-animation:fadein 2s;animation:fadein 2s;position:absolute;top:0;left:0;right:0;bottom:0;background-color:#F5F7FA}
+@-moz-keyframes fadein{from{opacity:0}
+to{opacity:1}
+}@-webkit-keyframes fadein{from{opacity:0}
+to{opacity:1}
+}@-o-keyframes fadein{from{opacity:0}
+to{opacity:1}
+}@keyframes fadein{from{opacity:0}
+to{opacity:1}
+}.loader-inner{position:absolute;z-index:300;top:40%;left:50%;-webkit-transform:translate(-50%,-50%);-moz-transform:translate(-50%,-50%);-ms-transform:translate(-50%,-50%);-o-transform:translate(-50%,-50%);transform:translate(-50%,-50%)}
+@-webkit-keyframes rotate_pacman_half_up{0%{-webkit-transform:rotate(270deg);transform:rotate(270deg)}
+50%{-webkit-transform:rotate(360deg);transform:rotate(360deg)}
+100%{-webkit-transform:rotate(270deg);transform:rotate(270deg)}
+}@keyframes rotate_pacman_half_up{0%{-webkit-transform:rotate(270deg);transform:rotate(270deg)}
+50%{-webkit-transform:rotate(360deg);transform:rotate(360deg)}
+100%{-webkit-transform:rotate(270deg);transform:rotate(270deg)}
+}@-webkit-keyframes rotate_pacman_half_down{0%{-webkit-transform:rotate(90deg);transform:rotate(90deg)}
+50%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}
+100%{-webkit-transform:rotate(90deg);transform:rotate(90deg)}
+}@keyframes rotate_pacman_half_down{0%{-webkit-transform:rotate(90deg);transform:rotate(90deg)}
+50%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}
+100%{-webkit-transform:rotate(90deg);transform:rotate(90deg)}
+}@-webkit-keyframes pacman-balls{75%{opacity:.7}
+100%{-webkit-transform:translate(-100px,-6.25px);transform:translate(-100px,-6.25px)}
+}@keyframes pacman-balls{75%{opacity:.7}
+100%{-webkit-transform:translate(-100px,-6.25px);transform:translate(-100px,-6.25px)}
+}.pacman>div:nth-child(2){-webkit-animation:pacman-balls 1s 0s infinite linear;animation:pacman-balls 1s 0s infinite linear}
+.pacman>div:nth-child(3){-webkit-animation:pacman-balls 1s .33s infinite linear;animation:pacman-balls 1s .33s infinite linear}
+.pacman>div:nth-child(4){-webkit-animation:pacman-balls 1s .66s infinite linear;animation:pacman-balls 1s .66s infinite linear}
+.pacman>div:nth-child(5){-webkit-animation:pacman-balls 1s .99s infinite linear;animation:pacman-balls 1s .99s infinite linear}
+.pacman>div:first-of-type{width:0;height:0;border-right:25px solid transparent;border-top:25px solid #7A57D1;border-left:25px solid #7A57D1;border-bottom:25px solid #7A57D1;border-radius:25px;-webkit-animation:rotate_pacman_half_up .5s 0s infinite;animation:rotate_pacman_half_up .5s 0s infinite}
+.pacman>div:nth-child(2){width:0;height:0;border-right:25px solid transparent;border-top:25px solid #7A57D1;border-left:25px solid #7A57D1;border-bottom:25px solid #7A57D1;border-radius:25px;-webkit-animation:rotate_pacman_half_down .5s 0s infinite;animation:rotate_pacman_half_down .5s 0s infinite;margin-top:-50px}
+.pacman>div:nth-child(3),.pacman>div:nth-child(4),.pacman>div:nth-child(5),.pacman>div:nth-child(6){background-color:#7A57D1;width:15px;height:15px;border-radius:100%;margin:2px;width:10px;height:10px;position:absolute;-webkit-transform:translate(0,-6.25px);-ms-transform:translate(0,-6.25px);transform:translate(0,-6.25px);top:25px;left:100px}
+.loader-text{margin:20px 0 0 -16px;display:block;font-size:18px}
 </style>
 </head>
 <body>
-<div id="loader-container"><p id="loadingText">页面加载中...</p></div>
+<div class="loader">
+<div class="loader-inner pacman">
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div> 
+<span class="loader-text">页面跳转中, 请稍候…</span>
+</div>
+</div>
 </body>
 </html>

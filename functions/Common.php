@@ -1020,3 +1020,41 @@ function get_link_items() {
     }
     return $result;
 }
+
+//充值按钮
+function buy_points(){
+
+    if(is_user_logged_in()) {//logined
+
+        $result = '
+        <a data-fancybox="pay_fancybox" data-src="#pay_fancybox" href="javascript:;" class="button">点击充值</a>
+        <form id="pay_fancybox" name="pay_form" style="display: none; width: 100%; max-width: 500px;" class="pure-form">
+                <h2 class="mb-3">积分充值</h2>
+                <p>请在下面输入充值金额以及支付工具,微信支付宝都可以,如果下面选项中有支付宝一般建议支付宝</p>
+                <label for="money">支付金额</label>
+                <input name="money" id="money" min="1" value="2" type="number" required>
+                <br /><label for="pay_way">支付方式</label>';
+                if( gdk_option('gdk_payjs_alipay')){
+                    $result .= '
+                    <label><input name="pay_way" type="radio" value = "alipay" checked/> 支付宝</label>  &nbsp;&nbsp;&nbsp;&nbsp;<label><input name="pay_way" type="radio" value = "wechat" /> 微信</label>';
+                }else{
+                    $result .= '<br /><label> 微信</label>';
+                }
+                $result .= '
+                <p class="mb-0 text-right">
+                    <input data-fancybox-close type="button" id="submit_pay" data-action="pay_points" data-id="'.get_current_user_id().'" class="pure-button pure-button-primary" value="提交">
+                </p>
+            </form>';
+        wp_enqueue_script('qrious', 'https://cdn.bootcss.com/qrious/4.0.2/qrious.min.js', array('jquery'), GDK_PLUGIN_VER, true);
+
+    }else{// no login
+        $result = '<div class=\'alert info\'>本页面需要您登录才可以操作，请先 <a target="_blank" href="'.esc_url( wp_login_url( get_permalink() ) ).'">点击登录</a>  或者<a href="'.esc_url( wp_registration_url() ).'">立即注册</a></div>';
+    }
+
+
+
+
+
+    return $result;
+
+}

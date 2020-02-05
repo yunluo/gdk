@@ -6,6 +6,12 @@
 add_filter( 'widget_text', 'shortcode_unautop' );
 add_filter( 'widget_text', 'do_shortcode' );
 
+//积分充值短代码
+function gdk_potin() {
+    return buy_points();
+}
+add_shortcode('gdk_potin_btn', 'gdk_potin');
+
 //添加钮Download
 function DownloadUrl($atts, $content = null) {
     extract(shortcode_atts(array(
