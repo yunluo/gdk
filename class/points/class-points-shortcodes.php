@@ -83,7 +83,7 @@ public static function pay($atts, $content = null) {
                 $notice.= '<div class="alert alert-info"">';
                 $notice.= '<p style="color:red;">本段内容需要支付 ' . $point . '金币查看</p>';
                 $notice.= '<p style="color:red;">您当前拥有 <em><strong>' . Points::get_user_total_points($user_id, 'accepted') . '</strong></em> 金币，您的金币不足，请充值</p>';
-                $notice.= '<p><a class="lhb" href="' . get_permalink(git_page_id('chongzhi')) . '" target="_blank" rel="nofollow" data-original-title="立即充值" title="">立即充值</a></p>';
+                $notice.= '<p><a class="lhb" href="' . get_permalink(gdk_page_id('chongzhi')) . '" target="_blank" rel="nofollow" data-original-title="立即充值" title="">立即充值</a></p>';
                 $notice.= '</div>';
             } else {
                 $notice.= '<div id="pay_notice" class="alert alert-info"">';

@@ -931,8 +931,8 @@ function gdk_term_meta($term,$meta,$id) {
 function gdk_thumbnail_src() {
     global $post;
     $gdk_thumbnail_src = '';
-    if ($values = get_post_custom_values('git_thumb')) { //输出自定义域图片地址
-        $values = get_post_custom_values('git_thumb');
+    if ($values = get_post_custom_values('gdk_thumb')) { //输出自定义域图片地址
+        $values = get_post_custom_values('gdk_thumb');
         $gdk_thumbnail_src = $values[0];
     } elseif (has_post_thumbnail()) { //如果有特色缩略图，则输出缩略图地址
         $thumbnail_src = wp_get_attachment_image_src(get_post_thumbnail_id($post->ID) , 'full');
@@ -952,7 +952,7 @@ function gdk_thumbnail_src() {
 
 
 //生成订单号编码
-function git_order_id(){
+function gdk_order_id(){
 	date_default_timezone_set('Asia/Shanghai');
 	$order_id = 'E' . date("YmdHis") . mt_rand(10000, 99999);
 	return $order_id;
@@ -974,7 +974,7 @@ function get_Yunluo_Notice(){
 }
 
 //获取页面id，并且不可重用
-function git_page_id( $pagephp ) {
+function gdk_page_id( $pagephp ) {
     global $wpdb;
     $pagephp = esc_sql($pagephp);
     $pageid = $wpdb->get_row("SELECT `post_id` FROM `{$wpdb->postmeta}` WHERE `meta_value` = 'pages/{$pagephp}.php'", ARRAY_A) ['post_id'];
@@ -982,7 +982,7 @@ function git_page_id( $pagephp ) {
 }
 
 //根据订单描述金币数据，d=订单号 u=用户id
-function git_check( $d , $u = null) {
+function gdk_check( $d , $u = null) {
 	global $wpdb;
 	$des = " WHERE `description` = '" . $d . "'";
 	$userid = "";
@@ -1008,7 +1008,7 @@ function get_the_link_items($id = null) {
 }
 
 function get_link_items() {
-    $linkcats = get_terms('link_category', 'orderby=count&hide_empty=1&exclude=' . git_get_option('git_linkpage_cat'));
+    $linkcats = get_terms('link_category', 'orderby=count&hide_empty=1&exclude=' . gdk_option('gdk_linkpage_cat'));
     if (!empty($linkcats)) {
         foreach ($linkcats as $linkcat) {
             $result.= '<h2 class="link_title">' . $linkcat->name . '</h2>';

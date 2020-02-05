@@ -647,13 +647,13 @@ function gdk_add_last_login($value, $column_name, $user_id) {
 add_action('manage_users_custom_column', 'gdk_add_last_login', 10, 3);
 
 // 评论添加@，来自：http://www.ludou.org/wordpress-comment-reply-add-at.html
-function git_comment_add_at($comment_text, $comment = '') {
+function gdk_comment_add_at($comment_text, $comment = '') {
     if ($comment->comment_parent > 0) {
         $comment_text = '@<a href="#comment-' . $comment->comment_parent . '">' . get_comment_author($comment->comment_parent) . '</a> ' . $comment_text;
     }
     return $comment_text;
 }
-add_filter('comment_text', 'git_comment_add_at', 20, 2);
+add_filter('comment_text', 'gdk_comment_add_at', 20, 2);
 
 //搜索结果排除所有页面
 function search_filter_page($query) {

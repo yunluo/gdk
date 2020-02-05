@@ -1,7 +1,7 @@
 <?php
 
 //添加后台个人信息
-function git_add_contact_fields($contactmethods) {
+function gdk_add_contact_fields($contactmethods) {
     $contactmethods['qq'] = 'QQ';
     $contactmethods['sina_weibo'] = '新浪微博';
     $contactmethods['baidu'] = '百度ID';
@@ -12,11 +12,11 @@ function git_add_contact_fields($contactmethods) {
     unset($contactmethods['jabber']);
     return $contactmethods;
 }
-add_filter('user_contactmethods', 'git_add_contact_fields');
+add_filter('user_contactmethods', 'gdk_add_contact_fields');
 
 if (!defined('UM_DIR')) { /*判断是否按照UM插件*/
     //注册表单
-    function git_show_extra_register_fields() {
+    function gdk_show_extra_register_fields() {
 ?>
     <p>
     <label for="password">密码<br/>
@@ -30,11 +30,11 @@ if (!defined('UM_DIR')) { /*判断是否按照UM插件*/
     </p>
     <?php
     }
-    add_action('register_form', 'git_show_extra_register_fields');
+    add_action('register_form', 'gdk_show_extra_register_fields');
     /*
      * Check the form for errors
     */
-    function git_check_extra_register_fields($login, $email, $errors) {
+    function gdk_check_extra_register_fields($login, $email, $errors) {
         if ($_POST['password'] !== $_POST['repeat_password']) {
             $errors->add('passwords_not_matched', "<strong>错误提示</strong>: 两次填写密码不一致");
         }
@@ -42,11 +42,11 @@ if (!defined('UM_DIR')) { /*判断是否按照UM插件*/
             $errors->add('password_too_short', "<strong>错误提示</strong>: 密码必须大于8个字符");
         }
     }
-    add_action('register_post', 'git_check_extra_register_fields', 10, 3);
+    add_action('register_post', 'gdk_check_extra_register_fields', 10, 3);
     /*
      * 提交用户密码进数据库
     */
-    function git_register_extra_fields($user_id) {
+    function gdk_register_extra_fields($user_id) {
         $userdata = array();
         $userdata['ID'] = $user_id;
         if ($_POST['password'] !== '') {
@@ -58,27 +58,27 @@ if (!defined('UM_DIR')) { /*判断是否按照UM插件*/
         }
         $new_user_id = wp_update_user($userdata);
     }
-    add_action('user_register', 'git_register_extra_fields', 100);
+    add_action('user_register', 'gdk_register_extra_fields', 100);
 }
 //注册之后跳转
-if (git_get_option('git_register_redirect_ok')) {
-    function git_registration_redirect() {
-        if (git_get_option('git_redirect_choise') == 'git_redirect_home') {
+if (gdk_option('gdk_register_redirect_ok')) {
+    function gdk_registration_redirect() {
+        if (gdk_option('gdk_redirect_choise') == 'gdk_redirect_home') {
             $redirect_url = home_url();
-        } elseif (git_get_option('git_redirect_choise') == 'git_redirect_author') {
+        } elseif (gdk_option('gdk_redirect_choise') == 'gdk_redirect_author') {
             $redirect_url = get_author_posts_url($user_id);
-        } elseif (git_get_option('git_redirect_choise') == 'git_redirect_profile') {
+        } elseif (gdk_option('gdk_redirect_choise') == 'gdk_redirect_profile') {
             $redirect_url = admin_url('wp-admin/profile.php');
-        } elseif (git_get_option('git_redirect_choise') == 'git_redirect_profile' && git_get_option('git_register_redirect_url')) {
-            $redirect_url = git_get_option('git_register_redirect_url');
+        } elseif (gdk_option('gdk_redirect_choise') == 'gdk_redirect_profile' && gdk_option('gdk_register_redirect_url')) {
+            $redirect_url = gdk_option('gdk_register_redirect_url');
         }
         return $redirect_url;
     }
-    add_filter('registration_redirect', 'git_registration_redirect');
+    add_filter('registration_redirect', 'gdk_registration_redirect');
 }
 
 //支持中文名注册，来自肚兜
-function git_sanitize_user($username, $raw_username, $strict) {
+function gdk_sanitize_user($username, $raw_username, $strict) {
     $username = wp_strip_all_tags($raw_username);
     $username = remove_accents($username);
     $username = preg_replace('|%([a-fA-F0-9][a-fA-F0-9])|', '', $username);
@@ -90,10 +90,10 @@ function git_sanitize_user($username, $raw_username, $strict) {
     $username = preg_replace('|\s+|', ' ', $username);
     return $username;
 }
-add_filter('sanitize_user', 'git_sanitize_user', 10, 3);
+add_filter('sanitize_user', 'gdk_sanitize_user', 10, 3);
 
 //修复 WordPress 找回密码提示“抱歉，该key似乎无效”
-function git_reset_password_message($message, $key) {
+function gdk_reset_password_message($message, $key) {
     if (strpos($_POST['user_login'], '@')) {
         $user_data = get_user_by('email', trim($_POST['user_login']));
     } else {
@@ -109,7 +109,7 @@ function git_reset_password_message($message, $key) {
     $msg.= wp_login_url() . "?action=rp&key=$key&login=" . rawurlencode($user_login);
     return $msg;
 }
-add_filter('retrieve_password_message', 'git_reset_password_message', null, 2);
+add_filter('retrieve_password_message', 'gdk_reset_password_message', null, 2);
 
 //仅显示作者自己的文章
 function mypo_query_useronly($wp_query) {
@@ -171,12 +171,12 @@ function output_my_users_columns($value, $column_name, $user_id) {
 }
 add_action('manage_users_custom_column', 'output_my_users_columns', 10, 3);
 //本地头像
-function git_user_avatar($column_headers) {
+function gdk_user_avatar($column_headers) {
     $column_headers['local_avatar'] = '本地头像';
     return $column_headers;
 }
-add_filter('manage_users_columns', 'git_user_avatar');
-function git_ripms_user_avatar($value, $column_name, $user_id) {
+add_filter('manage_users_columns', 'gdk_user_avatar');
+function gdk_ripms_user_avatar($value, $column_name, $user_id) {
     if ($column_name == 'local_avatar') {
         $localavatar = get_user_meta($user_id, 'simple_local_avatar', true);
         if (empty($localavatar)) {
@@ -189,14 +189,14 @@ function git_ripms_user_avatar($value, $column_name, $user_id) {
     }
     return $value;
 }
-add_action('manage_users_custom_column', 'git_ripms_user_avatar', 10, 3);
+add_action('manage_users_custom_column', 'gdk_ripms_user_avatar', 10, 3);
 //用户增加评论数量
-function git_users_comments($columns) {
+function gdk_users_comments($columns) {
     $columns['comments'] = '评论';
     return $columns;
 }
-add_filter('manage_users_columns', 'git_users_comments');
-function git_show_users_comments($value, $column_name, $user_id) {
+add_filter('manage_users_columns', 'gdk_users_comments');
+function gdk_show_users_comments($value, $column_name, $user_id) {
     if ($column_name == 'comments') {
         $comments_counts = get_comments(array(
             'status' => '1',
@@ -213,20 +213,20 @@ function git_show_users_comments($value, $column_name, $user_id) {
     }
     return $value;
 }
-add_action('manage_users_custom_column', 'git_show_users_comments', 10, 3);
+add_action('manage_users_custom_column', 'gdk_show_users_comments', 10, 3);
 // 添加一个字段保存IP地址
-function git_log_ip($user_id) {
+function gdk_log_ip($user_id) {
     $ip = $_SERVER['REMOTE_ADDR'];
     update_user_meta($user_id, 'signup_ip', $ip);
 }
-add_action('user_register', 'git_log_ip');
+add_action('user_register', 'gdk_log_ip');
 // 添加“IP地址”这个栏目
-function git_signup_ip($column_headers) {
+function gdk_signup_ip($column_headers) {
     $column_headers['signup_ip'] = 'IP地址';
     return $column_headers;
 }
-add_filter('manage_users_columns', 'git_signup_ip');
-function git_ripms_columns($value, $column_name, $user_id) {
+add_filter('manage_users_columns', 'gdk_signup_ip');
+function gdk_ripms_columns($value, $column_name, $user_id) {
     if ($column_name == 'signup_ip') {
         $ip = get_user_meta($user_id, 'signup_ip', true);
         if ($ip != "") {
@@ -239,22 +239,22 @@ function git_ripms_columns($value, $column_name, $user_id) {
     }
     return $value;
 }
-add_action('manage_users_custom_column', 'git_ripms_columns', 10, 3);
+add_action('manage_users_custom_column', 'gdk_ripms_columns', 10, 3);
 // 创建一个新字段存储用户登录时间
-function git_insert_last_login($login) {
+function gdk_insert_last_login($login) {
     $user = get_user_by('login', $login);
     update_user_meta($user->ID, 'last_login', current_time('mysql'));
 }
-add_action('wp_login', 'git_insert_last_login');
+add_action('wp_login', 'gdk_insert_last_login');
 // 添加一个新栏目“上次登录”
-function git_add_last_login_column($columns) {
+function gdk_add_last_login_column($columns) {
     $columns['last_login'] = '上次登录';
     unset($columns['name']);
     return $columns;
 }
-add_filter('manage_users_columns', 'git_add_last_login_column');
+add_filter('manage_users_columns', 'gdk_add_last_login_column');
 // 显示登录时间到新增栏目
-function git_add_last_login_column_value($value, $column_name, $user_id) {
+function gdk_add_last_login_column_value($value, $column_name, $user_id) {
     if ($column_name == 'last_login') {
         $login = get_user_meta($user_id, 'last_login', true);
         if ($login != "") {
@@ -267,18 +267,18 @@ function git_add_last_login_column_value($value, $column_name, $user_id) {
     }
     return $value;
 }
-add_action('manage_users_custom_column', 'git_add_last_login_column_value', 10, 3);
+add_action('manage_users_custom_column', 'gdk_add_last_login_column_value', 10, 3);
 
 //后台登陆数学验证码
-if (git_get_option('git_admin_captcha')) {
-    function git_add_login_fields(){
+if (gdk_option('gdk_admin_captcha')) {
+    function gdk_add_login_fields(){
         $num1 = mt_rand(0, 20);
         $num2 = mt_rand(0, 20);
         echo "<p><label for='sum'> {$num1} + {$num2} = ?<br /><input type='text' name='sum' class='input' value='' size='25' tabindex='4'>" . "<input type='hidden' name='num1' value='{$num1}'>" . "<input type='hidden' name='num2' value='{$num2}'></label></p>";
     }
-    add_action('login_form', 'git_add_login_fields');
-    add_action('register_form', 'git_add_login_fields');
-    function git_login_val(){
+    add_action('login_form', 'gdk_add_login_fields');
+    add_action('register_form', 'gdk_add_login_fields');
+    function gdk_login_val(){
         $sum = $_POST['sum'];
         switch ($sum) {
             case $_POST['num1'] + $_POST['num2']:
@@ -290,14 +290,14 @@ if (git_get_option('git_admin_captcha')) {
                 wp_die('错误: 验证码错误,请重试&nbsp; <a href="javascript:;" onclick="javascript:history.back();">返回上页</a>');
         }
     }
-    add_action('login_form_login', 'git_login_val');
-    add_action('register_post', 'git_login_val');
+    add_action('login_form_login', 'gdk_login_val');
+    add_action('register_post', 'gdk_login_val');
 }
 //限制每个ip的注册数量
-if (git_get_option('git_regist_ips')) {
+if (gdk_option('gdk_regist_ips')) {
     function validate_reg_ips(){
         global $err_msg;
-        $allow_time = git_get_option('git_regist_ips_num');
+        $allow_time = gdk_option('gdk_regist_ips_num');
         //每个IP允许注册的用户数
         $allowed = true;
         $ipsfile = ABSPATH . '/ips.txt';

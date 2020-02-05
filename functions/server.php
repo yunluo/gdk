@@ -10,7 +10,7 @@
 
 
 //百度收录提示
-if (git_get_option('git_baidurecord_b') && function_exists('curl_init')) {
+if (gdk_option('gdk_baidurecord_b') && function_exists('curl_init')) {
     function baidu_check($url, $post_id){
         $baidu_record = get_post_meta($post_id, 'baidu_record', true);
         if ($baidu_record != 1) {
@@ -44,11 +44,11 @@ if (git_get_option('git_baidurecord_b') && function_exists('curl_init')) {
 
 
 //百度主动推送
-if (git_get_option('git_sitemap_api')) {
+if (gdk_option('gdk_sitemap_api')) {
     function Git_Baidu_Submit($post_ID) {
-        if (get_post_meta($post_ID, 'git_baidu_submit', true) == 1) return;
+        if (get_post_meta($post_ID, 'gdk_baidu_submit', true) == 1) return;
         $url = get_permalink($post_ID);
-        $api = git_get_option('git_sitemap_api');
+        $api = gdk_option('gdk_sitemap_api');
         $request = new WP_Http;
         $result = $request->request($api, array(
             'method' => 'POST',
@@ -60,7 +60,7 @@ if (git_get_option('git_sitemap_api')) {
             $result = json_decode($result['body'], true);
         }
         if (array_key_exists('success', $result)) {
-            add_post_meta($post_ID, 'git_baidu_submit', 1, true);
+            add_post_meta($post_ID, 'gdk_baidu_submit', 1, true);
         }
     }
     add_action('publish_post', 'Git_Baidu_Submit', 0);
@@ -68,7 +68,7 @@ if (git_get_option('git_sitemap_api')) {
 
 //强制微信登录
 function force_weauth_login_url( $login_url, $redirect, $force_reauth ){
-    $login_url = get_permalink(git_page_id('weauth'));
+    $login_url = get_permalink(gdk_page_id('weauth'));
     if ( ! empty( $redirect ) ) {
         $login_url = add_query_arg( 'redirect_to', urlencode( $redirect ), $login_url );
     }
@@ -76,19 +76,19 @@ function force_weauth_login_url( $login_url, $redirect, $force_reauth ){
         $login_url = add_query_arg( 'reauth', '1', $login_url );
     }
     return $login_url;
-}if(git_get_option('git_weauth_oauth') && git_get_option('git_weauth_oauth_force')){
+}if(gdk_option('gdk_weauth_oauth') && gdk_option('gdk_weauth_oauth_force')){
 add_filter( 'login_url', 'force_weauth_login_url', 10, 3 );
 }
 
 //在登录框添加额外的微信登录
 function weixin_login_button() {
-    echo '<p><a class="button button-large" href="'.get_permalink(git_page_id('weauth')).'">微信登录</a></p><br>';
-}if(git_get_option('git_weauth_oauth')){
+    echo '<p><a class="button button-large" href="'.get_permalink(gdk_page_id('weauth')).'">微信登录</a></p><br>';
+}if(gdk_option('gdk_weauth_oauth')){
 add_action('login_form', 'weixin_login_button');
 }
 
 //评论微信推送
-if (git_get_option('git_Server') && !is_admin()) {
+if (gdk_option('gdk_Server') && !is_admin()) {
     function sc_send($comment_id) {
         $text = '网站上有新的评论，请及时查看'; //微信推送信息标题
         $comment = get_comment($comment_id);
@@ -99,7 +99,7 @@ if (git_get_option('git_Server') && !is_admin()) {
 * 文章标题 ：' . get_the_title() . '
 * 文章链接 ：' . get_the_permalink($comment->comment_post_ID) . '
 	'; //微信推送内容正文
-        $key = git_get_option('git_Server_key');
+        $key = gdk_option('gdk_Server_key');
         $postdata = http_build_query(array(
             'text' => $text,
             'desp' => $desp
@@ -120,7 +120,7 @@ if (git_get_option('git_Server') && !is_admin()) {
 //增加B站视频
 wp_embed_unregister_handler('bili');
 function wp_bili($matches, $attr, $url, $rawattr) {
-    if (git_is_mobile()) {
+    if (gdk_is_mobile()) {
         $height = 200;
     } else {
         $height = 480;
@@ -132,8 +132,8 @@ wp_embed_register_handler('bili_iframe', '#https://www.bilibili.com/video/av(.*?
 
 //bing美图自定义登录页面背景
 function custom_login_head() {
-    if (git_get_option('git_loginbg')) {
-        $imgurl = git_get_option('git_loginbg');
+    if (gdk_option('gdk_loginbg')) {
+        $imgurl = gdk_option('gdk_loginbg');
     } else {
         $imgurl = get_transient('Bing_img');
         if(false === $imgurl){ 
@@ -151,7 +151,7 @@ add_action('login_head', 'custom_login_head');
 
 // add youku using iframe
 function wp_iframe_handler_youku($matches, $attr, $url, $rawattr) {
-    if (git_is_mobile()) {
+    if (gdk_is_mobile()) {
         $height = 200;
     } else {
         $height = 485;

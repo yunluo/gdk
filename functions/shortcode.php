@@ -136,19 +136,19 @@ function ton($atts, $content = null) {
         "filesize" => '',
         "filedown" => ''
     ) , $atts));
-    return '<a class="lhb" id="showdiv" href="#fancydlbox" >文件下载</a><div id="fancydlbox" style="cursor:default;display:none;width:800px;"><div class="part" style="padding:20px 0;"><h2>下载声明:</h2> <div class="fancydlads" align="left"><p>' . git_get_option('git_fancydlcp') . '</p></div></div><div class="part" style="padding:20px 0;"><h2>文件信息：</h2> <div class="dlnotice" align="left"><p>文件名称：' . $filename . '<br />文件大小：' . $filesize . '<br />发布日期：' . get_the_modified_time('Y年n月j日') . '</p></div></div><div class="part" id="download_button_part"><a id="download_button" target="_blank" href="' . $href . '"><span></span>' . $filedown . '</a> </div><div class="part" style="padding:20px 0;"><div class="moredl" style="text-align:center;">[更多地址] : ' . $content . '</div></div><div class="dlfooter">' . git_get_option('git_fancydlad') . '</div></div>';
+    return '<a class="lhb" id="showdiv" href="#fancydlbox" >文件下载</a><div id="fancydlbox" style="cursor:default;display:none;width:800px;"><div class="part" style="padding:20px 0;"><h2>下载声明:</h2> <div class="fancydlads" align="left"><p>' . gdk_option('gdk_fancydlcp') . '</p></div></div><div class="part" style="padding:20px 0;"><h2>文件信息：</h2> <div class="dlnotice" align="left"><p>文件名称：' . $filename . '<br />文件大小：' . $filesize . '<br />发布日期：' . get_the_modified_time('Y年n月j日') . '</p></div></div><div class="part" id="download_button_part"><a id="download_button" target="_blank" href="' . $href . '"><span></span>' . $filedown . '</a> </div><div class="part" style="padding:20px 0;"><div class="moredl" style="text-align:center;">[更多地址] : ' . $content . '</div></div><div class="dlfooter">' . gdk_option('gdk_fancydlad') . '</div></div>';
 }
 add_shortcode('fanctdl', 'ton');
 //代码演示短代码
-function git_demo($atts, $content = null) {
-    return '<a class="lhb" href="' . get_permalink(git_page_id('demo')) . '?pid=' . get_the_ID() . '" target="_blank" rel="nofollow">' . $content . '</a>';
+function gdk_demo($atts, $content = null) {
+    return '<a class="lhb" href="' . get_permalink(gdk_page_id('demo')) . '?pid=' . get_the_ID() . '" target="_blank" rel="nofollow">' . $content . '</a>';
 }
-add_shortcode('demo', 'git_demo');
+add_shortcode('demo', 'gdk_demo');
 //下载单页短代码
-function git_download($atts, $content = null) {
-    return '<a class="lhb" href="' . get_permalink(git_page_id('download')) . '?pid=' . get_the_ID() . '" target="_blank" rel="nofollow">' . $content . '</a>';
+function gdk_download($atts, $content = null) {
+    return '<a class="lhb" href="' . get_permalink(gdk_page_id('download')) . '?pid=' . get_the_ID() . '" target="_blank" rel="nofollow">' . $content . '</a>';
 }
-add_shortcode('download', 'git_download');
+add_shortcode('download', 'gdk_download');
 
 //为WordPress添加展开收缩功能
 function xcollapse($atts, $content = null) {
@@ -164,7 +164,7 @@ function xdltable($atts, $content = null) {
         "file" => "",
         "size" => ""
     ) , $atts));
-    return '<table class="dltable"><tbody><tr><td style="background-color:#F9F9F9;" rowspan="3"><p>文件下载</p></td><td><i class="fa fa-list-alt"></i>&nbsp;&nbsp;文件名称：' . $file . '</td><td><i class="fa fa-th-large"></i>&nbsp;&nbsp;文件大小：' . $size . '</td></tr><tr><td colspan="2"><i class="fa fa-volume-up"></i>&nbsp;&nbsp;下载声明：' . git_get_option('git_dltable_b') . '</td></tr><tr><td colspan="2"><i class="fa fa-download"></i>&nbsp;&nbsp;下载地址：' . $content . '</td></tr></tbody></table>';
+    return '<table class="dltable"><tbody><tr><td style="background-color:#F9F9F9;" rowspan="3"><p>文件下载</p></td><td><i class="fa fa-list-alt"></i>&nbsp;&nbsp;文件名称：' . $file . '</td><td><i class="fa fa-th-large"></i>&nbsp;&nbsp;文件大小：' . $size . '</td></tr><tr><td colspan="2"><i class="fa fa-volume-up"></i>&nbsp;&nbsp;下载声明：' . gdk_option('gdk_dltable_b') . '</td></tr><tr><td colspan="2"><i class="fa fa-download"></i>&nbsp;&nbsp;下载地址：' . $content . '</td></tr></tbody></table>';
 }
 add_shortcode('dltable', 'xdltable');
 //网易云音乐
@@ -247,7 +247,7 @@ function gdk_insert_temp($atts, $content = null) {
 add_shortcode('temp', 'gdk_insert_temp');
 
 //快速插入列表
-function git_list_shortcode_handler($atts, $content = '') {
+function gdk_list_shortcode_handler($atts, $content = '') {
     $lists = explode("\n", $content);
     $ouput = '';
     foreach ($lists as $li) {
@@ -258,7 +258,7 @@ function git_list_shortcode_handler($atts, $content = '') {
     $output .= "<ul>" . $output . "</ul>\n";
     return $output;
 }
-add_shortcode('list', 'git_list_shortcode_handler');
+add_shortcode('list', 'gdk_list_shortcode_handler');
 
 //表格短代码
 function table_shortcode_handler( $atts, $content='' ) {

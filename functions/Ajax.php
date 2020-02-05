@@ -132,7 +132,7 @@ function getcontent() {
 	$id = $_POST["id"];
 	$action = $_POST["action"];
 	if ( isset($id) && $_POST['action'] == 'getcontent') {
-		$pay_content = get_post_meta($id, 'git_pay_content', true);
+		$pay_content = get_post_meta($id, 'gdk_pay_content', true);
 		exit($pay_content);
 	}
 }
@@ -172,7 +172,7 @@ function payjs_view(){
     $data = [
         'body' => '在线付费查看',   // 订单标题
         'attach' => 'P'.$id,
-        'out_trade_no' => git_order_id(),       // 订单号
+        'out_trade_no' => gdk_order_id(),       // 订单号
         'total_fee' => intval($money)*100,             // 金额,单位:分
         'notify_url' => GDK_BASE_URL.'/public/push.php',
         'hide' => '1'
@@ -181,7 +181,7 @@ function payjs_view(){
     if($way == 1) $data['type'] = 'alipay';
     $result_money = intval($money);
     $result_trade_no = $data['out_trade_no'];
-    if(git_is_mobile()){
+    if(gdk_is_mobile()){
         $rst = $payjs->cashier($data);//手机使用
         $result_img = $rst;
     }else{
@@ -240,28 +240,28 @@ add_action( 'wp_ajax_nopriv_addcode', 'addcode' );
 function pay_chongzhi() {
 	if (isset($_POST['jine']) && $_POST['action'] == 'pay_chongzhi') {
 		$config = [
-		        'mchid' => git_get_option('git_payjs_id'),   // 配置商户号
-				'key'   => git_get_option('git_payjs_secret'),   // 配置通信密钥
+		        'mchid' => gdk_option('gdk_payjs_id'),   // 配置商户号
+				'key'   => gdk_option('gdk_payjs_secret'),   // 配置通信密钥
 		];
 		// 初始化
 		$payjs = new Payjs($config);
 		$data = [
 		'body' => '积分充值',   // 订单标题
 		'attach' => get_current_user_id(),   // 订单备注
-		'out_trade_no' => git_order_id(),       // 订单号
+		'out_trade_no' => gdk_order_id(),       // 订单号
 		'total_fee' => intval($_POST['jine'])*100,             // 金额,单位:分
 		'notify_url' => GDK_BASE_URL.'/public/push.php',
 		'hide' => '1'
 		];
 		$result_money = intval($_POST['jine']);
 		$result_trade_no = $data['out_trade_no'];
-		if( git_get_option('git_payjs_alipay') && $_POST['way'] =='alipay' ) {
+		if( gdk_option('gdk_payjs_alipay') && $_POST['way'] =='alipay' ) {
 			$data['type'] = 'alipay';
 			$result_way = '支付宝';
 		} else {
 			$result_way = '微信';
 		}
-		if(git_is_mobile()) {
+		if(gdk_is_mobile()) {
 			$rst = $payjs->cashier($data);//手机使用
 			$result_img = $rst;
 		} else {
@@ -278,7 +278,7 @@ add_action( 'wp_ajax_nopriv_pay_chongzhi', 'pay_chongzhi' );
 //检查付款情况
 function payrest(){
     if (isset($_POST['check_trade_no']) && $_POST['action'] == 'payrest') {
-        if (git_check($_POST['check_trade_no'])) {
+        if (gdk_check($_POST['check_trade_no'])) {
             exit('1');
         } else {
             exit('0');

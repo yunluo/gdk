@@ -143,20 +143,6 @@ function gdk_cdn_water($content) {
 }
 
 
-//自动替换媒体库图片的域名
-if (is_admin() && gdk_option('gdk_cdn')) {
-    function attachment_replace($text) {
-        $replace = array(
-             home_url()  => gdk_option('gdk_cdn')
-        );
-        $text = str_replace(array_keys($replace) , $replace, $text);
-        return $text;
-    }
-    add_filter('wp_get_attachment_url', 'attachment_replace');
-}
-
-
-
 //压缩html代码
 if (gdk_option('gdk_compress')) {
     function gdk_compress_html(){
@@ -206,7 +192,7 @@ if (gdk_option('gdk_compress')) {
 }
 
 //只搜索文章标题
-function git_search_by_title($search, $wp_query) {
+function gdk_search_by_title($search, $wp_query) {
     if (!empty($search) && !empty($wp_query->query_vars['search_terms'])) {
         global $wpdb;
         $q = $wp_query->query_vars;
@@ -222,13 +208,13 @@ function git_search_by_title($search, $wp_query) {
     }
     return $search;
 }
-add_filter('posts_search', 'git_search_by_title', 10, 2);
+add_filter('posts_search', 'gdk_search_by_title', 10, 2);
 
 //评论地址更换
-function git_comment_author( $query_vars ) {
+function gdk_comment_author( $query_vars ) {
 	if ( array_key_exists( 'author_name', $query_vars ) ) {
 		global $wpdb;
-		$author_id = $wpdb->get_var( $wpdb->prepare( "SELECT user_id FROM {$wpdb->usermeta} WHERE meta_key='first_name' AND meta_value = %s", $query_vars['author_name'] ) );
+		$author_id = $wpdb->get_var( $wpdb->prepare( "SELECT user_id FROM {$wpdb->usermeta} WHERE meta_key = 'first_name' AND meta_value = %s", $query_vars['author_name'] ) );
 		if ( $author_id ) {
 			$query_vars['author'] = $author_id;
 			unset( $query_vars['author_name'] );
@@ -236,19 +222,19 @@ function git_comment_author( $query_vars ) {
 	}
 	return $query_vars;
 }
-add_filter( 'request', 'git_comment_author' );
+add_filter( 'request', 'gdk_comment_author' );
 
-function git_comment_author_link( $link, $author_id, $author_nicename ) {
+function gdk_comment_author_link( $link, $author_id, $author_nicename ) {
 	$my_name = get_user_meta( $author_id, 'first_name', true );
 	if ( $my_name ) {
 		$link = str_replace( $author_nicename, $my_name, $link );
 	}
 	return $link;
 }
-add_filter( 'author_link', 'git_comment_author_link', 10, 3 );
+add_filter( 'author_link', 'gdk_comment_author_link', 10, 3 );
 
 //文章目录,来自露兜,云落修改
-if (git_get_option('git_article_list')) {
+if (gdk_option('gdk_article_list')) {
     function article_index($content) {
         $matches = array();
         $ul_li = '';

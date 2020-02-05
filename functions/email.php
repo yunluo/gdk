@@ -3,19 +3,19 @@
 
 //SMTP邮箱设置
 /*
-if (git_get_option('git_mailsmtp_b')) {
+if (gdk_option('gdk_mailsmtp_b')) {
     function googlo_mail_smtp($phpmailer) {
-        $phpmailer->From = git_get_option('git_maildizhi_b'); //发件人地址
-        $phpmailer->FromName = git_get_option('git_mailnichen_b'); //发件人昵称
-        $phpmailer->Host = git_get_option('git_mailsmtp_b'); //SMTP服务器地址
-        $phpmailer->Port = git_get_option('git_mailport_b'); //SMTP邮件发送端口
-        if (git_get_option('git_smtpssl_b')) {
+        $phpmailer->From = gdk_option('gdk_maildizhi_b'); //发件人地址
+        $phpmailer->FromName = gdk_option('gdk_mailnichen_b'); //发件人昵称
+        $phpmailer->Host = gdk_option('gdk_mailsmtp_b'); //SMTP服务器地址
+        $phpmailer->Port = gdk_option('gdk_mailport_b'); //SMTP邮件发送端口
+        if (gdk_option('gdk_smtpssl_b')) {
             $phpmailer->SMTPSecure = 'ssl';
         } else {
             $phpmailer->SMTPSecure = '';
         } //SMTP加密方式(SSL/TLS)没有为空即可
-        $phpmailer->Username = git_get_option('git_mailuser_b'); //邮箱帐号
-        $phpmailer->Password = git_get_option('git_mailpass_b'); //邮箱密码
+        $phpmailer->Username = gdk_option('gdk_mailuser_b'); //邮箱帐号
+        $phpmailer->Password = gdk_option('gdk_mailpass_b'); //邮箱密码
         $phpmailer->IsSMTP();
         $phpmailer->SMTPAuth = true; //启用SMTPAuth服务
 
@@ -61,17 +61,17 @@ function comment_mail_notify($comment_id) {
 add_action('comment_post', 'comment_mail_notify');
 
 //站长评论邮件添加评论链接
-function git_notify_postauthor($notify_message,$comment_ID) {
+function gdk_notify_postauthor($notify_message,$comment_ID) {
     $notify = $notify_message;
     $notify.= '快速回复此评论: ' . admin_url("edit-comments.php").'#comment-'.$comment_ID;
     return $notify;
 }
-add_filter('comment_notification_text', 'git_notify_postauthor', 10, 2);
+add_filter('comment_notification_text', 'gdk_notify_postauthor', 10, 2);
 
 
 //欢迎新用户邮件
 
-    function git_register_mail($user_id) {
+    function gdk_register_mail($user_id) {
         $user = get_user_by('id', $user_id);
         $user_pass = $_POST['password'];
         $blogname = get_option('blogname');
@@ -79,13 +79,13 @@ add_filter('comment_notification_text', 'git_notify_postauthor', 10, 2);
         $headers = "Content-Type:text/html;charset=UTF-8\n";
         wp_mail($user->user_email, '[' . $blogname . ']欢迎注册' . $blogname, $message, $headers);
     }
-    add_action('user_register', 'git_register_mail');
+    add_action('user_register', 'gdk_register_mail');
     
 
 
 //登录失败提醒
 
-    function git_login_failed_notify() {
+    function gdk_login_failed_notify() {
         date_default_timezone_set('PRC');
         $admin_email = get_bloginfo('admin_email');
         $to = $admin_email;
@@ -96,4 +96,4 @@ add_filter('comment_notification_text', 'git_notify_postauthor', 10, 2);
         $headers = "$from\nContent-Type: text/html; charset=" . get_option('blog_charset') . "\n";
         wp_mail($to, $subject, $message, $headers);
     }
-    add_action('wp_login_failed', 'git_login_failed_notify');
+    add_action('wp_login_failed', 'gdk_login_failed_notify');

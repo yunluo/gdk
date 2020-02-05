@@ -139,20 +139,20 @@ $gdk_options = [
 		[
 			'name'  => '网站关键字',//选项显示的文字，选填
 			'desc'  => '各关键字间用半角逗号','分割，数量在6个以内最佳。',//选项显示的一段描述文字，选填
-			'id'    => 'git_keywords',//选项的id，必须是唯一，后面根据这个获取值，必填
+			'id'    => 'gdk_keywords',//选项的id，必须是唯一，后面根据这个获取值，必填
 			'type'  => 'text',//种类，这个是普通的文字输入，必填
 			'std'   => ''//选项的默认值，选填
 		],
 		[
 			'name'  => '网站描述',
 			'desc'  => '用简洁的文字描述本站点，字数建议在120个字以内。',
-			'id'    => 'git_description',
+			'id'    => 'gdk_description',
 			'type'  => 'text'
 		],
 		[
 			'name'  => 'title分隔符',
 			'desc'  => '显示在浏览器标题栏的一个用来风格网站名字的',
-			'id'    => 'git_delimiter',
+			'id'    => 'gdk_delimiter',
 			'type'  => 'text',
 			'std'   => '|'
 		],
@@ -383,7 +383,7 @@ $gdk_options = [
 			[
 			'name'  => '侧边栏缓存',
 			'desc'  => '启用 【开启后，将会自动缓存小工具，如果想禁止缓存某个小工具，可以去小工具页面排除】',
-			'id'    => 'git_sidebar_cache',
+			'id'    => 'gdk_sidebar_cache',
 			'type'  => 'checkbox'
 			],
 			[
@@ -478,7 +478,7 @@ $gdk_options = [
 		[
 			'name'  => 'CDN镜像后台化',
 			'desc'  => '启用【一般可不启用，如果您启用CDN镜像之后并在FTP删除了本地文件，则必须开启】',
-			'id'    => 'git_adminqn_b',
+			'id'    => 'gdk_adminqn_b',
 			'type'  => 'checkbox'
 		],
 		[
@@ -488,13 +488,13 @@ $gdk_options = [
 		[
 			'name'  => '是否启用微信扫码登录',
 			'desc'  => '启用 【开启后，新建微信登录页面即可，另外需要HTTPS】',
-			'id'    => 'git_weauth_oauth',
+			'id'    => 'gdk_weauth_oauth',
 			'type'  => 'checkbox'
 		],
 		[
 			'name'  => '是否启用强制微信登录',
 			'desc'  => '启用 【开启后，将禁用WordPress自带的登录，所有登录地址都跳转到微信的登录，如需临时使用自带登录，可以使用这个链接：你的域名/wp-login.php?loggedout=true】',
-			'id'    => 'git_weauth_oauth_force',
+			'id'    => 'gdk_weauth_oauth_force',
 			'type'  => 'checkbox'
 		],
 		[
@@ -504,34 +504,34 @@ $gdk_options = [
 		[
 			'name'  => '评论微信推送提醒',
 			'desc'  => '启用【开启后，如果网站有新的评论，可以给您的微信推送提醒，这个只是给网站管理员提醒，不涉及访客】',
-			'id'    => 'git_Server',
+			'id'    => 'gdk_Server',
 			'type'  => 'checkbox'
 		],
 		[
 			'name'  => '微信推送KEY',
 			'desc'  => '请输入您的微信推送KEY',
-			'id'    => 'git_Server_key',
+			'id'    => 'gdk_Server_key',
 			'type'  => 'text',
 			'std'   => ''
 		],
 		[
 			'name'  => '微信订阅号/公众号二维码',
 			'desc'  => '请输入您的微信订阅号/公众号二维码图片链接，不要想得太多，只是给主题调用的。',
-			'id'    => 'git_mp_qr',
+			'id'    => 'gdk_mp_qr',
 			'type'  => 'text',
 			'std'   => ''
 		],
 		[
 			'name'  => '微信验证码',
 			'desc'  => '请输入您的微信验证码，这里的必须要要和微信里面回复的保持一致。',
-			'id'    => 'git_mp_code',
+			'id'    => 'gdk_mp_code',
 			'type'  => 'text',
 			'std'   => '2233'
 		],
 		[
 			'name'  => '微信可见提示信息，可用html代码',
 			'desc'  => '在本输入框内输入您的微信公众号描述信息，支持html代码，字数合适就行，不能太多',
-			'id'    => 'git_mp_tips',
+			'id'    => 'gdk_mp_tips',
 			'type'  => 'textarea',
 			'std'   => '请关注极客公园官方微信公众号，关注并订阅<span class="key_word">云落极客公园</span>获取验证码。在微信里搜索<span class="key_word">云落极客公园</span>或者微信扫描二维码都可以关注极客公园官方微信公众号。'
 		],
@@ -553,42 +553,42 @@ $gdk_options = [
 		[
 			'name'  => 'HTML5推送标题【必选】',
 			'desc'  => '显示在弹窗顶部',
-			'id'    => 'git_notification_title',
+			'id'    => 'gdk_notification_title',
 			'type'  => 'text',
 			'std'   => 'Hi，你好'
 		],
 		[
 			'name'  => 'HTML5推送间隔【必选】',
 			'desc'  => '输入数字，当自动关闭或者用户关闭之后多久再次弹窗，默认10天',
-			'id'    => 'git_notification_days',
+			'id'    => 'gdk_notification_days',
 			'type'  => 'number',
 			'std'   => 10
 		],
 		[
 			'name'  => 'HTML5推送COOKIE【必选】',
 			'desc'  => '修改COOKIE值可以强制向访客推送新的信息，无视时间间隔，不能使用中文，默认233',
-			'id'    => 'git_notification_cookie',
+			'id'    => 'gdk_notification_cookie',
 			'type'  => 'text',
 			'std'   => '233'
 		],
 		[
 			'name'  => 'HTML5推送图片【必选】',
 			'desc'  => '填写一个正方形的图片，显示在推送信息左侧，默认为默认头像',
-			'id'    => 'git_notification_icon',
+			'id'    => 'gdk_notification_icon',
 			'type'  => 'text',
 			'std'   => '',
 		],
 		[
 			'name'  => 'HTML5推送链接【可选】',
 			'desc'  => '当用户点击弹窗的时候说点击的链接，默认为极客公园',
-			'id'    => 'git_notification_link',
+			'id'    => 'gdk_notification_link',
 			'type'  => 'text',
 			'std'   => 'https://gitcafe.net'
 		],
 		[
 			'name'  => 'HTML5推送内容',
 			'desc'  => '在这里输入推送主体内容，字数合适就行，不能太多【必选】',
-			'id'    => 'git_notification_body',
+			'id'    => 'gdk_notification_body',
 			'type'  => 'textarea',
 			'std'   => '极客公园，一个分享有趣的安卓APP和实用的WordPress技术以及Windows使用技巧的网站'
 		],
