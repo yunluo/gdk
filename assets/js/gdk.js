@@ -141,9 +141,7 @@ var money = $("#money").val(),
 
 
 if(check_data(money,1)){
-	//swal("充值金额", "充值金额为:"+money+";支付方式为:"+pay_way, "success");//开始支付
 	get_payjs_qr(money , pay_way ,user_id);
-	
 }else{
 	swal("充值金额不正确", "请输入正确的充值金额", "error");
 
