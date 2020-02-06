@@ -25,12 +25,13 @@ function gdk_enqueue_script_frontend() {
         wp_enqueue_script('code_prettify_js', GDK_BASE_URL.'assets/js/prettify.min.js', array('jquery'), GDK_PLUGIN_VER, true);
         wp_enqueue_script('fancybox_js', GDK_BASE_URL.'assets/js/fancybox.min.js', array('jquery'), GDK_PLUGIN_VER, true);
         wp_enqueue_script('lazyload_js', GDK_BASE_URL.'assets/js/lazyload.min.js', array('jquery'), GDK_PLUGIN_VER, true);
-        wp_enqueue_script('sweetalert_js','https://cdn.jsdelivr.net/npm/sweetalert@2.0.0/dist/sweetalert.min.js', [], GDK_PLUGIN_VER, true);
+        wp_enqueue_script('sweetalert_js','https://cdn.jsdelivr.net/combine/npm/sweetalert@2.0.0,npm/qrious@4.0.2', [], GDK_PLUGIN_VER, true);
         wp_enqueue_script('gdk_js', GDK_BASE_URL.'assets/js/gdk.js', array('jquery'), GDK_PLUGIN_VER, true);
         wp_localize_script('gdk_js', 'ajax', [
             'url'=> admin_url('admin-ajax.php'), 
             'pass_nonce' => wp_create_nonce('pass_nonce'),
-            'pay_points' => wp_create_nonce('pay_points')
+            'pay_points' => wp_create_nonce('pay_points'),
+            'check_pay_points' => wp_create_nonce('check_pay_points')
         ]);
         
         

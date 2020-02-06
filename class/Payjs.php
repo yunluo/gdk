@@ -1,6 +1,6 @@
 <?php
 
-class Payjs
+class GDK_Payjs
 {
     private $mchid;
     private $key;

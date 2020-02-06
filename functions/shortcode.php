@@ -13,31 +13,31 @@ function gdk_potin() {
 add_shortcode('gdk_potin_btn', 'gdk_potin');
 
 //添加钮Download
-function DownloadUrl($atts, $content = null) {
+function gdk_DownloadUrl($atts, $content = null) {
     extract(shortcode_atts(array(
         "href" => 'http://'
     ) , $atts));
     return '<a class="dl" href="' . $href . '" target="_blank" rel="nofollow"><i class="fa fa-cloud-download"></i>' . $content . '</a>';
 }
-add_shortcode("dl", "DownloadUrl");
+add_shortcode("dl", "gdk_DownloadUrl");
 //添加钮git
-function GithubUrl($atts, $content = null) {
+function gdk_GithubUrl($atts, $content = null) {
     extract(shortcode_atts(array(
         "href" => 'http://'
     ) , $atts));
     return '<a class="dl" href="' . $href . '" target="_blank" rel="nofollow"><i class="fa fa-github-alt"></i>' . $content . '</a>';
 }
-add_shortcode('gt', 'GithubUrl');
+add_shortcode('gt', 'gdk_GithubUrl');
 //添加钮Demo
-function DemoUrl($atts, $content = null) {
+function gdk_DemoUrl($atts, $content = null) {
     extract(shortcode_atts(array(
         "href" => 'http://'
     ) , $atts));
     return '<a class="dl" href="' . $href . '" target="_blank" rel="nofollow"><i class="fa fa-external-link"></i>' . $content . '</a>';
 }
-add_shortcode('dm', 'DemoUrl');
+add_shortcode('dm', 'gdk_DemoUrl');
 //使用短代码添加回复后可见内容开始
-function reply_to_read($atts, $content = null) {
+function gdk_reply_to_read($atts, $content = null) {
     extract(shortcode_atts(array(
         "notice" => '<blockquote><center><p class="reply-to-read" style="color: blue;">注意：本段内容须成功“<a href="' . get_permalink() . '#respond" title="回复本文">回复本文</a>”后“<a href="javascript:window.location.reload();" title="刷新本页">刷新本页</a>”方可查看！</p></center></blockquote>'
     ) , $atts));
@@ -67,49 +67,49 @@ function reply_to_read($atts, $content = null) {
         return $notice;
     }
 }
-add_shortcode('reply', 'reply_to_read');
+add_shortcode('reply', 'gdk_reply_to_read');
 
 //绿色提醒框
-function toz($atts, $content = null) {
+function gdk_toz($atts, $content = null) {
     return '<div id="sc_notice">' . $content . '</div>';
 }
-add_shortcode('v_notice', 'toz');
+add_shortcode('v_notice', 'gdk_toz');
 //红色提醒框
-function toa($atts, $content = null) {
+function gdk_toa($atts, $content = null) {
     return '<div id="sc_error">' . $content . '</div>';
 }
-add_shortcode('v_error', 'toa');
+add_shortcode('v_error', 'gdk_toa');
 //黄色提醒框
-function toc($atts, $content = null) {
+function gdk_toc($atts, $content = null) {
     return '<div id="sc_warn">' . $content . '</div>';
 }
-add_shortcode('v_warn', 'toc');
+add_shortcode('v_warn', 'gdk_toc');
 //灰色提醒框
-function tob($atts, $content = null) {
+function gdk_tob($atts, $content = null) {
     return '<div id="sc_tips">' . $content . '</div>';
 }
-add_shortcode('v_tips', 'tob');
+add_shortcode('v_tips', 'gdk_tob');
 //蓝色提醒框
-function tod($atts, $content = null) {
+function gdk_tod($atts, $content = null) {
     return '<div id="sc_blue">' . $content . '</div>';
 }
-add_shortcode('v_blue', 'tod');
+add_shortcode('v_blue', 'gdk_tod');
 //蓝边文本框
-function toe($atts, $content = null) {
+function gdk_toe($atts, $content = null) {
     return '<div  class="sc_act">' . $content . '</div>';
 }
-add_shortcode('v_act', 'toe');
+add_shortcode('v_act', 'gdk_toe');
 
 //灵魂按钮
-function tom($atts, $content = null) {
+function gdk_tom($atts, $content = null) {
     extract(shortcode_atts(array(
         "href" => 'http://'
     ) , $atts));
     return '<a class="lhb" href="' . $href . '" target="_blank" rel="nofollow">' . $content . '</a>';
 }
-add_shortcode('lhb', 'tom');
+add_shortcode('lhb', 'gdk_tom');
 //添加视频按钮
-function too($atts, $content = null) {
+function gdk_too($atts, $content = null) {
     extract(shortcode_atts(array(
         "play" => '0'
     ) , $atts));
@@ -120,9 +120,9 @@ function too($atts, $content = null) {
         return '<video style="width:100%;" src="' . $content . '" controls preload autoplay >您的浏览器不支持HTML5的 video 标签，无法为您播放！</video>';
     }
 }
-add_shortcode('video', 'too');
+add_shortcode('video', 'gdk_too');
 //添加音频按钮
-function tkk($atts, $content = null) {
+function gdk_tkk($atts, $content = null) {
     extract(shortcode_atts(array(
         "play" => '0'
     ) , $atts));
@@ -133,9 +133,9 @@ function tkk($atts, $content = null) {
         return '<audio style="width:100%;" src="' . $content . '" controls autoplay loop>您的浏览器不支持 audio 标签。</audio>';
     }
 }
-add_shortcode('audio', 'tkk');
+add_shortcode('audio', 'gdk_tkk');
 //弹窗下载
-function ton($atts, $content = null) {
+function gdk_ton($atts, $content = null) {
     extract(shortcode_atts(array(
         "href" => 'http://',
         "filename" => '',
@@ -144,7 +144,7 @@ function ton($atts, $content = null) {
     ) , $atts));
     return '<a class="lhb" id="showdiv" href="#fancydlbox" >文件下载</a><div id="fancydlbox" style="cursor:default;display:none;width:800px;"><div class="part" style="padding:20px 0;"><h2>下载声明:</h2> <div class="fancydlads" align="left"><p>' . gdk_option('gdk_fancydlcp') . '</p></div></div><div class="part" style="padding:20px 0;"><h2>文件信息：</h2> <div class="dlnotice" align="left"><p>文件名称：' . $filename . '<br />文件大小：' . $filesize . '<br />发布日期：' . get_the_modified_time('Y年n月j日') . '</p></div></div><div class="part" id="download_button_part"><a id="download_button" target="_blank" href="' . $href . '"><span></span>' . $filedown . '</a> </div><div class="part" style="padding:20px 0;"><div class="moredl" style="text-align:center;">[更多地址] : ' . $content . '</div></div><div class="dlfooter">' . gdk_option('gdk_fancydlad') . '</div></div>';
 }
-add_shortcode('fanctdl', 'ton');
+add_shortcode('fanctdl', 'gdk_ton');
 //代码演示短代码
 function gdk_demo($atts, $content = null) {
     return '<a class="lhb" href="' . get_permalink(gdk_page_id('demo')) . '?pid=' . get_the_ID() . '" target="_blank" rel="nofollow">' . $content . '</a>';
@@ -157,32 +157,32 @@ function gdk_download($atts, $content = null) {
 add_shortcode('download', 'gdk_download');
 
 //为WordPress添加展开收缩功能
-function xcollapse($atts, $content = null) {
+function gdk_xcollapse($atts, $content = null) {
     extract(shortcode_atts(array(
         "title" => ""
     ) , $atts));
     return '<div style="margin: 0.5em 0;"><div class="xControl"><a href="javascript:void(0)" class="collapseButton xButton"><i class="fa fa-plus-square" ></i> ' . $title . '</a><div style="clear: both;"></div></div><div class="xContent" style="display: none;">' . $content . '</div></div>';
 }
-add_shortcode('collapse', 'xcollapse');
+add_shortcode('collapse', 'gdk_xcollapse');
 //简单的下载面板
-function xdltable($atts, $content = null) {
+function gdk_xdltable($atts, $content = null) {
     extract(shortcode_atts(array(
         "file" => "",
         "size" => ""
     ) , $atts));
     return '<table class="dltable"><tbody><tr><td style="background-color:#F9F9F9;" rowspan="3"><p>文件下载</p></td><td><i class="fa fa-list-alt"></i>&nbsp;&nbsp;文件名称：' . $file . '</td><td><i class="fa fa-th-large"></i>&nbsp;&nbsp;文件大小：' . $size . '</td></tr><tr><td colspan="2"><i class="fa fa-volume-up"></i>&nbsp;&nbsp;下载声明：' . gdk_option('gdk_dltable_b') . '</td></tr><tr><td colspan="2"><i class="fa fa-download"></i>&nbsp;&nbsp;下载地址：' . $content . '</td></tr></tbody></table>';
 }
-add_shortcode('dltable', 'xdltable');
+add_shortcode('dltable', 'gdk_xdltable');
 //网易云音乐
-function music163($atts, $content = null) {
+function gdk_music163($atts, $content = null) {
     extract(shortcode_atts(array(
         "play" => "1"
     ) , $atts));
     return '<iframe style="width:100%;max-height:86px;" frameborder="no" border="0" marginwidth="0" marginheight="0" src="http://music.163.com/outchain/player?type=2&id=' . $content . '&auto=' . $play . '&height=66"></iframe>';
 }
-add_shortcode('netmusic', 'music163');
+add_shortcode('netmusic', 'gdk_music163');
 //登录可见
-function login_to_read($atts, $content = null) {
+function gdk_login_to_read($atts, $content = null) {
     $logina = '<a target="_blank" href="' . esc_url(wp_login_url(get_permalink())) . '">登录</a>';
     extract(shortcode_atts(array(
         "notice" => '<blockquote><center><p class="reply-to-read" style="color: blue;">注意：本段内容须“' . $logina . '”后方可查看！</p></center></blockquote>'
@@ -193,10 +193,10 @@ function login_to_read($atts, $content = null) {
     }
     return $notice;
 }
-add_shortcode('vip', 'login_to_read');
+add_shortcode('vip', 'gdk_login_to_read');
 
 // 部分内容输入密码可见
-function e_secret($atts, $content = null) {
+function gdk_e_secret($atts, $content = null) {
     extract(shortcode_atts(array('wx' => null) , $atts));
     $pid = get_the_ID();
     add_post_meta($pid, '_pass_content', $content, true) or update_post_meta($pid, '_pass_content', $content);
@@ -204,10 +204,10 @@ function e_secret($atts, $content = null) {
         return '<div class="pass_viewbox"><input id="pass_view" type="text">    <input id="start_view" data-action="gdk_pass_view" data-id="'.$pid.'" type="button" value="提交"></div>';
 
 }
-add_shortcode('secret', 'e_secret');
+add_shortcode('secret', 'gdk_e_secret');
 
 // 支持文章和页面运行PHP代码id
-function php_include($attr) {
+function gdk_php_include($attr) {
     $file = $attr['file'];
     $upload_dir = wp_upload_dir();
     $folder = $upload_dir['basedir'] . '/php-content' . "/{$file}.php";
@@ -215,7 +215,7 @@ function php_include($attr) {
     include $folder;
     return ob_get_clean();
 }
-add_shortcode('phpcode', 'php_include');
+add_shortcode('phpcode', 'gdk_php_include');
 
 //给文章加内链短代码
 function gdk_insert_posts($atts, $content = null) {
@@ -267,7 +267,7 @@ function gdk_list_shortcode_handler($atts, $content = '') {
 add_shortcode('list', 'gdk_list_shortcode_handler');
 
 //表格短代码
-function table_shortcode_handler( $atts, $content='' ) {
+function gdk_table_shortcode_handler( $atts, $content='' ) {
     extract( shortcode_atts( ['width' => '100%'], $atts ) );
     $output = '';
     $content = trim($content);
@@ -302,7 +302,7 @@ function table_shortcode_handler( $atts, $content='' ) {
 
     return $output;
 }
-add_shortcode( 'table', 'table_shortcode_handler' );
+add_shortcode( 'table', 'gdk_table_shortcode_handler' );
 
 add_shortcode('youku', function( $atts, $content='') {
 	extract( shortcode_atts( array( 

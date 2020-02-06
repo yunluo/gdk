@@ -158,7 +158,7 @@ function my_users_columns($columns) {
 }
 function output_my_users_columns($value, $column_name, $user_id) {
     if ($column_name == 'points') {
-        $jinbi = Points::get_user_total_points($user_id, POINTS_STATUS_ACCEPTED);
+        $jinbi = GDK_Points::get_user_total_points($user_id, POINTS_STATUS_ACCEPTED);
         if ($jinbi != "") {
             $ret = $jinbi;
             return $ret;

@@ -240,7 +240,7 @@ function weauth_oauth_init(){
 add_action('init','weauth_oauth_init');
 
 //GET自动登录
-function weauth_oauth_login(){
+function gdk_weauth_oauth_login(){
     $key = isset($_GET['spam']) ? $_GET['spam'] : false;
     if ($key) {
         $user_id = get_transient($key.'ok');
@@ -249,4 +249,4 @@ function weauth_oauth_login(){
         }
     }
 }
-add_action('init', 'weauth_oauth_login');
+add_action('init', 'gdk_weauth_oauth_login');

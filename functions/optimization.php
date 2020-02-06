@@ -554,7 +554,7 @@ function gdk_points_columns($columns) {
 }
 function gdk_points_value($value, $column_name, $user_id) {
     if ($column_name == 'points') {
-        $jinbi = Points::get_user_total_points($user_id, 'accepted');
+        $jinbi = GDK_Points::get_user_total_points($user_id, 'accepted');
         if ($jinbi != "") {
             $ret = $jinbi;
             return $ret;
@@ -656,10 +656,10 @@ function gdk_comment_add_at($comment_text, $comment = '') {
 add_filter('comment_text', 'gdk_comment_add_at', 20, 2);
 
 //搜索结果排除所有页面
-function search_filter_page($query) {
+function gdk_search_filter_page($query) {
     if ($query->is_search && !$query->is_admin) {
         $query->set('post_type', 'post');
     }
     return $query;
 }
-add_filter('pre_get_posts', 'search_filter_page');
+add_filter('pre_get_posts', 'gdk_search_filter_page');

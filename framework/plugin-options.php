@@ -9,7 +9,7 @@
 
 $current_theme = wp_get_theme();
 $gdk_default_options = [];
-$gdk_options = [];
+$gdk_options = array();
 include('options-config.php');
 $gdk_current_options = get_option('gdk_options_setup');
 
@@ -162,7 +162,7 @@ switch ( $type ) {
 ?>
 	<div class="panel" id="panel_data">
 	<table class="form-table">
-	<?php echo wp_clean_up_page();?>
+	<?php echo gdk_clean_up_page();?>
 	</table>
 	</div>
 	<div class="panel" id="panel_about">
@@ -344,9 +344,9 @@ jQuery(function ($) {
         function(a) {
 			a = $.trim(a);
             if (a == '200') {
-				alert("测试成功", "您的SMTP邮箱邮件发送已成功,Enjoy it");
+				alert("测试成功,您的SMTP邮箱邮件发送已成功,Enjoy it");
             }else{
-				swal("测试失败", "您的SMTP邮箱邮件响应失败,请重试", "error");
+				alert("测试失败,您的SMTP邮箱邮件响应失败,请重试");
 			}
         });
 	});

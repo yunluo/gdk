@@ -960,7 +960,7 @@ function gdk_order_id(){
 
 
 //获取云落的远程通知，加入缓存，1天一次
-function get_Yunluo_Notice(){
+function gdk_get_Yunluo_Notice(){
 	$Yunluo_Notice = get_transient('Yunluo_Notice');
 	if(false === $Yunluo_Notice){
         $Yunluo_Notice = wp_remote_get('https://u.gitcafe.net/api/notice.txt')['body'];
@@ -977,7 +977,7 @@ function get_Yunluo_Notice(){
 function gdk_page_id( $pagephp ) {
     global $wpdb;
     $pagephp = esc_sql($pagephp);
-    $pageid = $wpdb->get_row("SELECT `post_id` FROM `{$wpdb->postmeta}` WHERE `meta_value` = 'pages/{$pagephp}.php'", ARRAY_A) ['post_id'];
+    $pageid = $wpdb->get_row("SELECT `post_id` FROM `{$wpdb->postmeta}` WHERE `meta_value` = 'pages/{$pagephp}.php'", ARRAY_A)['post_id'];
     return $pageid;
 }
 
@@ -989,12 +989,12 @@ function gdk_check( $d , $u = null) {
 	if ( isset( $u ) && ( $u !== null ) ) {
 		$userid = " AND `user_id` = '" . $u . "'";
 	}
-	$result = $wpdb->query("SELECT `point_id` FROM " . Points_Database::points_get_table("users") . $des . $userid . " AND `status` = 'accepted' LIMIT 3", ARRAY_A);
-	return $result;//0=无订单结果，1=有订单结果，>1均为异常数据
+	$result = $wpdb->query("SELECT `point_id` FROM " . GDK_Points_Database::points_get_table("users") . $des . $userid . " AND `status` = 'accepted' LIMIT 3", ARRAY_A);
+	return $result;//0=无订单结果，1=有订单结果，>1均为异常重复入库数据
 }
 
 //导航单页函数
-function get_the_link_items($id = null) {
+function gdk_get_the_link_items($id = null) {
     $bookmarks = get_bookmarks('orderby=date&category=' . $id);
     $output = '';
     if (!empty($bookmarks)) {
@@ -1007,18 +1007,76 @@ function get_the_link_items($id = null) {
     return $output;
 }
 
-function get_link_items() {
+function gdk_get_link_items() {
     $linkcats = get_terms('link_category', 'orderby=count&hide_empty=1&exclude=' . gdk_option('gdk_linkpage_cat'));
     if (!empty($linkcats)) {
         foreach ($linkcats as $linkcat) {
             $result.= '<h2 class="link_title">' . $linkcat->name . '</h2>';
             if ($linkcat->description) $result.= '<div class="link_description">' . $linkcat->description . '</div>';
-            $result.= get_the_link_items($linkcat->term_id);
+            $result.= gdk_get_the_link_items($linkcat->term_id);
         }
     } else {
-        $result = get_the_link_items();
+        $result = gdk_get_the_link_items();
     }
     return $result;
+}
+
+/*
+ * Payjs支付操作函数  
+ * 订单标题    
+ * 订单备注
+ * $_POST['money'] = 提交的金额,$_POST['way'] = 支付方式,支付宝为alipay,不设置默认微信,
+ */
+function payjs_action($body,$attach){
+	$config = [
+	    'mchid' => gdk_option('gdk_payjs_id'),   // 配置商户号
+	    'key'   => gdk_option('gdk_payjs_key'),   // 配置通信密钥
+	];
+	// 初始化
+	$payjs = new GDK_Payjs($config);
+	$data = [
+	    'body' => $body,   // 订单标题
+	    'attach' => $attach,   // 订单备注
+	    'out_trade_no' => gdk_order_id(),// 订单号
+	    'total_fee' => intval($_POST['money'])*100,// 金额,单位:分
+	    'notify_url' => GDK_BASE_URL.'/public/notify.php',//异步通知文件
+	    'hide' => '1'
+	];
+	$result['money'] = intval($_POST['money']);//RMB金额
+	$result['trade_no'] = $data['out_trade_no'];
+	if( $_POST['way'] == 'alipay' ) {
+		$data['type'] = 'alipay';
+		$result['way'] = '支付宝';
+	} else {
+		$result['way'] = '微信';
+	}
+	if(gdk_is_mobile()) {
+		$rst = $payjs->cashier($data);//手机使用收银台
+		$result['img'] = $rst;
+	} else {
+		$rst = $payjs->native($data);//电脑使用扫码
+		$result['img'] = $rst['code_url'];
+	}
+	exit(implode('|',$result));//以字符串形式返回并停止运行
+}
+
+
+//接受payjs支付结果推送
+function payjs_notify() {
+	// 配置通信参数
+	$config = [
+	    'mchid' => gdk_option('gdk_payjs_id'),   // 配置商户号
+	    'key'   => gdk_option('gdk_payjs_key'),   // 配置通信密钥
+	];
+	$payjs = new GDK_Payjs($config);
+	$data = $payjs->notify();//需要做签名性检查
+	// 对返回码判断
+	if($data['return_code'] == 1) {
+		echo 'success';
+		return $data;
+	} else {
+		exit($data['return_msg']);
+	}
 }
 
 //充值按钮
@@ -1031,6 +1089,7 @@ function buy_points(){
         <form id="pay_fancybox" name="pay_form" style="display: none; width: 100%; max-width: 500px;" class="pure-form">
                 <h2 class="mb-3">积分充值</h2>
                 <p>请在下面输入充值金额以及支付工具,微信支付宝都可以,如果下面选项中有支付宝一般建议支付宝</p>
+                <p class="alert info">本站支付比例为: 1 RMB = '.gdk_option('gdk_rate').'金币</p></blockquote>
                 <label for="money">支付金额</label>
                 <input name="money" id="money" min="1" value="2" type="number" required>
                 <br /><label for="pay_way">支付方式</label>';
@@ -1038,14 +1097,14 @@ function buy_points(){
                     $result .= '
                     <label><input name="pay_way" type="radio" value = "alipay" checked/> 支付宝</label>  &nbsp;&nbsp;&nbsp;&nbsp;<label><input name="pay_way" type="radio" value = "wechat" /> 微信</label>';
                 }else{
-                    $result .= '<br /><label> 微信</label>';
+                    $result .= '<br /><label><input name="pay_way" type="radio" value = "wechat" checked/> 微信</label>';
                 }
                 $result .= '
                 <p class="mb-0 text-right">
                     <input data-fancybox-close type="button" id="submit_pay" data-action="pay_points" data-id="'.get_current_user_id().'" class="pure-button pure-button-primary" value="提交">
                 </p>
             </form>';
-        wp_enqueue_script('qrious', 'https://cdn.bootcss.com/qrious/4.0.2/qrious.min.js', array('jquery'), GDK_PLUGIN_VER, true);
+        //wp_enqueue_script('qrious', 'https://cdn.bootcss.com/qrious/4.0.2/qrious.min.js', array('jquery'), GDK_PLUGIN_VER, true);
 
     }else{// no login
         $result = '<div class=\'alert info\'>本页面需要您登录才可以操作，请先 <a target="_blank" href="'.esc_url( wp_login_url( get_permalink() ) ).'">点击登录</a>  或者<a href="'.esc_url( wp_registration_url() ).'">立即注册</a></div>';

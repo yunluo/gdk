@@ -1,9 +1,9 @@
 <?php
 
 /**
- * Points_Database class
+ * GDK_Points_Database class
  */
-class Points_Database {
+class GDK_Points_Database {
 	public static $prefix = "points_";
 	public static function points_get_table( $table ) {
 		global $wpdb;
@@ -19,9 +19,9 @@ class Points_Database {
 
 
 /**
- * Points class
+ * GDK_Points class
  */
-class Points {
+class GDK_Points {
 
 	public static function get_points_by_user ( $user_id, $limit = null, $order_by = null, $order = null, $output = OBJECT, $offset = 0 ) {
 		global $wpdb;
@@ -39,7 +39,7 @@ class Points {
 			$order_str = " " . $order;
 		}
 
-		$result = $wpdb->get_results('SELECT * FROM ' . Points_Database::points_get_table( 'users' ) . " WHERE user_id = '$user_id'" . $order_by_str . $order_str . $limit_str, $output );
+		$result = $wpdb->get_results('SELECT * FROM ' . GDK_Points_Database::points_get_table( 'users' ) . " WHERE user_id = '$user_id'" . $order_by_str . $order_str . $limit_str, $output );
 
 		return $result;
 	}
@@ -53,7 +53,7 @@ class Points {
 		if ( $status !== null ) {
 			$where_status = " AND status = '" . $status . "'";
 		}
-		$points = $wpdb->get_row("SELECT SUM(points) as total FROM " . Points_Database::points_get_table( "users" ) . " WHERE user_id = '$user_id' " . $where_status);
+		$points = $wpdb->get_row("SELECT SUM(points) as total FROM " . GDK_Points_Database::points_get_table( "users" ) . " WHERE user_id = '$user_id' " . $where_status);
 
 		if ( $points && ( $points->total !== NULL ) ) {
 			$result = $points->total;
@@ -68,7 +68,7 @@ class Points {
 		if ( $status !== null ) {
 			$where_status = " WHERE status = '" . $status . "'";
 		}
-		$points = $wpdb->get_results("SELECT SUM(points) as total, user_id FROM " . Points_Database::points_get_table( "users" ) . $where_status . " GROUP BY user_id");
+		$points = $wpdb->get_results("SELECT SUM(points) as total, user_id FROM " . GDK_Points_Database::points_get_table( "users" ) . $where_status . " GROUP BY user_id");
 
 		return $points;
 	}
@@ -81,7 +81,7 @@ class Points {
 	public static function get_users() {
 		global $wpdb;
 
-		$users_id = $wpdb->get_results("SELECT user_id FROM " . Points_Database::points_get_table( "users" ) . " GROUP BY user_id");
+		$users_id = $wpdb->get_results("SELECT user_id FROM " . GDK_Points_Database::points_get_table( "users" ) . " GROUP BY user_id");
 
 		$result = array();
 		if ( sizeof( $users_id ) > 0 ) {
@@ -122,7 +122,7 @@ class Points {
 		}
 		$values['user_id'] = $user_id;
 
-		$rows_affected = $wpdb->insert( Points_Database::points_get_table("users"), $values );
+		$rows_affected = $wpdb->insert( GDK_Points_Database::points_get_table("users"), $values );
 
 		return $rows_affected;
 	}
@@ -152,7 +152,7 @@ class Points {
 			$order_str = " " . $order;
 		}
 
-		$result = $wpdb->get_results("SELECT * FROM " . Points_Database::points_get_table( "users" ) . $where_str . $order_by_str . $order_str . $limit_str, $output );
+		$result = $wpdb->get_results("SELECT * FROM " . GDK_Points_Database::points_get_table( "users" ) . $where_str . $order_by_str . $order_str . $limit_str, $output );
 
 		return $result;
 	}
@@ -165,7 +165,7 @@ class Points {
 		if ( isset( $point_id ) && ( $point_id !== null ) ) {
 
 			$points_id_str = " WHERE point_id = " . (int)$point_id;
-			$result = $wpdb->get_row("SELECT * FROM " . Points_Database::points_get_table( "users" ) . $points_id_str );
+			$result = $wpdb->get_row("SELECT * FROM " . GDK_Points_Database::points_get_table( "users" ) . $points_id_str );
 		}
 
 		return $result;
@@ -177,7 +177,7 @@ class Points {
 		$values = array();
 		$values['status'] = 'removed';
 
-		$rows_affected = $wpdb->update( Points_Database::points_get_table("users"), $values , array( 'point_id' => $point_id ) );
+		$rows_affected = $wpdb->update( GDK_Points_Database::points_get_table("users"), $values , array( 'point_id' => $point_id ) );
 
 		if ( !$rows_affected ) {
 			$rows_affected = null;
@@ -218,7 +218,7 @@ class Points {
 			$values['ipv6'] = $info['ipv6'];
 		}
 
-		$rows_affected = $wpdb->update( Points_Database::points_get_table("users"), $values , array( 'point_id' => $point_id ) );
+		$rows_affected = $wpdb->update( GDK_Points_Database::points_get_table("users"), $values , array( 'point_id' => $point_id ) );
 
 		if ( !$rows_affected ) { // insert
 			$rows_affected = null;

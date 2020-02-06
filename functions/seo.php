@@ -1,7 +1,7 @@
 <?php
 
 
-add_theme_support('title-tag');
+
 if (!function_exists('nc_filter_document_title_separator')):
     add_filter('document_title_separator', 'nc_filter_document_title_separator', 10, 1);
     add_filter('document_title_parts', 'nc_filter_document_title_parts', 10, 1);

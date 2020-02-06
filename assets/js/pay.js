@@ -30,7 +30,7 @@ function checkpayjs(a, b) { //ID，订单号
                         content: "input",
                     })
                     .then((d) => {
-                        getcontent(a);
+                        gdk_getcontent(a);
                         addcode(a, `${d}`);
                     }); //ok
             } else {
@@ -87,9 +87,9 @@ function payway(a, b) { //id,money
 }
 
 
-function getcontent(a) {
+function gdk_getcontent(a) {
     var ajax_data = {
-        action: 'getcontent',
+        action: 'gdk_getcontent',
         id: a
     };
     $.post(ajax.url, ajax_data,
@@ -103,7 +103,7 @@ function getcontent(a) {
 
 function checkcode(a, b) {
     var ajax_data = {
-        action: 'check_code',
+        action: 'gdk_check_code',
         id: a,
         code: b
     };
@@ -111,7 +111,7 @@ function checkcode(a, b) {
         function(c) {
             if (c == 1) {
                 localStorage.setItem('ID:'+a,b);
-                getcontent(a);
+                gdk_getcontent(a);
             } else {
                 swal("Write something here:", {
                     content: "input",

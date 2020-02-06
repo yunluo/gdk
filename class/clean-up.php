@@ -2,7 +2,7 @@
 
 
 
-function wp_clean_up_page(){
+function gdk_clean_up_page(){
 ?>
 <div class="wrap">
 

@@ -14,3 +14,4 @@ body.compensate-for-scrollbar{overflow:hidden}.fancybox-active{height:auto}.fanc
 .success{background-color:#ebf8e1;border-color:#4d9f0c}
 .error{background-color:#ffe7e8;border-color:#e66465}
 .swal-footer {text-align: center !important;}
+.swal-button {background-color: #9b4dca !important;}.swal-button:hover {background-color: #54397E !important;}

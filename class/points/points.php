@@ -6,7 +6,7 @@ include 'class-points-admin.php';
 include 'class-points-shortcodes.php';
 
 
-class Points_Class {
+class GDK_Points_Class {
 	private static $notices = [];
 	public static function init() {
 		add_action( 'init', [ __CLASS__, 'wp_init' ] );
@@ -14,7 +14,7 @@ class Points_Class {
 	}
 
 	public static function wp_init() {
-		Points_Admin::init();
+		GDK_Points_Admin::init();
 	}
 
 	/**
@@ -33,7 +33,7 @@ class Points_Class {
 		}
 
 		// create tables
-		$points_users_table = Points_Database::points_get_table("users");
+		$points_users_table = GDK_Points_Database::points_get_table("users");
 		if ( $wpdb->get_var( "SHOW TABLES LIKE '$points_users_table'" ) != $points_users_table ) {
 			$queries[] = "CREATE TABLE $points_users_table (
 			point_id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -56,4 +56,4 @@ class Points_Class {
 		}
 	}
 }
-Points_Class::init();
+GDK_Points_Class::init();

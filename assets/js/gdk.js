@@ -74,20 +74,21 @@ var money = $("#money").val(),
 	/**检查服务器是否有订单 */
 	function checkpayjs(a, b) { //ID，订单号
 		var ajax_data = {
-			action: 'checkpayjs',
+			check_pay_points: ajax.check_pay_points,
+			action: 'check_pay_points',
 			id: a,
-			orderid: b,
+			orderid: b
 		};
 		$.post(ajax.url, ajax_data,
 			function(c) {
-				if (c == '1') {
+				if (c == '200') {
 					swal("支付成功!", "为了方便您后续再次查看，建议您输入您的常用邮箱作为提取码", "info", {
 							dangerMode: true,
 							closeOnClickOutside: false,
 							content: "input",
 						})
 						.then((d) => {
-							getcontent(a);
+							gdk_getcontent(a);
 							addcode(a, `${d}`);
 						}); //ok
 				} else {
@@ -109,14 +110,15 @@ var money = $("#money").val(),
 		$.post(ajax.url, ajax_data,
 			function(d) {
 				if (d !== '400') {
+					console.log(d);
 					var f = document.createElement("img"),
 					e = d.split('|');
 					f.id = 'pqrious';
-					console.log(e[3]);
+					
 					swal("支付金额：" + e[0] + "元", {
 							content: f,
 							closeOnClickOutside: false,
-							button: "支付已完成",
+							button: ""+e[2]+"支付已完成",
 						})
 						.then((value) => {
 							checkpayjs(c, e[1]);/**用户id,订单号 */
@@ -127,7 +129,7 @@ var money = $("#money").val(),
 						value: e[3]
 					});
 				}else{
-					swal("充值发生错误", "哦嚯,好像发生了什么错误", "error");
+					swal("充值发生错误", "哦嚯,好像发生了什么错误,二维码加载失败", "error");
 				}
 			});
 	}

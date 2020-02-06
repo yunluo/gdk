@@ -2,7 +2,7 @@
 /**
 * class-points-shortcodes.php
 */
-class Points_Shortcodes {
+class GDK_Points_Shortcodes {
 	/**
 	 * Add shortcodes.
 	 */
@@ -24,10 +24,10 @@ class Points_Shortcodes {
 		);
 		extract( $options );
 		$output = "";
-		$pointsusers = Points::get_users();
+		$pointsusers = GDK_Points::get_users();
 		if ( sizeof( $pointsusers )>0 ) {
 			foreach ( $pointsusers as $pointsuser ) {
-				$total = Points::get_user_total_points( $pointsuser );
+				$total = GDK_Points::get_user_total_points( $pointsuser );
 				$output .='<div class="points-user">';
 				$output .= '<span style="font-weight:bold;width:100%;" class="points-user-username">';
 				$output .= get_user_meta ( $pointsuser, 'nickname', true );
@@ -52,7 +52,7 @@ class Points_Shortcodes {
 			$id = get_current_user_id();
 		}
 		if ( $id !== 0 ) {
-			$points = Points::get_user_total_points( $id, 'accepted' );
+			$points = GDK_Points::get_user_total_points( $id, 'accepted' );
 			$output .= $points;
 		}
 		return $output;
@@ -64,7 +64,7 @@ public static function pay($atts, $content = null) {
     global $wpdb;
     $user_id = get_current_user_id();
     $description = get_the_ID();
-    $result = $wpdb->get_row("SELECT description FROM " . Points_Database::points_get_table("users") . " WHERE user_id=" . $user_id . " AND description=" . $description . " AND status='accepted' LIMIT 0, 3;", ARRAY_A )['description']; //验证是否支付
+    $result = $wpdb->get_row("SELECT description FROM " . GDK_Points_Database::points_get_table("users") . " WHERE user_id=" . $user_id . " AND description=" . $description . " AND status='accepted' LIMIT 0, 3;", ARRAY_A )['description']; //验证是否支付
     extract(shortcode_atts(['point' => "10"], $atts));
     $notice = '';
     $pay_content = get_post_meta($description, 'pay_content', true);
@@ -79,21 +79,21 @@ public static function pay($atts, $content = null) {
             $notice.= $content;
             $notice.= '</div>';
         } else {
-            if (Points::get_user_total_points($user_id, 'accepted') < $point) {
+            if (GDK_Points::get_user_total_points($user_id, 'accepted') < $point) {
                 $notice.= '<div class="alert alert-info"">';
                 $notice.= '<p style="color:red;">本段内容需要支付 ' . $point . '金币查看</p>';
-                $notice.= '<p style="color:red;">您当前拥有 <em><strong>' . Points::get_user_total_points($user_id, 'accepted') . '</strong></em> 金币，您的金币不足，请充值</p>';
+                $notice.= '<p style="color:red;">您当前拥有 <em><strong>' . GDK_Points::get_user_total_points($user_id, 'accepted') . '</strong></em> 金币，您的金币不足，请充值</p>';
                 $notice.= '<p><a class="lhb" href="' . get_permalink(gdk_page_id('chongzhi')) . '" target="_blank" rel="nofollow" data-original-title="立即充值" title="">立即充值</a></p>';
                 $notice.= '</div>';
             } else {
                 $notice.= '<div id="pay_notice" class="alert alert-info"">';
-                $notice.= '<p style="color:red;">本段内容需要付费查看，您当前拥有 <em><strong>' . Points::get_user_total_points($user_id, 'accepted') . '</strong></em> 金币</p>';
+                $notice.= '<p style="color:red;">本段内容需要付费查看，您当前拥有 <em><strong>' . GDK_Points::get_user_total_points($user_id, 'accepted') . '</strong></em> 金币</p>';
                 $notice.= '<p><a class="lhb" style="cursor: pointer;" onclick="pay_point();">点击购买</a></p>';
                 $notice.= '</div>';
                 $notice.= '<p id="pay_success"></p>';
                 echo '<script type="text/javascript">
 function pay_point() {
-    ajax.post("' . admin_url('admin-ajax.php') . '", "action=pay_buy&point=' . $point . '&userid=' . $user_id . '&id=' . $description . '", function(n) {
+    ajax.post("' . admin_url('admin-ajax.php') . '", "action=gdk_pay_buy&point=' . $point . '&userid=' . $user_id . '&id=' . $description . '", function(n) {
         null != n && (document.getElementById("pay_notice").style.display = "none", document.getElementById("pay_success").innerHTML = "<div class=\"alert alert-info\">" + n + "</div>");
     });
 }</script>';
@@ -137,7 +137,7 @@ function pay_point() {
 		global $wp_query;
 		$curauth = $wp_query->get_queried_object();
 		$user_id = $curauth->ID;
-		$points = Points::get_points_by_user( $user_id );
+		$points = GDK_Points::get_points_by_user( $user_id );
 		$output = '<table class="points_user_points_table">' .
 		'<tr>' .
 		'<th>日期时间' .
@@ -171,4 +171,4 @@ function pay_point() {
 		return $output;
 	}
 }
-Points_Shortcodes::init();
+GDK_Points_Shortcodes::init();

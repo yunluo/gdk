@@ -1,6 +1,6 @@
 <?php
 /**
- * Points Table class
+ * GDK_Points Table class
  */
 
 // WP_List_Table is not loaded automatically so we need to load it in our application
@@ -8,7 +8,7 @@ if ( !class_exists( 'WP_List_Table' ) ) {
 	require_once (ABSPATH . 'wp-admin/includes/class-wp-list-table.php');
 }
 
-class Points_List_Table extends WP_List_Table {
+class GDK_Points_List_Table extends WP_List_Table {
 	/**
 	 * Prepare the items for the table to process
 	 *
@@ -108,7 +108,7 @@ class Points_List_Table extends WP_List_Table {
 	 */
 	private function table_data() {
 		$data = [];
-		$data = Points::get_points( null, null, null, ARRAY_A );
+		$data = GDK_Points::get_points( null, null, null, ARRAY_A );
 		return $data;
 	}
 
@@ -180,9 +180,9 @@ class Points_List_Table extends WP_List_Table {
 
 
 /**
- * Points Admin class
+ * GDK_Points Admin class
  */
-class Points_Admin {
+class GDK_Points_Admin {
 
 	public static function init () {
 		add_action( 'admin_notices', [ __CLASS__, 'admin_notices' ] );
@@ -210,15 +210,15 @@ class Points_Admin {
 			$sdata = trim($_POST['psearch']);
 			if(preg_match('/E20/', $sdata)){//order id
 				global $wpdb;
-				$point_id = $wpdb->get_row("SELECT point_id FROM " . Points_Database::points_get_table( "users" ) . " WHERE description = '{$sdata}'", ARRAY_A )['point_id'];
-				$points = Points::get_point( $point_id );
+				$point_id = $wpdb->get_row("SELECT point_id FROM " . GDK_Points_Database::points_get_table( "users" ) . " WHERE description = '{$sdata}'", ARRAY_A )['point_id'];
+				$points = GDK_Points::get_point( $point_id );
 			}elseif(filter_var($sdata, FILTER_VALIDATE_EMAIL)){//email
 				$user = get_user_by( 'email', $sdata );
-				$points = Points::get_points_by_user( $user->ID );
-				$k[] = '<div style="margin-bottom:10px;">用户ID：'.$user->ID.'  &nbsp;&nbsp;总金币为：'.Points::get_user_total_points( $user->ID ).'</div>';
+				$points = GDK_Points::get_points_by_user( $user->ID );
+				$k[] = '<div style="margin-bottom:10px;">用户ID：'.$user->ID.'  &nbsp;&nbsp;总金币为：'.GDK_Points::get_user_total_points( $user->ID ).'</div>';
 			}else{//userid
-				$points = Points::get_points_by_user( $sdata );
-				$k[] = '<div style="margin-bottom:10px;">用户ID：'.$sdata.'  &nbsp;&nbsp;总金币为：'.Points::get_user_total_points( $sdata ).'</div>';
+				$points = GDK_Points::get_points_by_user( $sdata );
+				$k[] = '<div style="margin-bottom:10px;">用户ID：'.$sdata.'  &nbsp;&nbsp;总金币为：'.GDK_Points::get_user_total_points( $sdata ).'</div>';
 			}
 			if(is_array($points)){
 				foreach ( $points as $point ) {
@@ -233,7 +233,7 @@ class Points_Admin {
 		if ( isset( $_POST['save'] ) && isset( $_POST['action'] ) ) {
 			if ( $_POST['action'] == "edit" ) {
 				$point_id = isset($_POST['point_id'])?intval( $_POST['point_id'] ) : null;
-				$points = Points::get_point( $point_id );
+				$points = GDK_Points::get_point( $point_id );
 				$data = array();
 				if ( isset( $_POST['user_mail'] ) ) {
 					$data['user_mail'] = $_POST['user_mail'];
@@ -255,7 +255,7 @@ class Points_Admin {
 				}
 
 				if ( $points ) {  // 编辑金币
-					Points::update_points($point_id, $data);
+					GDK_Points::update_points($point_id, $data);
 				} else {  // 增加金币
 					if ( isset( $_POST['user_mail'] ) ) {//如果输入邮箱的话
 						$usermail = $data['user_mail'];
@@ -269,8 +269,8 @@ class Points_Admin {
 						$userid = $data['user_id'];
 						$username = $user->display_name;
 					}
-					Points::set_points($_POST['points'], $userid, $data);
-					$message = '<div class="emailcontent" style="width:100%;max-width:720px;text-align:left;margin:0 auto;padding-top:80px;padding-bottom:20px"><div class="emailtitle"><h1 style="color:#fff;background:#51a0e3;line-height:70px;font-size:24px;font-weight:400;padding-left:40px;margin:0">金币金额调整通知</h1><div class="emailtext" style="background:#fff;padding:20px 32px 40px"><div style="padding:0;font-weight:700;color:#6e6e6e;font-size:16px">尊敬的'.$username.',您好！</div><p style="color:#6e6e6e;font-size:13px;line-height:24px">您的金币金额被管理员调整，请查收！</p><table cellpadding="0" cellspacing="0" border="0" style="width:100%;border-top:1px solid #eee;border-left:1px solid #eee;color:#6e6e6e;font-size:16px;font-weight:normal"><thead><tr><th colspan="2" style="padding:10px 0;border-right:1px solid #eee;border-bottom:1px solid #eee;text-align:center;background:#f8f8f8">您的金币详细情况</th></tr></thead><tbody><tr><td style="padding:10px 0;border-right:1px solid #eee;border-bottom:1px solid #eee;text-align:center;width:100px">用户名</td><td style="padding:10px 20px 10px 30px;border-right:1px solid #eee;border-bottom:1px solid #eee;line-height:30px">'.$username.'</td></tr><tr><td style="padding:10px 0;border-right:1px solid #eee;border-bottom:1px solid #eee;text-align:center">调整金币</td><td style="padding:10px 20px 10px 30px;border-right:1px solid #eee;border-bottom:1px solid #eee;line-height:30px">'.$_POST['points'].'</td></tr><tr><td style="padding:10px 0;border-right:1px solid #eee;border-bottom:1px solid #eee;text-align:center">金币总额</td><td style="padding:10px 20px 10px 30px;border-right:1px solid #eee;border-bottom:1px solid #eee;line-height:30px">'.Points::get_user_total_points($userid, 'accepted' ).'</td></tr></tbody></table><p style="color:#6e6e6e;font-size:13px;line-height:24px">如果您的金币金额有异常，请您在第一时间和我们取得联系哦，联系邮箱：'.get_bloginfo('admin_email').'</p></div><div class="emailad" style="margin-top:4px"><a href="'.home_url().'"><img src="http://reg.163.com/images/secmail/adv.png" alt="" style="margin:auto;width:100%;max-width:700px;height:auto"></a></div></div></div>';
+					GDK_Points::set_points($_POST['points'], $userid, $data);
+					$message = '<div class="emailcontent" style="width:100%;max-width:720px;text-align:left;margin:0 auto;padding-top:80px;padding-bottom:20px"><div class="emailtitle"><h1 style="color:#fff;background:#51a0e3;line-height:70px;font-size:24px;font-weight:400;padding-left:40px;margin:0">金币金额调整通知</h1><div class="emailtext" style="background:#fff;padding:20px 32px 40px"><div style="padding:0;font-weight:700;color:#6e6e6e;font-size:16px">尊敬的'.$username.',您好！</div><p style="color:#6e6e6e;font-size:13px;line-height:24px">您的金币金额被管理员调整，请查收！</p><table cellpadding="0" cellspacing="0" border="0" style="width:100%;border-top:1px solid #eee;border-left:1px solid #eee;color:#6e6e6e;font-size:16px;font-weight:normal"><thead><tr><th colspan="2" style="padding:10px 0;border-right:1px solid #eee;border-bottom:1px solid #eee;text-align:center;background:#f8f8f8">您的金币详细情况</th></tr></thead><tbody><tr><td style="padding:10px 0;border-right:1px solid #eee;border-bottom:1px solid #eee;text-align:center;width:100px">用户名</td><td style="padding:10px 20px 10px 30px;border-right:1px solid #eee;border-bottom:1px solid #eee;line-height:30px">'.$username.'</td></tr><tr><td style="padding:10px 0;border-right:1px solid #eee;border-bottom:1px solid #eee;text-align:center">调整金币</td><td style="padding:10px 20px 10px 30px;border-right:1px solid #eee;border-bottom:1px solid #eee;line-height:30px">'.$_POST['points'].'</td></tr><tr><td style="padding:10px 0;border-right:1px solid #eee;border-bottom:1px solid #eee;text-align:center">金币总额</td><td style="padding:10px 20px 10px 30px;border-right:1px solid #eee;border-bottom:1px solid #eee;line-height:30px">'.GDK_Points::get_user_total_points($userid, 'accepted' ).'</td></tr></tbody></table><p style="color:#6e6e6e;font-size:13px;line-height:24px">如果您的金币金额有异常，请您在第一时间和我们取得联系哦，联系邮箱：'.get_bloginfo('admin_email').'</p></div><div class="emailad" style="margin-top:4px"><a href="'.home_url().'"><img src="http://reg.163.com/images/secmail/adv.png" alt="" style="margin:auto;width:100%;max-width:700px;height:auto"></a></div></div></div>';
 					$headers = "Content-Type:text/html;charset=UTF-8\n";
 					wp_mail( $usermail , 'Hi,'.$username.'，金币账户金额增加通知！', $message ,$headers);
 				}
@@ -291,9 +291,9 @@ class Points_Admin {
 					case 'delete' :
 						if ( $_GET['point_id'] !== null ) {
 							if ( current_user_can( 'administrator' ) ) {
-								Points::remove_points( $_GET['point_id'] );
+								GDK_Points::remove_points( $_GET['point_id'] );
 								global $wpdb;
-								$wcu_sql = "DELETE FROM " . Points_Database::points_get_table( "users" ) . " WHERE status = 'removed'";
+								$wcu_sql = "DELETE FROM " . GDK_Points_Database::points_get_table( "users" ) . " WHERE status = 'removed'";
 								$wpdb->query($wcu_sql);
 								$alert= "金币已删除";
 							}
@@ -311,7 +311,7 @@ class Points_Admin {
 		$cancel_url  = remove_query_arg( 'point_id', remove_query_arg( 'action', $current_url ) );
 		$current_url = remove_query_arg( 'point_id', $current_url );
 		$current_url = remove_query_arg( 'action', $current_url );
-		$exampleListTable = new Points_List_Table();
+		$exampleListTable = new GDK_Points_List_Table();
 		$exampleListTable->prepare_items();
 		?>
 		<div class="wrap">
@@ -343,7 +343,7 @@ class Points_Admin {
 		$saved = false;  // temporal
 
 		if ( $point_id !== null ) {
-			$points = Points::get_point( $point_id );
+			$points = GDK_Points::get_point( $point_id );
 
 			if ( $points !== null ) {
 				$user_id = $points->user_id;
