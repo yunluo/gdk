@@ -89,7 +89,7 @@ add_action('wp_ajax_gdk_pass_view', 'gdk_pass_view');
 
 //在线积分充值
 function pay_points() {
-    if( !isset( $_POST['pay_points'] ) || !wp_verify_nonce($_POST['pay_points'], 'pay_points') ) exit('400');
+    if( !isset( $_POST['action'] ) || $_POST['action'] !== 'pay_points' ) exit('400');
     if (!isset($_POST['money']) || !isset($_POST['way'])) exit('400');//无脑输出400错误
 	if (isset($_POST['id'])) {
         payjs_action('积分充值',$_POST['id']);
@@ -113,7 +113,34 @@ function check_pay_points(){
 add_action( 'wp_ajax_check_pay_points', 'check_pay_points' );
 add_action( 'wp_ajax_nopriv_check_pay_points', 'check_pay_points' );
 
+//积分充值end
+
+//游客付费可见
+function pay_view() {
+    if( !isset( $_POST['action'] ) || $_POST['action'] !== 'pay_view' ) exit('400');
+    if (!isset($_POST['money']) || !isset($_POST['way'])) exit('400');//无脑输出400错误
+	if (isset($_POST['id'])) {
+        payjs_action('在线付费查看',$_POST['id']);//标题,文章id
+	}
+}
+add_action( 'wp_ajax_pay_view', 'pay_view' );
+add_action( 'wp_ajax_nopriv_pay_view', 'pay_view' );
 
 
-
+//检查付费可见订单
+function check_pay_view() {
+	if( !isset( $_POST['check_pay_view'] ) || !wp_verify_nonce($_POST['check_pay_view'], 'check_pay_view') ) exit('400');
+	if (!isset($_POST['id']) || !isset($_POST['orderid'])) exit('400');
+	//无脑输出400错误
+	if ( $_POST['action'] == 'check_pay_view') {
+		$sid = get_transient('PP'.$_POST['id']);
+		if(in_string($sid,'E20') && $orderid == $sid) {
+			exit('200');//OK
+		} else {
+			exit('400');//no
+		}
+	}
+}
+add_action( 'wp_ajax_check_pay_view', 'check_pay_view' );
+add_action( 'wp_ajax_nopriv_check_pay_view', 'check_pay_view' );
 /**END */

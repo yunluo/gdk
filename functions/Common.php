@@ -1056,8 +1056,14 @@ function payjs_action($body,$attach){
 	} else {
 		$rst = $payjs->native($data);//电脑使用扫码
 		$result['img'] = $rst['code_url'];
-	}
-	exit(implode('|',$result));//以字符串形式返回并停止运行
+    }
+    if(in_string($attach,'PP')){//如果是付费可见,增加一个参数
+        $result['mode'] = '1';//1=付费可见
+    }else{
+        $result['mode'] = '0';
+    }
+        
+    exit(implode('|',$result));//以字符串形式返回并停止运行
 }
 
 

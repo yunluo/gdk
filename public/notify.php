@@ -9,7 +9,7 @@ $data = payjs_notify();//获取payjs支付成功的信息
 
 
 $money = $data['total_fee']/100; 	//交易金额
-$userid = $data['attach']; 	//交易标题
+$userid = $data['attach']; 	//交易标题,积分充值是用户ID,付费可见的时候是文章ID
 $orderid = $data['out_trade_no']; //订单ID
 
 error_log('Payjs pay ok, Order_ID:'.$orderid.', Order_Title:'.$userid.', Money:'.$money);//输出到日志
@@ -25,7 +25,7 @@ if(gdk_check($data['out_trade_no']) !== 0) exit('Repeat push');//在入库前,�
 if( empty($userid) || empty($money) )exit('data null');//阻止某些极少数空值的
 
 
-/* payjs支付通知结束 */
+/* Payjs支付通知结束 */
 
 $user = get_user_by( 'id', $userid  );
 $point_number = $money * gdk_option('gdk_rate');

@@ -8,10 +8,20 @@ body.compensate-for-scrollbar{overflow:hidden}.fancybox-active{height:auto}.fanc
 
 /* 鼠标选中样式*/::selection{background-color:#d73a42;color:#fff}::-moz-selection{background-color:#d73a42;color:#fff}::-webkit-selection{background-color:#d73a42;color:#fff}
 /*短代码表格样式*/.gdk-table th{background:#7a57d1;border:1px solid #fff;color:#fff;font-weight:700;font-size:1.2pc}.gdk-table tr:nth-child(odd){background:#f4ebf7}.gdk-table td,.gdk-table th{vertical-align:middle;text-align:center}.gdk-table td{border:1px solid #e8daee}
+
+/**millgram mod begin*/
 /*提示框*/.alert{clear:both;clear:none;overflow:hidden;color:#333;box-sizing:border-box;margin-top:5px;margin-bottom:20px;margin-left:-20px;padding:20px 30px;max-width:42rem;background-color:#eee;font-size:15px;border-left-width:5px;border-left-style:solid}
-.warning{border-color:#f6b73c;background:#fff3d4}
-.info{background-color:#e4f0f5;border-color:#3d7e9a}
-.success{background-color:#ebf8e1;border-color:#4d9f0c}
-.error{background-color:#ffe7e8;border-color:#e66465}
+.cm-badge{padding:8px;font-size:.8em;background-color:#dadada;border-radius:3px;text-align:center;margin-bottom:15px}
+.cm-coin{padding:4px 18px;border:1px solid #f0ad4e;border-radius:20px;background-color:#fff;color:#f0ad4e}
+.cm-round{width:30px;height:30px;border-radius:50%;}
+.warning{background-color:#fdd867;border-color:#f6b73c}
+.info{background-color:#7db1f1;border-color:#3d7e9a}
+.success{background-color:#68d58c;border-color:#4d9f0c}
+.error{background-color:#f17783;border-color:#e66465}
+
+.red{color:#f6003c}.purple{color:#6b48ff}.black{color:#060608}.pink{color:#FF5F5F}
+/**millgram mod end*/
 .swal-footer {text-align: center !important;}
 .swal-button {background-color: #9b4dca !important;}.swal-button:hover {background-color: #54397E !important;}
+/*付费可见样式*/
+.content-hide-tips{text-align:center;position:relative;margin:20px 0 40px;padding:40px 20px 20px;border:1px dashed #ccc;border-radius:4px;background-color:#f6f6f6}.content-hide-tips .fa-lock{position:absolute;top:5px;right:10px;z-index:1;color:#ccc;font-style:normal;font-size:30px}

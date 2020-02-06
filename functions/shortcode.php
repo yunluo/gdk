@@ -201,7 +201,7 @@ function gdk_e_secret($atts, $content = null) {
     $pid = get_the_ID();
     add_post_meta($pid, '_pass_content', $content, true) or update_post_meta($pid, '_pass_content', $content);
     if ( current_user_can( 'administrator' ) || gdk_is_weixin()) { return $content; }//admin show
-        return '<div class="pass_viewbox"><input id="pass_view" type="text">    <input id="start_view" data-action="gdk_pass_view" data-id="'.$pid.'" type="button" value="提交"></div>';
+        return '<div class="pass_viewbox"><input id="pass_view" type="text">    <input id="submit_pass_view" data-action="gdk_pass_view" data-id="'.$pid.'" type="button" value="提交"></div>';
 
 }
 add_shortcode('secret', 'gdk_e_secret');
@@ -304,6 +304,7 @@ function gdk_table_shortcode_handler( $atts, $content='' ) {
 }
 add_shortcode( 'table', 'gdk_table_shortcode_handler' );
 
+
 add_shortcode('youku', function( $atts, $content='') {
 	extract( shortcode_atts( array( 
 		'width'		=> '510', 
@@ -367,6 +368,23 @@ add_shortcode('sohutv', function($atts, $content=''){
 		return '<iframe class="wpjam_video" height='.esc_attr($height).' width='.esc_attr($width).' src="http://tv.sohu.com/upload/static/share/share_play.html#'.esc_attr($matches[1]).'" frameborder=0 allowfullscreen></iframe>';
 	}
 });
+
+//付费可见短代码
+function gdk_pay_nologin($atts, $content = ''){
+    extract(shortcode_atts(array('money' => '1' ) , $atts));
+    $pid = get_the_ID();//文章ID
+    add_post_meta($pid, '_pay_content', $content, true) or update_post_meta($pid, '_pay_content', $content);//没有新建,有就更新
+	$pay_log = get_post_meta($pid, 'pay_log', true);//购买记录数据
+	$pay_arr = explode(",", $pay_log);
+	$pay_count = count($pay_arr);//已购买人数
+	$notice  = '<div id="hide_notice" class="content-hide-tips"><i class="fa fa-lock"></i>';
+    $notice .= '<p>当前隐藏内容需要支付<p><span class="cm-coin">'.$money.'元</span></p></p>';
+	$notice .= '<p>已有<span class="red">'.$pay_count.'</span>人支付</p>';
+	$notice .= '<p><button id="pay_view" type="button" data-action="pay_view" data-money="'.$money.'" data-id="'.$pid.'" class="button">立即查看</button></p>';
+	$notice .= '</div>';
+	return $notice;
+}
+add_shortcode('pax', 'gdk_pay_nologin');
 
 //WordPress 段代码按钮集合
 function gdk_shortcode_list() {
