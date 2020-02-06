@@ -63,6 +63,7 @@ function check_data(a,b){/**1=数字,2=邮箱,3=网址,4= 到时候再写 */
 
 }
 
+/**点击提交充值开始 */
 $("#submit_pay").click(function() {
 
 var money = $("#money").val(),
@@ -72,7 +73,7 @@ var money = $("#money").val(),
 
 
 	/**检查服务器是否有订单 */
-	function checkpayjs(a, b) { //ID，订单号
+	function check_pay_points(a, b) { //ID，订单号
 		var ajax_data = {
 			check_pay_points: ajax.check_pay_points,
 			action: 'check_pay_points',
@@ -81,6 +82,8 @@ var money = $("#money").val(),
 		};
 		$.post(ajax.url, ajax_data,
 			function(c) {
+				console.log(c);
+				c = $.trim(c);
 				if (c == '200') {
 					swal("支付成功!", "为了方便您后续再次查看，建议您输入您的常用邮箱作为提取码", "info", {
 							dangerMode: true,
@@ -88,6 +91,7 @@ var money = $("#money").val(),
 							content: "input",
 						})
 						.then((d) => {
+							console.log(d);
 							gdk_getcontent(a);
 							addcode(a, `${d}`);
 						}); //ok
@@ -121,7 +125,7 @@ var money = $("#money").val(),
 							button: ""+e[2]+"支付已完成",
 						})
 						.then((value) => {
-							checkpayjs(c, e[1]);/**用户id,订单号 */
+							check_pay_points(c, e[1]);/**用户id,订单号 */
 						});
 					new QRious({
 						element: document.getElementById("pqrious"),

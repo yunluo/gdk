@@ -904,9 +904,9 @@ function gdk_category(){
 */
 function gdk_term_meta($term,$meta,$id) {
 	if($term == 'cat') {
-		$term_meta = gdk_str2arr(category_description($id),'<br />');
+		$term_meta = gdk_str2arr(category_description($id),'@@');
 	} elseif($term == 'tag') {
-		$term_meta = gdk_str2arr(tag_description($id),'<br />');
+		$term_meta = gdk_str2arr(tag_description($id),'@@');
 	} else {
 		return false;
 	}
@@ -1081,9 +1081,7 @@ function payjs_notify() {
 
 //充值按钮
 function buy_points(){
-
     if(is_user_logged_in()) {//logined
-
         $result = '
         <a data-fancybox="pay_fancybox" data-src="#pay_fancybox" href="javascript:;" class="button">点击充值</a>
         <form id="pay_fancybox" name="pay_form" style="display: none; width: 100%; max-width: 500px;" class="pure-form">
