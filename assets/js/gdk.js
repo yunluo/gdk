@@ -123,7 +123,6 @@ function check_pay_view(a, b) { //文章ID，订单号
 }
 
 
-
 /**
  * 生成支付二维码.公共调用 
  * money , pay_way ,user_id/post_id*,action
