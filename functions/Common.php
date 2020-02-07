@@ -1085,6 +1085,7 @@ function payjs_notify() {
 	}
 }
 
+
 //充值按钮
 function buy_points(){
     if(is_user_logged_in()) {//logined
@@ -1108,16 +1109,78 @@ function buy_points(){
                     <input data-fancybox-close type="button" id="submit_pay" data-action="pay_points" data-id="'.get_current_user_id().'" class="pure-button pure-button-primary" value="提交">
                 </p>
             </form>';
-        //wp_enqueue_script('qrious', 'https://cdn.bootcss.com/qrious/4.0.2/qrious.min.js', array('jquery'), GDK_PLUGIN_VER, true);
-
     }else{// no login
         $result = '<div class=\'alert info\'>本页面需要您登录才可以操作，请先 <a target="_blank" href="'.esc_url( wp_login_url( get_permalink() ) ).'">点击登录</a>  或者<a href="'.esc_url( wp_registration_url() ).'">立即注册</a></div>';
     }
+    return $result;
+}
 
 
-
-
+function login_modal(){
+    $result = '<a data-fancybox="login_fancybox" data-src="#login_fancybox" href="javascript:;">登录</a>
+    <div id="login_fancybox" style="width: 100%; max-width: 500px;overflow:auto;display:none;">';
+    $result .= wp_login_form(array(
+         'echo' => false,
+         'value_remember' => true,
+		'value_username' => '请输入用户名...'
+        ));
+    $result .= '</div>';
 
     return $result;
-
+    
 }
+
+/**开始微信* */
+//生成随机字符
+//sk是12位随机字符, key是域名@sk
+function gdk_weauth_token(){
+    $strs = 'QWERTYUIOPASDFGHJKLZXCVBNM1234567890qwertyuiopasdfghjklzxcvbnm';
+    $sk = substr(str_shuffle($strs),mt_rand(0,strlen($strs)-11),12);//12位
+    set_transient($sk, 1, 60*6);//缓存  get_transient($sk) == 1
+    $key = $_SERVER['HTTP_HOST'].'@'.$sk;
+    return $key;
+  }
+  
+  function gdk_weauth_qr(){
+    $qr64 = [];
+    $qr64['key'] = gdk_weauth_token();
+    $qr64['qrcode'] = gdk_http_request('https://wa.isdot.net/qrcode?str='.$qr64['key'])['qrcode'];
+    return $qr64;
+  }
+  
+  function weauth_rewrite_rules($wp_rewrite){
+      if (get_option('permalink_structure')) {
+          $new_rules['^weauth'] = 'index.php?user=$matches[1]&sk=$matches[2]';
+          $wp_rewrite->rules = $new_rules + $wp_rewrite->rules;
+      }
+  }
+  add_action('generate_rewrite_rules', 'weauth_rewrite_rules');
+
+/**
+ * 微信登陆按钮
+ */
+function weixin_login_btn(){
+    $result = '<a id="weixin_login_btn" href="javascript:;" data-action="gdk_weauth_qr_gen" class="button weixin_login_btn">微信登陆</a>';
+    return $result;
+}
+
+
+function get_weauth_oauth(){
+    if(in_string($_SERVER['REQUEST_URI'],'weauth')){
+    $weauth_user = trim($_GET['user']);//weauth发来用户信息
+    $weauth_sk = trim($_GET['sk']);//weauth返回的12位sk信息
+    $weauth_res = get_transient($weauth_sk);
+    if (empty($weauth_res)) return;
+
+    $weauth_user = stripslashes($weauth_user);
+    $weauth_user = json_decode($weauth_user, true);
+    //$weauth_info['nickname'] = $weauth_user['nickName'];//微信昵称
+    //$weauth_info['wxavatar'] = $weauth_user['avatarUrl'];//微信头像
+    //$weauth_info['openid'] = $weauth_user['openid'];//微信Openid
+    $oauth_result = implode('|',$weauth_user);
+    set_transient($sk, $oauth_result, 60*6);
+    echo 'success';
+}
+}
+
+add_action('wp','get_weauth_oauth');

@@ -34,6 +34,8 @@ function gdk_enqueue_script_frontend() {
             'check_pay_points' => wp_create_nonce('check_pay_points'),
             'check_pay_view' => wp_create_nonce('check_pay_view'),
             'check_code' => wp_create_nonce('check_code'),
+            'gdk_weauth_qr_gen' => wp_create_nonce('gdk_weauth_qr_gen'),
+            'gdk_weauth_check' => wp_create_nonce('gdk_weauth_check'),
         ]);
         
         

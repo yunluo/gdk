@@ -87,7 +87,7 @@ add_action('wp_ajax_gdk_pass_view', 'gdk_pass_view');
 
 
 
-//在线积分充值
+//在线积分充值开始
 function pay_points() {
     if( !isset( $_POST['action'] ) || $_POST['action'] !== 'pay_points' ) exit('400');
     if (!isset($_POST['money']) || !isset($_POST['way'])) exit('400');//无脑输出400错误
@@ -113,9 +113,9 @@ function check_pay_points(){
 add_action( 'wp_ajax_check_pay_points', 'check_pay_points' );
 add_action( 'wp_ajax_nopriv_check_pay_points', 'check_pay_points' );
 
-//积分充值end
+//积分充值结束
 
-//游客付费可见
+//游客付费可见开始
 function pay_view() {
     if( !isset( $_POST['action'] ) || $_POST['action'] !== 'pay_view' ) exit('400');
     if (!isset($_POST['money']) || !isset($_POST['way'])) exit('400');//无脑输出400错误
@@ -126,12 +126,64 @@ function pay_view() {
 add_action( 'wp_ajax_pay_view', 'pay_view' );
 add_action( 'wp_ajax_nopriv_pay_view', 'pay_view' );
 
+//添加提取码
+function add_code() {
+	$id = $_POST['id'];
+	$code = $_POST['code'];
+	if(empty($id) || empty($code)) exit('400');
+	if ( $_POST['action'] == 'add_code') {
+		$code = trim($code);//清理一下
+		$pay_log = get_post_meta($id, 'pay_log', true);//获取旧的购买记录数据
+		add_post_meta($id, 'pay_log', $code, true) or update_post_meta($id, 'pay_log', $pay_log.','.$code);//没有新建,有就更新
+		$pay_log = get_post_meta($id, 'pay_log', true);//获取新的购买记录数据
+		$pay_arr = explode(",", $pay_log);
+		if(in_array($code,$pay_arr)) {
+			exit('200');//OK
+		}else{
+			exit('400');//NO
+		}
+	}
+}
+add_action( 'wp_ajax_add_code', 'add_code' );
+add_action( 'wp_ajax_nopriv_add_code', 'add_code' );
+
+//检测提取码
+function check_code() {
+	$check_code_nonce = $_POST['check_code'];
+	$code = $_POST['code'];
+	$action = $_POST['action'];
+	$id = $_POST['id'];
+	if( !isset( $check_code_nonce ) || !wp_verify_nonce($check_code_nonce, 'check_code') ) exit('400');
+	if (!isset($code) || !isset($action) || !isset($id)) exit('400');//无脑输出400错误
+	if ( $action == 'check_code') {
+		$code = trim($code);//清理一下
+		$pay_log = get_post_meta($id, 'pay_log', true);//购买记录数据
+		$pay_arr = explode(",", $pay_log);
+		if(in_array($code,$pay_arr)) {
+			exit('200');
+		} else {
+			exit('400');
+		}
+	}
+}
+add_action( 'wp_ajax_check_code', 'check_code' );
+add_action( 'wp_ajax_nopriv_check_code', 'check_code' );
+
+//获取加密内容
+function get_content(){
+	if ( !isset($_POST['action']) || $_POST['action'] !== 'get_content') exit('400');//无脑输出400错误
+	if ( isset($_POST['id'])) {
+		$pay_content = get_post_meta($_POST['id'], '_pay_content', true);
+		exit($pay_content);
+	}
+}
+add_action( 'wp_ajax_get_content', 'get_content' );
+add_action( 'wp_ajax_nopriv_get_content', 'get_content' );
 
 //检查付费可见订单
 function check_pay_view() {
 	if( !isset( $_POST['check_pay_view'] ) || !wp_verify_nonce($_POST['check_pay_view'], 'check_pay_view') ) exit('400');
-	if (!isset($_POST['id']) || !isset($_POST['orderid'])) exit('400');
-	//无脑输出400错误
+	if (!isset($_POST['id']) || !isset($_POST['orderid'])) exit('400');//无脑输出400错误
 	if ( $_POST['action'] == 'check_pay_view') {
 		$sid = get_transient('PP'.$_POST['id']);
 		if(in_string($sid,'E20') && $orderid == $sid) {
@@ -143,4 +195,33 @@ function check_pay_view() {
 }
 add_action( 'wp_ajax_check_pay_view', 'check_pay_view' );
 add_action( 'wp_ajax_nopriv_check_pay_view', 'check_pay_view' );
+
 /**END */
+
+//开始微信登陆
+//ajax生成登录二维码
+function gdk_weauth_qr_gen() {
+	if( !isset( $_POST['gdk_weauth_qr_gen'] ) || !wp_verify_nonce($_POST['gdk_weauth_qr_gen'], 'gdk_weauth_qr_gen') ) exit('400');
+	if (isset($_POST['action']) && $_POST['action'] == 'gdk_weauth_qr_gen') {
+		$rest = implode("|", gdk_weauth_qr());
+		exit($rest);
+	} else {
+		exit('400');
+	}
+}
+add_action( 'wp_ajax_gdk_weauth_qr_gen', 'gdk_weauth_qr_gen' );
+add_action( 'wp_ajax_nopriv_gdk_weauth_qr_gen', 'gdk_weauth_qr_gen' );
+
+//检查登录状况
+function gdk_weauth_check(){
+	if( !isset( $_POST['gdk_weauth_check'] ) || !wp_verify_nonce($_POST['gdk_weauth_check'], 'gdk_weauth_check') ) exit('400');
+    if (isset($_POST['key']) && !in_string($_POST['key'],'@') && $_POST['action'] == 'gdk_weauth_check') exit('400');
+        $sk = substr($_POST['key'],-12);//sk
+        $oauth_result = get_transient($sk);
+        if (!empty($oauth_result)) {
+            exit($oauth_result);//用户信息
+        }
+    
+}
+add_action( 'wp_ajax_gdk_weauth_check', 'gdk_weauth_check' );
+add_action( 'wp_ajax_nopriv_gdk_weauth_check', 'gdk_weauth_check' );

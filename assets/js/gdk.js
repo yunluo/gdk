@@ -114,55 +114,6 @@ function check_pay_points(a, b) {
 }
 
 
-/**
- * 获取隐藏内容
- * @param {init} a 文章ID
- * @param {string} b 提取码
- */
-function getcontent(a,b) {
-    var ajax_data = {
-        action: 'getcontent',
-        id: a
-    };
-    $.post(ajax.url, ajax_data,
-        function(c) {
-            if (c) {
-                show_hide_content('#hide_notice',c);
-            }
-        });
-}
-
-/** */
-/**
- * 检查服务器是否有付费可见订单
- * @param {init} a 文章ID
- * @param {string} b 订单号
- */
-function check_pay_view(a, b) { 
-    var ajax_data = {
-        check_pay_view: ajax.check_pay_view,
-        action: 'check_pay_view',
-        id: a,
-        orderid: b
-    };
-    $.post(ajax.url, ajax_data,function(c) {
-        c = $.trim(c);
-        if (c == '200') {
-			swal("支付成功!", "为了方便您后续再次查看，建议您输入您的常用邮箱作为提取码", "info", {
-					dangerMode: true,
-					closeOnClickOutside: false,
-					content: "input",
-				})
-				.then((d) => {/**提取码 */
-					getcontent(a, `${d}`);
-					addcode(a, `${d}`);
-				}); //ok
-		} else {
-            swal("支付失败", "您的支付没有成功，请重试", "error");
-        }
-    },
-    'json');
-}
 
 
 /**
@@ -224,14 +175,87 @@ $("#submit_pay").click(function() {
 	}
 });
 
-////end
+////end////
+
+
+/**
+ * 获取隐藏内容
+ * @param {init} a 文章ID
+ */
+function get_content(a) {
+    var ajax_data = {
+        action: 'get_content',
+        id: a
+    };
+    $.post(ajax.url, ajax_data,
+        function(c) {
+            c = $.trim(c);
+            if (c !== '400') {
+                show_hide_content('#hide_notice',c);
+            }else{
+                show_hide_content('#hide_notice','貌似出了点网络错误,请重试');
+            }
+        });
+}
+
+/**
+ * 
+ * @param {init} a 文章ID
+ * @param {string} b 提取码
+ */
+function add_code(a, b) { //ID ， 提取码
+    var ajax_data = {
+        action: 'add_code',
+        id: a,
+        code: b
+    };
+    $.post(ajax.url, ajax_data,
+        function(c) {
+            c = $.trim(c);
+            if (c == '200') {
+                swal("输入成功", "您的支付提取码是" + b, "success");
+				localStorage.setItem('payjs_view_id:'+a,b);
+            }
+        });
+}
+
+/**
+ * 检查服务器是否有付费可见订单
+ * @param {init} a 文章ID
+ * @param {string} b 订单号
+ */
+function check_pay_view(a, b) { 
+    var ajax_data = {
+        check_pay_view: ajax.check_pay_view,
+        action: 'check_pay_view',
+        id: a,
+        orderid: b
+    };
+    $.post(ajax.url, ajax_data,function(c) {
+        c = $.trim(c);
+        if (c == '200') {
+			swal("支付成功!", "为了方便您后续再次查看，建议您输入您的常用邮箱作为提取码", "info", {
+					dangerMode: true,
+					closeOnClickOutside: false,
+					content: "input",
+				})
+				.then((d) => {/**提取码 */
+					get_content(a);
+					add_code(a, `${d}`);
+				}); //ok
+		} else {
+            swal("支付失败", "您的支付没有成功，请重试", "error");
+        }
+    },
+    'json');
+}
 
 /**
  * 检验提取码
  * @param {init} a 文章ID
  * @param {string} b 提取码
  */
-function checkcode(a, b) {
+function check_code(a, b) {
     var ajax_data = {
         check_code: ajax.check_code,
         action: 'check_code',
@@ -240,8 +264,9 @@ function checkcode(a, b) {
     };
     $.post(ajax.url, ajax_data,
         function(c) {
-            if (c == '1') {
-                getcontent(a);
+            c = $.trim(c);
+            if (c == '200') {
+                get_content(a);
 				localStorage.setItem('payjs_view_id:'+a,b);
             } else {
                 swal("查看失败", "服务器不存在此提取码，请重新输入", "error");
@@ -262,14 +287,15 @@ function pay_way(a,b,c) {
             buttons: ["支付宝", "微信"],
             dangerMode: true,
             closeOnClickOutside: false,
-        })
-        .then((way) => {
-            if (way) { //微信
-                get_payjs_qr(b, 'wechat',a,c);
-            } else { //支付宝
-                get_payjs_qr(b, 'alipay',a,c);
-            }
-        });
+        }
+    )
+    .then((way) => {
+        if (way) { //微信
+            get_payjs_qr(b, 'wechat',a,c);
+        } else { //支付宝
+            get_payjs_qr(b, 'alipay',a,c);
+        }
+    });
 }
 
 
@@ -292,7 +318,7 @@ function pay_view(a,b,c){
                         button: "验证提取码"
                     })
                     .then((code) => {
-                        checkcode(a, `${code}`);/**文章id, 提取码 */
+                        check_code(a, `${code}`);/**文章id, 提取码 */
                     });
             } else {/* 未支付,选择支付方式*/
                 pay_way(a,b,c);
@@ -310,7 +336,7 @@ if ( $("#pay_view").length > 0 ) {/**如果网站有付费可见,就执行 */
         for (var i = 0; i < length; i++) {
             var key = localStorage.key(i),value = localStorage.getItem(key);
             if (key.indexOf(keys) >= 0) {/**发现目标 */
-				checkcode(id, value);
+				check_code(id, value);
                 break;
             }
         }
@@ -328,6 +354,66 @@ $("#pay_view").click(function() {
 		pay_view(id,money,action);
 });
 
+/**
+ * 
+ * @param {string} a 微信登陆密钥key,此时是 gitcafe.net@wrhGgveq3LCj 类型,实际需要的是@后面的
+ */
+function check_weauth_login(a){
+    var ajax_data = {
+        gdk_weauth_check: ajax.gdk_weauth_check,
+        action: 'gdk_weauth_check',
+        key: a
+    };
+    $.post(ajax.url, ajax_data, function(b) {
+        b = $.trim(b);//登陆信息
+        if (b !== '400') {
+            console.log(b);
+            swal("获取微信信息成功", "您的登陆信息是"+b+"", "success");
+        } else {
+            swal("发生错误", "哦嚯,好像发生了什么错误,微信二维码加载失败", "error");
+        }
+    });
+}
+
+/**
+ * 生成微信二维码,公共调用 
+ * @param {string} a action操作
+ */
+function get_weauth_qr(a) {
+    var ajax_data = {
+        action: a,
+        gdk_weauth_qr_gen: ajax.gdk_weauth_qr_gen
+    };
+    $.post(ajax.url, ajax_data, function(b) {
+        b = $.trim(b);//登陆信息
+        if (b !== '400') {
+            var c = document.createElement("img"),
+                d = b.split('|');/**使用|风格,分为数组 */
+                c.src = d[1];//d[1]=base64
+                c.width = "300";
+                console.log(d[0]);//d[0]=key
+            swal("微信扫码并确认登陆", {
+                content: c,
+                closeOnClickOutside: true,
+                buttons: false
+            });
+            console.log('未点击但是我继续执行');
+            check_weauth_login(d[0]);
+        } else {
+            swal("发生错误", "哦嚯,好像发生了什么错误,微信二维码加载失败", "error");
+        }
+    });
+}
+
+
+
+
+
+
+$("#weixin_login_btn").click(function() {
+    var action = $("#weixin_login_btn").data("action");//gdk_weauth_qr_gen
+    get_weauth_qr(action);
+});
 
 
 
@@ -336,16 +422,5 @@ $("#pay_view").click(function() {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
+/**jQuery结尾,不要超过此行 */
 });

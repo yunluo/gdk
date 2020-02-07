@@ -12,6 +12,13 @@ function gdk_potin() {
 }
 add_shortcode('gdk_potin_btn', 'gdk_potin');
 
+
+//
+function gdk_login_fancybox() {
+    return weixin_login_btn();
+}
+add_shortcode('gdk_login_btn', 'gdk_login_fancybox');
+
 //添加钮Download
 function gdk_DownloadUrl($atts, $content = null) {
     extract(shortcode_atts(array(
