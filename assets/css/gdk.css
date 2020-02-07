@@ -20,8 +20,11 @@ body.compensate-for-scrollbar{overflow:hidden}.fancybox-active{height:auto}.fanc
 .error{background-color:#f17783;border-color:#e66465}
 
 .red{color:#f6003c}.purple{color:#6b48ff}.black{color:#060608}.pink{color:#FF5F5F}
+.pull-center,.fieldset p{text-align:center;}
 /**millgram mod end*/
 .swal-footer {text-align: center !important;}
 .swal-button {background-color: #9b4dca !important;}.swal-button:hover {background-color: #54397E !important;}
-/*付费可见样式*/
-.content-hide-tips{text-align:center;position:relative;margin:20px 0 40px;padding:40px 20px 20px;border:1px dashed #ccc;border-radius:4px;background-color:#f6f6f6}.content-hide-tips .fa-lock{position:absolute;top:5px;right:10px;z-index:1;color:#ccc;font-style:normal;font-size:30px}
+/**隐藏内容样式*/
+fieldset,.fieldset{position:relative;margin:20px;padding:20px;border:1px dashed #ccc;border-radius:4px;background-color:#f6f6f6}
+.fieldset .fa-lock{position:absolute;top:5px;right:10px;z-index:1;color:#ccc;font-style:normal;font-size:30px}
+legend,.legend{background-color:#f0ad4e;padding:.4em .8em;font-size:75%;font-weight:700;width:auto;line-height:1;color:#fff;border-radius:.25em}

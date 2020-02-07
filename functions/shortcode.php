@@ -39,7 +39,7 @@ add_shortcode('dm', 'gdk_DemoUrl');
 //使用短代码添加回复后可见内容开始
 function gdk_reply_to_read($atts, $content = null) {
     extract(shortcode_atts(array(
-        "notice" => '<blockquote><center><p class="reply-to-read" style="color: blue;">注意：本段内容须成功“<a href="' . get_permalink() . '#respond" title="回复本文">回复本文</a>”后“<a href="javascript:window.location.reload();" title="刷新本页">刷新本页</a>”方可查看！</p></center></blockquote>'
+        "notice" => '<div class="alert info pull-center"><p class="reply-to-read">注意：本段内容须成功“<a href="' . get_permalink() . '#respond" title="回复本文">回复本文</a>”后“<a href="javascript:window.location.reload();" title="刷新本页">刷新本页</a>”方可查看！</p></div>'
     ) , $atts));
     $email = null;
     $user_ID = get_current_user_id();
@@ -185,18 +185,17 @@ add_shortcode('netmusic', 'gdk_music163');
 function gdk_login_to_read($atts, $content = null) {
     $logina = '<a target="_blank" href="' . esc_url(wp_login_url(get_permalink())) . '">登录</a>';
     extract(shortcode_atts(array(
-        "notice" => '<blockquote><center><p class="reply-to-read" style="color: blue;">注意：本段内容须“' . $logina . '”后方可查看！</p></center></blockquote>'
+        "notice" => '<div class="alert info pull-center"><p class="reply-to-read" style="color: blue;">注意：本段内容须“' . $logina . '”后方可查看！</p></div>'
     ) , $atts));
     if (is_user_logged_in() && !is_null($content) && !is_feed()) {
-        return '<div class="e-secret"><fieldset><legend>隐藏的内容</legend>
-	' . $content . '<div class="clear"></div></fieldset></div>';
+        return '<fieldset class="fieldset"><legend class="legend">隐藏内容</legend><p>' . $content . '</p></fieldset>';
     }
     return $notice;
 }
 add_shortcode('vip', 'gdk_login_to_read');
 
 // 部分内容输入密码可见
-function gdk_e_secret($atts, $content = null) {
+function gdk_secret_view($atts, $content = null) {
     extract(shortcode_atts(array('wx' => null) , $atts));
     $pid = get_the_ID();
     add_post_meta($pid, '_pass_content', $content, true) or update_post_meta($pid, '_pass_content', $content);
@@ -204,9 +203,9 @@ function gdk_e_secret($atts, $content = null) {
         return '<div class="pass_viewbox"><input id="pass_view" type="text">    <input id="submit_pass_view" data-action="gdk_pass_view" data-id="'.$pid.'" type="button" value="提交"></div>';
 
 }
-add_shortcode('secret', 'gdk_e_secret');
+add_shortcode('secret', 'gdk_secret_view');
 
-// 支持文章和页面运行PHP代码id
+// 支持文章和页面运行PHP代码
 function gdk_php_include($attr) {
     $file = $attr['file'];
     $upload_dir = wp_upload_dir();
@@ -254,14 +253,15 @@ add_shortcode('temp', 'gdk_insert_temp');
 
 //快速插入列表
 function gdk_list_shortcode_handler($atts, $content = '') {
+    $content = trim($content);
     $lists = explode("\n", $content);
-    $ouput = '';
+    $output = '';
     foreach ($lists as $li) {
         if (trim($li) != '') {
             $output.= "<li>{$li}</li>";
         }
     }
-    $output .= "<ul>" . $output . "</ul>\n";
+    $output = "<ul>" . $output . "</ul>\n";
     return $output;
 }
 add_shortcode('list', 'gdk_list_shortcode_handler');
@@ -376,12 +376,12 @@ function gdk_pay_nologin($atts, $content = ''){
     add_post_meta($pid, '_pay_content', $content, true) or update_post_meta($pid, '_pay_content', $content);//没有新建,有就更新
 	$pay_log = get_post_meta($pid, 'pay_log', true);//购买记录数据
 	$pay_arr = explode(",", $pay_log);
-	$pay_count = count($pay_arr);//已购买人数
-	$notice  = '<div id="hide_notice" class="content-hide-tips"><i class="fa fa-lock"></i>';
-    $notice .= '<p>当前隐藏内容需要支付<p><span class="cm-coin">'.$money.'元</span></p></p>';
+    $pay_count = count($pay_arr);//已购买人数
+    $notice  = '<fieldset id="hide_notice" class="fieldset"><legend class="legend">付费内容</legend>';
+    $notice .= '<p>当前隐藏内容需要支付</p><span class="cm-coin">'.$money.'元</span>';
 	$notice .= '<p>已有<span class="red">'.$pay_count.'</span>人支付</p>';
 	$notice .= '<p><button id="pay_view" type="button" data-action="pay_view" data-money="'.$money.'" data-id="'.$pid.'" class="button">立即查看</button></p>';
-	$notice .= '</div>';
+	$notice .= '</fieldset>';
 	return $notice;
 }
 add_shortcode('pax', 'gdk_pay_nologin');
