@@ -409,13 +409,6 @@ function deactivate_rest_api() {
 remove_action( 'rest_api_init', 'wp_oembed_register_route' );
 }
 
-
-//前台禁止加载语言包
-add_filter('locale', function($locale) {
-    $locale = ( is_admin() ) ? $locale : 'en_US';
-    return $locale;
-});
-
 // 定制登录页面链接的连接
 add_filter('login_headerurl', function (){
 	return home_url();
