@@ -26,7 +26,7 @@ function get_weauth_oauth(){
     $weauth_user = stripslashes($weauth_user);
     $weauth_user = json_decode($weauth_user, true);
     $oauth_result = implode('|',$weauth_user);
-    set_transient($weauth_sk.'-info', $oauth_result, 60*2);
+    set_transient($weauth_sk.'-info', $oauth_result, 60);//1分钟缓存
     echo 'success';//给对方服务器打个招呼
     exit;
     }

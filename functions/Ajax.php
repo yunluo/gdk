@@ -228,6 +228,7 @@ add_action( 'wp_ajax_nopriv_gdk_weauth_check', 'gdk_weauth_check' );
 //开始自动登陆
 function gdk_auto_login(){
 	if (!isset($_POST['data']) || $_POST['action'] !== 'gdk_auto_login') exit('400');
+		$mail = $_POST['email'] ?? '';
 		$userdata = gdk_str2arr($_POST['data'],'|');
 		$user_id = create_user_id($userdata);
 		if(is_numeric($user_id) && $user_id){
@@ -235,6 +236,9 @@ function gdk_auto_login(){
 			wp_set_current_user( $user_id , $user->user_login);
 			wp_set_auth_cookie( $user_id ,true);
 			do_action( 'wp_login', $user->user_login );
+            if($mail && !empty($mail) && is_email($mail)){
+                wp_update_user( array( 'ID' => $user_id, 'user_email' => $mail ) );//绑定邮箱
+            }
 			exit('200');
 		}
 }

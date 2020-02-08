@@ -407,32 +407,34 @@ jQuery(function ($) { /**声明加载jQuery */
 	});
 
 
-
 	/**
-	 * weauth登陆
-	 * @param {string} a sk
-	 * @param {string} b mail
+	 * 用微信的账号信息开始登陆或绑定
+	 * @param {string} a 微信账号信息字符串,格式是:风起云落|1|zh_CN||海牙|荷兰|https://wx.qlogo.cn/m***A/132|o02B***jw|oq***HPA
+	 * @param {string} c email 
 	 */
-	function weauth_auto_login(a, b) {
+	function gdk_auto_login(a ,c) {
 		var ajax_data = {
-			action: 'weauth_oauth_login',
-			spam: a,
-			email: b
+			action: 'gdk_auto_login',
+			data: a,
+			email: c
 		};
-		$.post(ajax.url, ajax_data, function (c) {
-			console.log(c);
-			window.location.reload();
+		$.post(ajax.url, ajax_data, function (b) {
+			b = $.trim(b); //登陆信息
+			if (b !== '400' && b == '200') {
+				window.location.reload();
+			} else {
+				swal("发生错误", "哦嚯,好像发生了什么错误", "error");
+			}
 		});
-
 	}
 
 	/**
-	 * 绑定邮箱
-	 * @param {string} a sk
+	 * 绑定邮箱前检测
+	 * @param {string} a userdata
 	 */
 	function bind_mail(a) {
 		if (gdk_ls('get', 'ls-bind') || getCookie('next_bind')) {//已经绑定邮箱了
-			weauth_auto_login(a);
+			gdk_auto_login(a);
 		} else {
 			swal("绑定邮箱", "为了方便使用邮箱登录，我们墙裂推荐您绑定邮箱", {
 				content: { element: "input", attributes: { placeholder: "请输入您的邮箱", type: "text", }, },
@@ -451,23 +453,23 @@ jQuery(function ($) { /**声明加载jQuery */
 								swal("邮箱绑定错误", "您输入的邮箱已被绑定，请更换邮箱或者联系管理员，谢谢", { icon: "error", dangerMode: true });
 							} else {
 								gdk_ls('set', 'ls-bind', 1);
-								weauth_auto_login(a, `${value}`);
+								gdk_auto_login(a, `${value}`);
 							}
 						});
 					} else {//邮箱格式错误
 						swal("邮箱输入错误", "您输入的邮箱格式错误，请重新扫码绑定，谢谢", { icon: "error", dangerMode: true });
-						weauth_auto_login(a);
+						gdk_auto_login(a);
 					}
 				} else {//以后再绑定
 					setCookie('next_bind', 1, 30);
-					weauth_auto_login(a);
+					gdk_auto_login(a);
 				}
 			});
 		}
 	}
 
 	/**
-	 *
+	 *	检测微信账号信息
 	 * @param {string}  微信登陆密钥key,此时是 gitcafe.net@wrhGgveq3LCj 类型,实际需要的是@后面的
 	 */
 	function check_weauth_login() {
@@ -477,34 +479,19 @@ jQuery(function ($) { /**声明加载jQuery */
 			key: $('#weauth_key').text()
 		};
 		$.post(ajax.url, ajax_data, function (b) {
-			b = $.trim(b); //登陆信息=登陆信息
+			b = $.trim(b); //登陆||信息
 			if (b.length > 100) {
-				swal("微信登录成功！", "跳转刷新中！", "success");
+				swal("微信登录成功！", "跳转刷新中！", "success", {
+					button: false
+				  });
 				clearTimeout(timeres);
-				gdk_auto_login(b);
+				bind_mail(b);
+				//gdk_auto_login(b);
 			}
 		});
 	}
 
-	/**
-	 * 
-	 * @param {string} a 微信账号信息字符串,格式是:风起云落|1|zh_CN||海牙|荷兰|https://wx.qlogo.cn/m***A/132|o02B***jw|oq***HPA
-	 */
-	function gdk_auto_login(a) {
-		var ajax_data = {
-			action: 'gdk_auto_login',
-			data: a
-		};
-		$.post(ajax.url, ajax_data, function (b) {
-			b = $.trim(b); //登陆信息
-			if (b !== '400' && b == '200') {
-				//console.log('登陆结果:' + b);
-				window.location.reload();
-			} else {
-				swal("发生错误", "哦嚯,好像发生了什么错误", "error");
-			}
-		});
-	}
+
 
 	/**
 	 * 生成微信二维码,a action
@@ -520,14 +507,14 @@ jQuery(function ($) { /**声明加载jQuery */
 				var c = document.createElement("img"),
 					d = b.split('|'); /**使用|风格,分为数组 */
 				c.src = d[1]; //d[1]=base64
-				c.width = "350";
+				c.width = "300";
 				swal("微信扫码并确认登陆", {
 					content: c,
 					closeOnClickOutside: true,
 					buttons: false
 				});
 				$('#weauth_key').html(d[0]);
-				timeres = setTimeout(timecheck, 1e3);
+				timeres = setTimeout(timecheck, 2e3);
 			} else {
 				swal("发生错误", "哦嚯,好像发生了什么错误,微信二维码加载失败", "error");
 			}
@@ -535,14 +522,14 @@ jQuery(function ($) { /**声明加载jQuery */
 	}
 
 	/**
-	 * 轮询
+	 * 30秒轮询
 	 */
 	var num = 0,
-		max = 25,
+		max = 30,
 		timeres;
 
 	function timecheck() {
-		++num < max && (timeres = setTimeout(timecheck, 1e3), check_weauth_login());
+		++num < max && (timeres = setTimeout(timecheck, 2e3), check_weauth_login());
 	}
 
 
