@@ -1132,7 +1132,7 @@ function login_modal(){
 
 /**开始微信* */
 //生成随机字符
-//sk是12位随机字符, key是域名@sk
+//sk是12位随机字符, key格式是域名@sk
 function gdk_weauth_token(){
     $strs = 'QWERTYUIOPASDFGHJKLZXCVBNM1234567890qwertyuiopasdfghjklzxcvbnm';
     $sk = substr(str_shuffle($strs),mt_rand(0,strlen($strs)-11),12);//12位
@@ -1176,7 +1176,7 @@ function weixin_login_btn(){
 
 
 //获取用户ID
-function create_user_id($userdata){
+function create_user_id( $userdata ){
     $nickname = $userdata[0];
     $wxavatar = $userdata[6];
     $openid   = $userdata[7];
