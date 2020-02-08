@@ -201,9 +201,8 @@ add_action( 'wp_ajax_nopriv_check_pay_view', 'check_pay_view' );
 //开始微信登陆
 //ajax生成登录二维码
 function gdk_weauth_qr_gen() {
-	if( !isset( $_POST['gdk_weauth_qr_gen'] ) || !wp_verify_nonce($_POST['gdk_weauth_qr_gen'], 'gdk_weauth_qr_gen') ) exit('400');
 	if (isset($_POST['action']) && $_POST['action'] == 'gdk_weauth_qr_gen') {
-		$rest = implode("|", gdk_weauth_qr());
+		$rest = implode('|', gdk_weauth_qr());
 		exit($rest);
 	} else {
 		exit('400');
@@ -213,15 +212,81 @@ add_action( 'wp_ajax_gdk_weauth_qr_gen', 'gdk_weauth_qr_gen' );
 add_action( 'wp_ajax_nopriv_gdk_weauth_qr_gen', 'gdk_weauth_qr_gen' );
 
 //检查登录状况
+/*
 function gdk_weauth_check(){
-	if( !isset( $_POST['gdk_weauth_check'] ) || !wp_verify_nonce($_POST['gdk_weauth_check'], 'gdk_weauth_check') ) exit('400');
-    if (isset($_POST['key']) && !in_string($_POST['key'],'@') && $_POST['action'] == 'gdk_weauth_check') exit('400');
-        $sk = substr($_POST['key'],-12);//sk
-        $oauth_result = get_transient($sk);
-        if (!empty($oauth_result)) {
-            exit($oauth_result);//用户信息
-        }
-    
+	if( !isset($_POST['key']) || !isset( $_POST['gdk_weauth_check'] ) || !wp_verify_nonce($_POST['gdk_weauth_check'], 'gdk_weauth_check') ) exit('400');
+	if (!in_string($_POST['key'],'@') || $_POST['action'] !== 'gdk_weauth_check') exit('400');
+		$sk = substr(trim($_POST['key']),-12);//sk
+        $userid = get_transient($sk. '-login');//userid
+        if (!empty($userid)) {
+            exit($sk);//sk
+		}
 }
 add_action( 'wp_ajax_gdk_weauth_check', 'gdk_weauth_check' );
 add_action( 'wp_ajax_nopriv_gdk_weauth_check', 'gdk_weauth_check' );
+*/
+
+//检查登录状况,临时代码
+function gdk_weauth_check(){
+	if( !isset($_POST['key']) || !isset( $_POST['gdk_weauth_check'] ) || !wp_verify_nonce($_POST['gdk_weauth_check'], 'gdk_weauth_check') ) exit('400');
+	if (!in_string($_POST['key'],'@') || $_POST['action'] !== 'gdk_weauth_check') exit('400');
+		$sk = substr(trim($_POST['key']),-12);//sk
+		$user_info = get_transient($sk.'-info');//user_info
+		error_log('AJAX---info--'.$user_info);
+        if (!empty($user_info)) {
+            exit($user_info);//user_info
+		}
+}
+add_action( 'wp_ajax_gdk_weauth_check', 'gdk_weauth_check' );
+add_action( 'wp_ajax_nopriv_gdk_weauth_check', 'gdk_weauth_check' );
+
+//自动登陆
+function gdk_auto_login(){
+	if (!isset($_POST['data']) || $_POST['action'] !== 'gdk_auto_login') exit('400');
+		$userdata = gdk_str2arr($_POST['data'],'|');
+		$user_id = create_user_id($userdata);
+		
+		if(is_numeric($user_id) && $user_id){
+			$user = get_user_by('id', $user_id );
+			wp_set_current_user( $user_id , $user->user_login);
+			wp_set_auth_cookie( $user_id ,true);
+			do_action( 'wp_login', $user->user_login );
+			//wp_safe_redirect(  home_url() );
+			exit('200');
+		}
+}
+add_action( 'wp_ajax_gdk_auto_login', 'gdk_auto_login' );
+add_action( 'wp_ajax_nopriv_gdk_auto_login', 'gdk_auto_login' );
+
+/**临时测试代码*/
+
+//邮箱绑定
+function bind_email_check(){
+    $mail = isset($_POST['email']) ? $_POST['email'] : false;
+    if($mail && $_POST['action'] == 'bind_email_check'){
+        $user_id = email_exists( $email );
+        if ($user_id) {
+            exit('200');
+        }
+    }
+}
+add_action( 'wp_ajax_bind_email_check', 'bind_email_check' );
+add_action( 'wp_ajax_nopriv_bind_email_check', 'bind_email_check' );
+
+//weauth自动登录
+function weauth_oauth_login(){
+    $key = $_POST['spam'] ?? false;
+    $mail = $_POST['email'] ?? false;
+    if($key && $_POST['action'] == 'weauth_oauth_login'){
+        $user_id = get_transient($key.'-login');
+        if ($user_id != 0) {
+			wp_set_auth_cookie($user_id,true);
+            if($mail && !empty($mail) && is_email($mail)){
+                wp_update_user( array( 'ID' => $user_id, 'user_email' => $mail ) );
+            }
+            exit(wp_unique_id());
+        }
+    }
+}
+add_action( 'wp_ajax_weauth_oauth_login', 'weauth_oauth_login' );
+add_action( 'wp_ajax_nopriv_weauth_oauth_login', 'weauth_oauth_login' ); 

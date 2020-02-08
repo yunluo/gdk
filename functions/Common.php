@@ -151,7 +151,7 @@ function nc_ajax_comment_callback()
     $comment_author_url   = (isset($_POST['url']))     ? trim($_POST['url']) : null;
     $comment_content      = (isset($_POST['comment'])) ? trim($_POST['comment']) : null;
     $user = wp_get_current_user();
-    $user_ID = $user->ID;
+    $user_id = $user->ID;
     if ($user->exists()) {
         if (empty($user->display_name)) {
             $user->display_name=$user->user_login;
@@ -159,7 +159,7 @@ function nc_ajax_comment_callback()
         $comment_author       = esc_sql($user->display_name);
         $comment_author_email = esc_sql($user->user_email);
         $comment_author_url   = esc_sql($user->user_url);
-        $user_ID              = esc_sql($user->ID);
+        $user_id              = esc_sql($user->ID);
     } else {
         if (get_option('comment_registration') || 'private' == $status) {
             nc_ajax_comment_err('<p>'.__('Sorry, you must be logged in to leave a comment', 'jimu').'</p>');
@@ -746,7 +746,7 @@ function gdk_http_request($url, $args=array(), $err_args=array()) {
 
 //根据腾讯视频网址或者ID互相转化
 function gdk_get_qq_vid($id_or_url){
-    if(filter_var($id_or_url, FILTER_VALIDATE_URL)){ 
+    if(filter_var($id_or_url, FILTER_VALIDATE_URL)){
         if(preg_match('#https://v.qq.com/x/page/(.*?).html#i',$id_or_url, $matches)){
             return $matches[1];
         }elseif(preg_match('#https://v.qq.com/x/cover/.*/(.*?).html#i',$id_or_url, $matches)){
@@ -761,7 +761,7 @@ function gdk_get_qq_vid($id_or_url){
 
 //根据秒拍id或者网站获取视频直连
 function get_video_mp4($id_or_url){
-    if(filter_var($id_or_url, FILTER_VALIDATE_URL)){ 
+    if(filter_var($id_or_url, FILTER_VALIDATE_URL)){
         if(preg_match('#http://www.miaopai.com/show/(.*?).htm#i',$id_or_url, $matches)){
             return 'http://gslb.miaopai.com/stream/'.esc_attr($matches[1]).'.mp4';
         }elseif(preg_match('#https://v.qq.com/x/page/(.*?).html#i',$id_or_url, $matches)){
@@ -1022,8 +1022,8 @@ function gdk_get_link_items() {
 }
 
 /*
- * Payjs支付操作函数  
- * 订单标题    
+ * Payjs支付操作函数
+ * 订单标题
  * 订单备注
  * $_POST['money'] = 提交的金额,$_POST['way'] = 支付方式,支付宝为alipay,不设置默认微信,
  */
@@ -1062,7 +1062,7 @@ function payjs_action($body,$attach){
     }else{
         $result['mode'] = '0';
     }
-        
+
     exit(implode('|',$result));//以字符串形式返回并停止运行
 }
 
@@ -1127,7 +1127,7 @@ function login_modal(){
     $result .= '</div>';
 
     return $result;
-    
+
 }
 
 /**开始微信* */
@@ -1136,18 +1136,18 @@ function login_modal(){
 function gdk_weauth_token(){
     $strs = 'QWERTYUIOPASDFGHJKLZXCVBNM1234567890qwertyuiopasdfghjklzxcvbnm';
     $sk = substr(str_shuffle($strs),mt_rand(0,strlen($strs)-11),12);//12位
-    set_transient($sk, 1, 60*6);//缓存  get_transient($sk) == 1
+    set_transient($sk.'-OK', 1, 30);//缓存  get_transient($sk.'OK') == 1
     $key = $_SERVER['HTTP_HOST'].'@'.$sk;
     return $key;
   }
-  
+
   function gdk_weauth_qr(){
     $qr64 = [];
     $qr64['key'] = gdk_weauth_token();
     $qr64['qrcode'] = gdk_http_request('https://wa.isdot.net/qrcode?str='.$qr64['key'])['qrcode'];
     return $qr64;
   }
-  
+
   function weauth_rewrite_rules($wp_rewrite){
       if (get_option('permalink_structure')) {
           $new_rules['^weauth'] = 'index.php?user=$matches[1]&sk=$matches[2]';
@@ -1160,27 +1160,129 @@ function gdk_weauth_token(){
  * 微信登陆按钮
  */
 function weixin_login_btn(){
-    $result = '<a id="weixin_login_btn" href="javascript:;" data-action="gdk_weauth_qr_gen" class="button weixin_login_btn">微信登陆</a>';
+    $result = '<a id="weixin_login_btn" href="javascript:;" data-action="gdk_weauth_qr_gen" class="button weixin_login_btn">微信登陆</a><span id="weauth_key" class="hide"></span>';
+	if(is_user_logged_in()){
+    $user_id = get_current_user_id();
+    $email = get_user_by('id', $user_id)->user_email;
+    if ($user_id > 0) {
+        if (!empty($email)) {
+            $result .= '<script>window.localStorage.setItem(\'ls-bind\',1);</script>';
+        }
+    }
+	$result .= '<p>您已登陆</p><p>您的ID是:'.$user_id.'</p><p>您的邮箱是:'.$email.'</p>';
+    }
     return $result;
 }
 
+function weauth_oauth_redirect(){
+    $url = home_url();
+    wp_redirect( $url );
+    exit;
+}
 
-function get_weauth_oauth(){
-    if(in_string($_SERVER['REQUEST_URI'],'weauth')){
-    $weauth_user = trim($_GET['user']);//weauth发来用户信息
-    $weauth_sk = trim($_GET['sk']);//weauth返回的12位sk信息
-    $weauth_res = get_transient($weauth_sk);
-    if (empty($weauth_res)) return;
-
+/***
+function weauth_oauth(){
+    $weauth_user = $_GET['user'];
+    $weauth_sk = esc_attr($_GET['sk']);
+    $weauth_res = get_transient($weauth_sk.'-OK');
+    if (empty($weauth_res) && $weauth_res !== 1) return;
     $weauth_user = stripslashes($weauth_user);
     $weauth_user = json_decode($weauth_user, true);
-    //$weauth_info['nickname'] = $weauth_user['nickName'];//微信昵称
-    //$weauth_info['wxavatar'] = $weauth_user['avatarUrl'];//微信头像
-    //$weauth_info['openid'] = $weauth_user['openid'];//微信Openid
-    $oauth_result = implode('|',$weauth_user);
-    set_transient($sk, $oauth_result, 60*6);
-    echo 'success';
-}
+
+    $nickname = $weauth_user['nickName'];
+    $wxavatar = $weauth_user['avatarUrl'];
+    $openid = $weauth_user['openid'];
+    $login_name = 'wx_' . wp_create_nonce($openid);
+
+    if (is_user_logged_in()) {
+        $this_user = wp_get_current_user();
+        $user_id = $this_user->ID;
+        update_user_meta($user_id, 'wx_openid', $openid);
+        update_user_meta($user_id, 'simple_local_avatar', $wxavatar);
+        weauth_oauth_redirect();
+    } else {
+        $weauth_user = get_users(array(
+          'meta_key ' => 'wx_openid',
+          'meta_value' => $openid
+              )
+         );
+        if (is_wp_error($weauth_user) || !count($weauth_user)) {
+            $random_password = wp_generate_password(12, false);
+            $userdata = array(
+              'user_login' => $login_name,
+              'display_name' => $nickname,
+              'user_pass' => $random_password,
+              'nickname' => $nickname
+            );
+            $user_id = wp_insert_user($userdata);
+            update_user_meta($user_id, 'wx_openid', $openid);
+            update_user_meta($user_id, 'simple_local_avatar', $wxavatar);
+        } else {
+            $user_id = $weauth_user[0]->ID;
+        }
+    }
+    set_transient($weauth_sk . '-login', $user_id, 20);//用于登录的随机数，有效期为20秒
+  
 }
 
-add_action('wp','get_weauth_oauth');
+//初始化
+function weauth_oauth_init(){
+    if (isset($_GET['user']) && isset($_GET['sk'])){
+        weauth_oauth();
+    }
+}
+add_action('parse_request','weauth_oauth_init');
+
+*/
+
+function create_user_id($userdata){
+    $nickname = $userdata[1];
+    $wxavatar = $userdata[6];
+    $openid   = $userdata[7];
+    $password = wp_generate_password(12, false);
+    $login_name = 'wx_' . wp_create_nonce($openid);
+
+    if (is_user_logged_in()) {
+        $user_id = get_current_user_id();
+        update_user_meta($user_id, 'wx_openid', $openid);
+        update_user_meta($user_id, 'wx_avatar', $wxavatar);
+    } else {
+        $weauth_user = get_users(array(
+          'meta_key ' => 'wx_openid',
+          'meta_value' => $openid
+              )
+         );
+        if (is_wp_error($weauth_user) || !count($weauth_user)) {
+            
+            $user_info = array(
+              'user_login' => $login_name,
+              'display_name' => $nickname,
+              'user_pass' => $password,
+              'nickname' => $nickname
+            );
+            $user_id = wp_insert_user($user_info);
+            update_user_meta($user_id, 'wx_openid', $openid);
+            update_user_meta($user_id, 'wx_avatar', $wxavatar);
+        } else {
+            $user_id = $weauth_user[0]->ID;
+        }
+    }
+    return $user_id;
+}
+
+function get_weauth_oauth(){
+    $weauth_user = trim($_GET['user']);//weauth发来用户信息
+    $weauth_sk = trim($_GET['sk']);//weauth返回的12位sk信息
+    $weauth_res = get_transient($weauth_sk.'-OK');
+    if (empty($weauth_res) && $weauth_res !== 1) return;
+    $weauth_user = stripslashes($weauth_user);
+    $weauth_user = json_decode($weauth_user, true);
+
+    $oauth_result = implode('|',$weauth_user);
+    error_log('COM---info--'.$oauth_result);
+    set_transient($weauth_sk.'-info', $oauth_result, 60*2);
+    echo 'success';
+    exit;
+
+}
+add_action('parse_request','get_weauth_oauth');

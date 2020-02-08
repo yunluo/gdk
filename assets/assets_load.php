@@ -36,9 +36,8 @@ function gdk_enqueue_script_frontend() {
             'check_code' => wp_create_nonce('check_code'),
             'gdk_weauth_qr_gen' => wp_create_nonce('gdk_weauth_qr_gen'),
             'gdk_weauth_check' => wp_create_nonce('gdk_weauth_check'),
+            'user_id' => get_current_user_id()
         ]);
-        
-        
     }
 }
 add_action('wp_enqueue_scripts', 'gdk_enqueue_script_frontend');
