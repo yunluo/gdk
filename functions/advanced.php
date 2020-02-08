@@ -16,6 +16,23 @@ function gdk_add_content($content) {
 }
 add_filter('the_content', 'gdk_add_content');
 
+//接受奶子微信的账号信息
+function get_weauth_oauth(){
+    if(in_string($_SERVER['REQUEST_URI'],'weauth')){
+    $weauth_user = isset($_GET['user']) ? sanitize_text_field($_GET['user']) : false;//weauth发来用户信息
+    $weauth_sk = isset($_GET['sk']) ? sanitize_text_field($_GET['sk']) : false;	//weauth返回的12位sk信息
+    $weauth_res = get_transient($weauth_sk.'-OK');
+    if (empty($weauth_res) && $weauth_res !== 1) return;
+    $weauth_user = stripslashes($weauth_user);
+    $weauth_user = json_decode($weauth_user, true);
+    $oauth_result = implode('|',$weauth_user);
+    set_transient($weauth_sk.'-info', $oauth_result, 60*2);
+    echo 'success';//给对方服务器打个招呼
+    exit;
+    }
+}
+add_action('parse_request','get_weauth_oauth');
+
 //社交头像
 function gdk_wx_avatar( $avatar, $id_or_email, $size, $default, $alt ) {
 	$user = false;

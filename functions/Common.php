@@ -1163,80 +1163,21 @@ function weixin_login_btn(){
     $result = '<a id="weixin_login_btn" href="javascript:;" data-action="gdk_weauth_qr_gen" class="button weixin_login_btn">微信登陆</a><span id="weauth_key" class="hide"></span>';
 	if(is_user_logged_in()){
     $user_id = get_current_user_id();
-    $email = get_user_by('id', $user_id)->user_email;
+    $user = get_user_by('id', $user_id);
     if ($user_id > 0) {
-        if (!empty($email)) {
+        if (!empty($user->user_email)) {
             $result .= '<script>window.localStorage.setItem(\'ls-bind\',1);</script>';
         }
     }
-	$result .= '<p>您已登陆</p><p>您的ID是:'.$user_id.'</p><p>您的邮箱是:'.$email.'</p>';
+	$result .= '<p>您已登陆</p><p>您的ID是:'.$user_id.'</p><p>您的昵称是:'.$user->nickname.'</p>';
     }
     return $result;
 }
 
-function weauth_oauth_redirect(){
-    $url = home_url();
-    wp_redirect( $url );
-    exit;
-}
 
-/***
-function weauth_oauth(){
-    $weauth_user = $_GET['user'];
-    $weauth_sk = esc_attr($_GET['sk']);
-    $weauth_res = get_transient($weauth_sk.'-OK');
-    if (empty($weauth_res) && $weauth_res !== 1) return;
-    $weauth_user = stripslashes($weauth_user);
-    $weauth_user = json_decode($weauth_user, true);
-
-    $nickname = $weauth_user['nickName'];
-    $wxavatar = $weauth_user['avatarUrl'];
-    $openid = $weauth_user['openid'];
-    $login_name = 'wx_' . wp_create_nonce($openid);
-
-    if (is_user_logged_in()) {
-        $this_user = wp_get_current_user();
-        $user_id = $this_user->ID;
-        update_user_meta($user_id, 'wx_openid', $openid);
-        update_user_meta($user_id, 'simple_local_avatar', $wxavatar);
-        weauth_oauth_redirect();
-    } else {
-        $weauth_user = get_users(array(
-          'meta_key ' => 'wx_openid',
-          'meta_value' => $openid
-              )
-         );
-        if (is_wp_error($weauth_user) || !count($weauth_user)) {
-            $random_password = wp_generate_password(12, false);
-            $userdata = array(
-              'user_login' => $login_name,
-              'display_name' => $nickname,
-              'user_pass' => $random_password,
-              'nickname' => $nickname
-            );
-            $user_id = wp_insert_user($userdata);
-            update_user_meta($user_id, 'wx_openid', $openid);
-            update_user_meta($user_id, 'simple_local_avatar', $wxavatar);
-        } else {
-            $user_id = $weauth_user[0]->ID;
-        }
-    }
-    set_transient($weauth_sk . '-login', $user_id, 20);//用于登录的随机数，有效期为20秒
-  
-}
-
-//初始化
-function weauth_oauth_init(){
-    if (isset($_GET['user']) && isset($_GET['sk'])){
-        weauth_oauth();
-    }
-}
-add_action('parse_request','weauth_oauth_init');
-
-*/
-
+//获取用户ID
 function create_user_id($userdata){
-    $nickname = $userdata[1];
+    $nickname = $userdata[0];
     $wxavatar = $userdata[6];
     $openid   = $userdata[7];
     $password = wp_generate_password(12, false);
@@ -1270,19 +1211,3 @@ function create_user_id($userdata){
     return $user_id;
 }
 
-function get_weauth_oauth(){
-    $weauth_user = trim($_GET['user']);//weauth发来用户信息
-    $weauth_sk = trim($_GET['sk']);//weauth返回的12位sk信息
-    $weauth_res = get_transient($weauth_sk.'-OK');
-    if (empty($weauth_res) && $weauth_res !== 1) return;
-    $weauth_user = stripslashes($weauth_user);
-    $weauth_user = json_decode($weauth_user, true);
-
-    $oauth_result = implode('|',$weauth_user);
-    error_log('COM---info--'.$oauth_result);
-    set_transient($weauth_sk.'-info', $oauth_result, 60*2);
-    echo 'success';
-    exit;
-
-}
-add_action('parse_request','get_weauth_oauth');

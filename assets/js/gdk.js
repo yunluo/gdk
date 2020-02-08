@@ -1,7 +1,5 @@
 jQuery(function ($) { /**声明加载jQuery */
 
-	//cookie
-
 	/**
 	 * 展示被隐藏的内容,适用于密码可见,付费可见,积分可见
 	 * @param {string} a 内容div的 id或者class
@@ -470,32 +468,8 @@ jQuery(function ($) { /**声明加载jQuery */
 
 	/**
 	 *
-	 * @param {string} a 微信登陆密钥key,此时是 gitcafe.net@wrhGgveq3LCj 类型,实际需要的是@后面的
+	 * @param {string}  微信登陆密钥key,此时是 gitcafe.net@wrhGgveq3LCj 类型,实际需要的是@后面的
 	 */
-/*
-	function check_weauth_login() {
-		var ajax_data = {
-			gdk_weauth_check: ajax.gdk_weauth_check,
-			action: 'gdk_weauth_check',
-			key: $('#weauth_key').text()
-		};
-		$.post(ajax.url, ajax_data, function (b) {
-			b = $.trim(b); //登陆信息=登陆sk
-			if (b.length > 10) {
-				console.log('SK查询结果:' + b);
-				clearTimeout(timeres);
-				swal("微信登录成功！", "如未登录，请手动刷新一下！", "success", {
-					buttons: false,
-					timer: 1000,
-				}).then(function () {
-					bind_mail(b);
-				})
-			}
-		});
-	}
-	*/
-
-	//测试代码
 	function check_weauth_login() {
 		var ajax_data = {
 			gdk_weauth_check: ajax.gdk_weauth_check,
@@ -505,25 +479,28 @@ jQuery(function ($) { /**声明加载jQuery */
 		$.post(ajax.url, ajax_data, function (b) {
 			b = $.trim(b); //登陆信息=登陆信息
 			if (b.length > 100) {
-				swal("微信登录成功！", "用户名请手动刷新一下！", "success");
+				swal("微信登录成功！", "跳转刷新中！", "success");
 				clearTimeout(timeres);
 				gdk_auto_login(b);
 			}
 		});
 	}
 
-	//测试代码
+	/**
+	 * 
+	 * @param {string} a 微信账号信息字符串,格式是:风起云落|1|zh_CN||海牙|荷兰|https://wx.qlogo.cn/m***A/132|o02B***jw|oq***HPA
+	 */
 	function gdk_auto_login(a) {
 		var ajax_data = {
 			action: 'gdk_auto_login',
 			data: a
 		};
 		$.post(ajax.url, ajax_data, function (b) {
-			b = $.trim(b); //登陆信息=登陆信息
+			b = $.trim(b); //登陆信息
 			if (b !== '400' && b == '200') {
-				//console.log('登陆查询结果:' + b);
+				//console.log('登陆结果:' + b);
 				window.location.reload();
-			}else{
+			} else {
 				swal("发生错误", "哦嚯,好像发生了什么错误", "error");
 			}
 		});
@@ -533,7 +510,6 @@ jQuery(function ($) { /**声明加载jQuery */
 	 * 生成微信二维码,a action
 	 * 
 	 */
-
 	function get_weauth_qr(a) {
 		var ajax_data = {
 			action: a
@@ -558,7 +534,9 @@ jQuery(function ($) { /**声明加载jQuery */
 		});
 	}
 
-
+	/**
+	 * 轮询
+	 */
 	var num = 0,
 		max = 25,
 		timeres;
