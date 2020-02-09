@@ -11,7 +11,7 @@ function gdk_edl_add_query_vars($public_query_vars){
 
 function gdk_edl_redirect(){
 	global $wp,$wp_query;
-	$b =  $wp_query->query_vars['dl'];
+	$b =  $wp_query->query_vars['dl']?? '';
 	if ($b){
 		gdk_edl();
     exit;
@@ -121,7 +121,7 @@ if(empty($download_link)) wp_die('不填写文件下载链接是不可以的哦'
 				</div>
 			</footer>
 		</div>
-        <?php apply_filters('gdk_filter_download_page_code');?>
+        <?php echo apply_filters( 'gdk_filter_download_page_code', '' );?>
 	</body>
 </html>
 <?php }

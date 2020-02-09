@@ -11,7 +11,7 @@ function gdk_go_add_query_vars($public_query_vars){
 
 function gdk_go_redirect(){
 	global $wp,$wp_query;
-	$b =  $wp_query->query_vars['go'];
+	$b =  $wp_query->query_vars['go']??'';
 	if ($b){
 		gdk_go_action();
     exit;
