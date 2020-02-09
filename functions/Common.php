@@ -1115,6 +1115,16 @@ function buy_points(){
     return $result;
 }
 
+//获取bing图
+function get_bing_img(){
+    $bing_imgurl = get_transient('Bing_img');
+    if(false === $bing_imgurl){
+    $arr = json_decode(file_get_contents('https://cn.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1'),true);
+    $bing_imgurl = 'https://cn.bing.com' . $arr['images'][0]['url'];
+    set_transient('Bing_img', $bing_imgurl, 60*60*12);
+    }
+    return $bing_imgurl;
+}
 
 function login_modal(){
     $result = '<a data-fancybox="login_fancybox" data-src="#login_fancybox" href="javascript:;">登录</a>

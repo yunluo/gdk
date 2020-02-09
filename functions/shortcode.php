@@ -19,6 +19,7 @@ function gdk_login_fancybox() {
 }
 add_shortcode('gdk_login_btn', 'gdk_login_fancybox');
 
+
 //添加钮Download
 function gdk_DownloadUrl($atts, $content = null) {
     extract(shortcode_atts(array(

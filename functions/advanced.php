@@ -123,16 +123,11 @@ add_filter('the_content', 'gdk_fancybox');
 
 //GO跳转
 function gdk_link_go($content) {
-	if(file_exists(ABSPATH.'go.php')) {
-		$gourl = home_url().'/go.php';
-	} else {
-		$gourl = GDK_BASE_URL.'public/go.php';
-	}
 	preg_match_all('/<a(.*?)href="(.*?)"(.*?)>/',$content,$matches);
 	if($matches) {
 		foreach($matches[2] as $val) {
 			if(in_string($val,'://') && !in_string($val,home_url()) && !preg_match('/\.(jpg|jepg|png|ico|bmp|gif|tiff)/i',$val) && !preg_match('/(ed2k|thunder|Flashget|flashget|qqdl):\/\//i',$val)) {
-				$content=str_replace("href=\"$val\"", "href=\"".$gourl."?url=$val\" ",$content);
+				$content=str_replace("href=\"$val\"", "href=\"".home_url()."?go=$val\" ",$content);
 			}
 		}
 	}
