@@ -3,7 +3,8 @@
 
 //加载网站地图xml
 if(gdk_option('gdk_sitemap_xml')){
-    include('sitemap-xml.php');
+	include(GDK_ROOT_PATH.'public/sitemap-xml.php');
+	include(GDK_ROOT_PATH.'public/sitemap.php');
 }
 
 // 屏蔽蜘蛛爬取作者页面

@@ -3,7 +3,7 @@
 Plugin Name: GitCafe Development Kit 极客公园开发套件
 Plugin URI: https://gitcafe.net/
 Description: 为WordPress主题开发提供底层支持
-Version: 0.0.1
+Version: 0.0.2
 Author: 云落
 Author URI: https://gitcafe.net/
 Compatible:5.3.2
@@ -37,3 +37,6 @@ include('framework/frame_load.php');//加载后台框架
 include('class/class_load.php');//加载各种类
 include('functions/func_load.php');//加载函数
 include('assets/assets_load.php');//加载静态资源
+
+//激活插件之后创建必要页面
+//register_activation_hook(__FILE__, 'gdk_plugin_activate');

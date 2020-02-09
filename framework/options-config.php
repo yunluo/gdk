@@ -214,8 +214,8 @@ $gdk_options = [
 			'std'   => '0'
 		],
 		[
-			'name'  => '网站地图 sitemap_xml',
-			'desc'  => '该功能会自动生成网站地图链接:域名/sitemap_xml,开启后建议更新固定链接一次,默认开启',
+			'name'  => '网站地图 sitemap',
+			'desc'  => '该功能会自动生成网站地图[xml版和html版],链接:域名/sitemap.xml,域名/sitemap.html,开启后建议更新固定链接一次,默认开启',
 			'id'    => 'gdk_sitemap_xml',
 			'type'  => 'radio',
 			'options' => [
