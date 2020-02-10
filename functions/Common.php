@@ -998,26 +998,24 @@ function gdk_get_the_link_items($id = null) {
     $bookmarks = get_bookmarks('orderby=date&category=' . $id);
     $output = '';
     if (!empty($bookmarks)) {
-        $output.= '<div class="link_items fontSmooth">';
         foreach ($bookmarks as $bookmark) {
-            $output.= '<div class="link_item"><a class="link_item_inner apollo_' . $bookmark->link_rating . '" rel="nofollow" href="' . $bookmark->link_url . '" title="' . $bookmark->link_description . '" target="_blank" ><span class="sitename sitecolor_' . mt_rand(1, 14) . '">' . $bookmark->link_name . '</span></a></div>';
+            $output.= '<div class="sm-6 md-4 lg-3">
+            <div class="card"><a class="card-heading link-tooltip bg-lvs' . $bookmark->link_rating . '" href="' . $bookmark->link_url . '" target="_blank"><span class="card-icon"><img src="https://ico.mikelin.cn/' . $bookmark->link_url . '"></span><span class="card-title">' . $bookmark->link_name . '</span></a><div class="card-body">'.$bookmark->link_description.' : '.$bookmark->link_notes.'</div></div></div>';
         }
-        $output.= '</div>';
     }
     return $output;
 }
 
 function gdk_get_link_items() {
-    $linkcats = get_terms('link_category', 'orderby=count&hide_empty=1&exclude=' . gdk_option('gdk_linkpage_cat'));
-    if (!empty($linkcats)) {
+    $linkcats = get_terms('link_category', 'orderby=count&hide_empty=1&exclude=7');
         foreach ($linkcats as $linkcat) {
-            $result.= '<h2 class="link_title">' . $linkcat->name . '</h2>';
-            if ($linkcat->description) $result.= '<div class="link_description">' . $linkcat->description . '</div>';
+            $result.= '<a id="' . $linkcat->term_id . '"></a><div class="panel">
+            <div class="panel-title card">' . $linkcat->name . '</div>
+            <div class="panel-body">
+                <div class="row">';
             $result.= gdk_get_the_link_items($linkcat->term_id);
+            $result.= '</div></div></div>';
         }
-    } else {
-        $result = gdk_get_the_link_items();
-    }
     return $result;
 }
 
@@ -1135,7 +1133,6 @@ function login_modal(){
 		'value_username' => '请输入用户名...'
         ));
     $result .= '</div>';
-
     return $result;
 
 }
@@ -1158,13 +1155,7 @@ function gdk_weauth_token(){
     return $qr64;
   }
 
-  function weauth_rewrite_rules($wp_rewrite){
-      if (get_option('permalink_structure')) {
-          $new_rules['^weauth'] = 'index.php?user=$matches[1]&sk=$matches[2]';
-          $wp_rewrite->rules = $new_rules + $wp_rewrite->rules;
-      }
-  }
-  add_action('generate_rewrite_rules', 'weauth_rewrite_rules');
+
 
 /**
  * 微信登陆按钮

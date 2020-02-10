@@ -273,6 +273,53 @@ if( gdk_option('gdk_hide_user_name') ){
 	add_filter( 'rest_prepare_user', 'gdk_custom_rest_prepare_user', 10, 3 );
 }
 
+if (!defined('UM_DIR')) { /*判断是否按照UM插件*/
+    //注册表单
+    function gdk_show_extra_register_fields() {
+?>
+    <p>
+    <label for="password">密码<br/>
+    <input id="password" class="input" type="password" tabindex="30" size="25" value="" name="password" />
+    </label>
+    </p>
+    <p>
+    <label for="repeat_password">确认密码<br/>
+    <input id="repeat_password" class="input" type="password" tabindex="40" size="25" value="" name="repeat_password" />
+    </label>
+    </p>
+    <?php
+    }
+    add_action('register_form', 'gdk_show_extra_register_fields');
+    /*
+     * Check the form for errors
+    */
+    function gdk_check_extra_register_fields($login, $email, $errors) {
+        if ($_POST['password'] !== $_POST['repeat_password']) {
+            $errors->add('passwords_not_matched', "<strong>错误提示</strong>: 两次填写密码不一致");
+        }
+        if (strlen($_POST['password']) < 8) {
+            $errors->add('password_too_short', "<strong>错误提示</strong>: 密码必须大于8个字符");
+        }
+    }
+    add_action('register_post', 'gdk_check_extra_register_fields', 10, 3);
+    /*
+     * 提交用户密码进数据库
+    */
+    function gdk_register_extra_fields($user_id) {
+        $userdata = array();
+        $userdata['ID'] = $user_id;
+        if ($_POST['password'] !== '') {
+            $userdata['user_pass'] = $_POST['password'];
+        }
+        $pattern = '/[一-龥]/u';
+        if (preg_match($pattern, $_POST['user_login'])) {
+            $userdata['user_nicename'] = $user_id;
+        }
+        $new_user_id = wp_update_user($userdata);
+    }
+    add_action('user_register', 'gdk_register_extra_fields', 100);
+}
+
 //后台登陆数学验证码
 if (gdk_option('gdk_login_verify')) {
     function gdk_login_verify(){

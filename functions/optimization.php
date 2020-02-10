@@ -537,8 +537,24 @@ function gdk_userid_value($value, $column_name, $id) {
     if ($column_name == 'ssid') $value = $id;
     return $value;
 }
-add_filter('manage_users_custom_column', 'gdk_userid_value', 10, 3);
-
+add_filter('manage_users_custom_column', 'gdk_userid_value', 30, 3);
+/**
+ * WordPress 后台用户列表显示用户昵称
+ * https://www.wpdaxue.com/add-user-nickname-column.html
+ */
+add_filter('manage_users_columns', 'gdk_add_user_nickname');
+function gdk_add_user_nickname($columns) {
+	$columns['user_nickname'] = '昵称';
+	return $columns;
+}
+add_action('manage_users_custom_column',  'gdk_show_user_nickname_val', 20, 3);
+function gdk_show_user_nickname_val($value, $column_name, $user_id) {
+	$user = get_userdata( $user_id );
+	$user_nickname = $user->nickname;
+	if ( 'user_nickname' == $column_name )
+		return $user_nickname;
+	return $value;
+}
 //用户列表显示积分
 add_filter('manage_users_columns', 'gdk_points_columns');
 function gdk_points_columns($columns) {
@@ -638,6 +654,8 @@ function gdk_add_last_login($value, $column_name, $user_id) {
     return $value;
 }
 add_action('manage_users_custom_column', 'gdk_add_last_login', 10, 3);
+
+
 
 // 评论添加@，来自：http://www.ludou.org/wordpress-comment-reply-add-at.html
 function gdk_comment_add_at($comment_text, $comment = '') {
