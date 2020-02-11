@@ -21,7 +21,7 @@ function gdk_daohang_html_api_handlers( $template ){
             $daohang = gdk_create_html_daohang();
             set_transient( 'gdk-daohang-html', $daohang );
         }
-        header("Content-type: text/html");
+        //header("Content-type: text/html");
         $daohang;
         return;
     }
@@ -47,11 +47,8 @@ function gdk_create_html_daohang() {
     </style>
 </head>
 <body>
-    <div style='margin:0 auto;width:0px;height:0px;overflow:hidden; '>
-        <img src='http://chuangzaoshi.com/assets/images/logo/300.png' />
-    </div>
     <header class="mobile-header-wrap">
-        <a class="mobile-logo" href="/"><img src="<?php echo GDK_BASE_URL;?>assets/img/logo.png" alt="logo"></a>
+        <a class="mobile-logo" href="/"><img src="<?php GDK_BASE_URL?>assets/img/logo.png" alt="logo"></a>
     </header>
     <div class="btn-mobile-sidenav">
         <div class="nav-bar">

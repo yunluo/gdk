@@ -1008,6 +1008,7 @@ function gdk_get_the_link_items($id = null) {
 
 function gdk_get_link_items() {
     $linkcats = get_terms('link_category', 'orderby=count&hide_empty=1&exclude=7');
+    $result = '';
         foreach ($linkcats as $linkcat) {
             $result.= '<a id="' . $linkcat->term_id . '"></a><div class="panel">
             <div class="panel-title card">' . $linkcat->name . '</div>

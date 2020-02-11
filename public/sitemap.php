@@ -24,7 +24,7 @@ function gdk_sitemap_html_api_handlers( $template ){
             $sitemap = gdk_create_html_sitemap();
             set_transient( 'gdk-sitemap-html', $sitemap );
         }
-        header("Content-type: text/html");
+
         $sitemap;
         return;
     }
@@ -40,20 +40,13 @@ function gdk_create_html_sitemap() {
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head profile="http://gmpg.org/xfn/11">
-        <meta http-equiv="Content-Type" content="text/html; charset=<?php bloginfo( 'charset' ); ?>"/>
+        <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
         <title>站点地图 -<?php bloginfo( 'name'); ?></title>
         <meta name="keywords" content="站点地图,<?php bloginfo('name'); ?>" />
         <meta name="copyright" content="<?php bloginfo('name'); ?>" />
         <link rel="canonical" href="<?php echo get_permalink(); ?>" />
         <style type="text/css">
-            body {font-family: Microsoft Yahei,Verdana;font-size:13px;margin:0 auto;color:
-            #000000;background: #ffffff;width: 990px;margin: 0 auto}a:link,a:visited
-            {color:#000;text-decoration:none;}a:hover {color:#08d;text-decoration:none;}h1,h2,h3,h4,h5,h6
-            {font-weight:normal;}img {border:0;}li {margin-top: 8px;}.page {padding:
-            4px; border-top: 1px #EEEEEE solid}.author {background-color:#EEEEFF; padding:
-            6px; border-top: 1px #ddddee solid}#nav, #content, #footer {padding: 8px;
-            border: 1px solid #EEEEEE; clear: both; width: 95%; margin: auto; margin-top:
-            10px;}
+            body{font-family:Microsoft Yahei,Verdana;font-size:13px;color:#000;background:#fff;width:990px;margin:0 auto}a:link,a:visited{color:#000;text-decoration:none}a:hover{color:#08d;text-decoration:none}h1,h2,h3,h4,h5,h6{font-weight:400}img{border:0}li{margin-top:8px}.page{padding:4px;border-top:1px solid #eee}.author{background-color:#eef;padding:6px;border-top:1px solid #dde}#content,#footer,#nav{padding:8px;border:1px solid #eee;clear:both;width:95%;margin:auto;margin-top:10px}
         </style>
     </head>
 
@@ -62,7 +55,7 @@ function gdk_create_html_sitemap() {
             <?php bloginfo( 'name'); ?>'s SiteMap</h2>
         <div id="nav">
             <a href="<?php echo esc_url( home_url() ); ?>/">
-                <strong><?php bloginfo( 'name'); ?></strong>
+                <b><?php bloginfo( 'name'); ?></b>
             </a>
             &raquo;
             <a href="<?php echo get_permalink(); ?>">站点地图</a>
@@ -71,9 +64,6 @@ function gdk_create_html_sitemap() {
             <h3>最新文章</h3>
             <ul>
                 <?php 
-                    $previous_year = $year = 0;
-                    $previous_month = $month = 0;
-                    $ul_open = false;
                     $myposts = get_posts('numberposts=-1&orderby=post_date&order=DESC');
                     foreach($myposts as $post):?>
                     <li>
@@ -88,10 +78,10 @@ function gdk_create_html_sitemap() {
         </div>
         <div id="content">
             <h3>单页面</h3>
-            <?php wp_page_menu( $args ); ?>
+            <?php wp_page_menu(); ?>
         </div>
         <div id="footer">
-            查看博客首页:
+            查看网站首页:
             <strong>
                 <a href="<?php echo esc_url( home_url() ); ?>/"><?php bloginfo( 'name'); ?></a>
             </strong>
