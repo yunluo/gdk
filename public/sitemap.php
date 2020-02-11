@@ -2,34 +2,7 @@
 /**
  * SiteMap HTML 版
  */
-// ----------------------
-// 开一个api的统一URL
-function gdk_sitemap_html_flush_rules(){
-    $rules = get_option( 'rewrite_rules' );
-    if ( !isset( $rules['^sitemap(.*?)\.html$'] ) ) {
-        global $wp_rewrite;
-        $wp_rewrite->flush_rules();
-    }
-}
 
-// 添加自定义URL重写
-function gdk_sitemap_html_custom_rewrite_rule() {
-    add_rewrite_rule('^sitemap(.*?)\.html$','index.php?sitemap=gdkk$matches[1]','top');
-}
-
-function gdk_sitemap_html_insert_query_vars( $vars ){
-    array_push($vars, 'sitemap');
-    return $vars;
-}
-
-function gdk_sitemap_html_cancel_redirect( $redirect_url ) {
-	$api_type = get_query_var('sitemap');
-	if ( !empty($api_type) ){
-		return false;
-	}else{
-		return $redirect_url; 
-	}
-}
 
 function gdk_sitemap_html_api_handlers( $template ){
 
@@ -59,10 +32,7 @@ function gdk_sitemap_html_api_handlers( $template ){
 	return $template;
 }
 
-add_action( 'init', 'gdk_sitemap_html_custom_rewrite_rule' , 10, 0);
-add_filter( 'query_vars', 'gdk_sitemap_html_insert_query_vars' );
-add_filter( 'redirect_canonical', 'gdk_sitemap_html_cancel_redirect' );
-add_action( 'wp_loaded', 'gdk_sitemap_html_flush_rules' );
+
 add_filter( 'template_include', 'gdk_sitemap_html_api_handlers', 99 );
 
 function gdk_create_html_sitemap() {

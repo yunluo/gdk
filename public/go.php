@@ -1,13 +1,10 @@
 <?php
 
-add_action('query_vars', 'gdk_go_add_query_vars');
+
 
 add_action('template_redirect', 'gdk_go_redirect');
 
-function gdk_go_add_query_vars($public_query_vars){
-		$public_query_vars[] = 'go';
-    return $public_query_vars;
-}
+
 
 function gdk_go_redirect(){
 	global $wp,$wp_query;

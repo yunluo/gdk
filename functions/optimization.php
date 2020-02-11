@@ -323,14 +323,7 @@ if (gdk_option('gdk_porxy_update') && !gdk_option('gdk_diasble_wp_update')) {
 	);
 }
 
-//页面伪静态
-function gdk_page_permalink() {
-	global $wp_rewrite;
-	if (!strpos($wp_rewrite->get_page_permastruct(), '.html')) {
-		$wp_rewrite->page_structure = $wp_rewrite->page_structure . '.html';
-	}
-}
-add_action('init', 'gdk_page_permalink', -1);
+
 
 //文件自动重命名
 if(gdk_option('gdk_upload_rename')) {

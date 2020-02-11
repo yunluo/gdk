@@ -1,13 +1,10 @@
 <?php
 
-add_action('query_vars', 'gdk_edl_add_query_vars');
+
 
 add_action('template_redirect', 'gdk_edl_redirect');
 
-function gdk_edl_add_query_vars($public_query_vars){
-		$public_query_vars[] = 'dl';
-    return $public_query_vars;
-}
+
 
 function gdk_edl_redirect(){
 	global $wp,$wp_query;
@@ -125,7 +122,3 @@ if(empty($download_link)) wp_die('不填写文件下载链接是不可以的哦'
 	</body>
 </html>
 <?php }
-
-
-//页脚
-

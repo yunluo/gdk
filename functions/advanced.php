@@ -134,14 +134,7 @@ function gdk_link_go($content) {
 	return $content;
 }
 
-//微信登陆重写
-function weauth_rewrite_rules($wp_rewrite){
-    if (get_option('permalink_structure')) {
-        $new_rules['^weauth'] = 'index.php?user=$matches[1]&sk=$matches[2]';
-        $wp_rewrite->rules = $new_rules + $wp_rewrite->rules;
-    }
-}
-add_action('generate_rewrite_rules', 'weauth_rewrite_rules');
+
 
 //邮箱SMTP设置
 function gdk_smtp( $phpmailer ) {
