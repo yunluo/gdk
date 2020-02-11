@@ -97,7 +97,7 @@ if(!class_exists('Aq_Resize')) {
 
                 // Check if $img_url is local.
                 if ( false === strpos( $url, $upload_url ) )
-                    throw new Aq_Exception('Image must be local: ' . $url);
+                    throw new Aq_Exception('图片必须是本地图片: ' . $url);
 
                 // Define path of image.
                 $rel_path = str_replace( $upload_url, '', $url );
@@ -105,7 +105,7 @@ if(!class_exists('Aq_Resize')) {
 
                 // Check if img path exists, and is an image indeed.
                 if ( ! file_exists( $img_path ) or ! getimagesize( $img_path ) )
-                    throw new Aq_Exception('Image file does not exist (or is not an image): ' . $img_path);
+                    throw new Aq_Exception('图片不存在或者不是一个图片文件: ' . $img_path);
 
                 // Get image info.
                 $info = pathinfo( $img_path );

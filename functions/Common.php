@@ -944,10 +944,10 @@ function gdk_thumbnail_src() {
         $gdk_thumbnail_src = $matches[1][0]; //获取该图片 src
         if (empty($gdk_thumbnail_src)) { //如果日志中没有图片，则显示随机图片
             $random = mt_rand(1, 12);
-            echo GDK_BASE_URL.'assets/img/thumb/' . $random . '.jpg';
+            $gdk_thumbnail_src = GDK_BASE_URL.'assets/img/thumb/' . $random . '.jpg';
         }
     };
-    echo $gdk_thumbnail_src;
+    return $gdk_thumbnail_src;
 }
 
 

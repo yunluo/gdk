@@ -8,3 +8,5 @@ include( 'updates.php' );//在线更新
 
 include( 'Payjs.php' );//支付功能
 include( 'points/points.php' );//积分功能
+
+include( 'aq_resizer.php' );//缩略图功能
