@@ -1011,7 +1011,7 @@ function gdk_get_link_items() {
     $result = '';
         foreach ($linkcats as $linkcat) {
             $result.= '<a id="' . $linkcat->term_id . '"></a><div class="panel">
-            <div class="panel-title card">' . $linkcat->name . '</div>
+            <div class="panel-title card"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzODQgNTEyIj4gPHBhdGggZD0iTTMzNiAwSDQ4QzIxLjQ5IDAgMCAyMS40OSAwIDQ4djQ2NGwxOTItMTEyIDE5MiAxMTJWNDhjMC0yNi41MS0yMS40OS00OC00OC00OHptMCA0MjguNDNsLTE0NC04NC0xNDQgODRWNTRhNiA2IDAgMCAxIDYtNmgyNzZjMy4zMTQgMCA2IDIuNjgzIDYgNS45OTZWNDI4LjQzeiI+PC9wYXRoPiA8L3N2Zz4=">' . $linkcat->name . '</div>
             <div class="panel-body">
                 <div class="row">';
             $result.= gdk_get_the_link_items($linkcat->term_id);

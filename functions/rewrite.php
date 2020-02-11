@@ -49,7 +49,10 @@ add_filter( 'redirect_canonical', 'gdk_custom_cancel_redirect' );
 
 //自定义路由参数,GO跳转和dl下载
 function gdk_public_query_vars($public_query_vars){
-    array_push($public_query_vars, 'go','dl','sitemap','daohang');
+    $public_query_vars[] = 'go';
+    $public_query_vars[] = 'dl';
+    $public_query_vars[] = 'sitemap';
+    $public_query_vars[] = 'daohang';
     return $public_query_vars;
 }
 add_action('query_vars', 'gdk_public_query_vars');

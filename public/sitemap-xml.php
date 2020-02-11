@@ -1,12 +1,12 @@
 <?php
 
+/**
+ * sitemap xml
+ */
 
 function gdk_sitemap_xml_api_handlers( $template ){
-
     $hook = explode('-', get_query_var( 'sitemap' ) );
-    
     if( isset( $hook[0] ) && $hook[0] === 'gdk' ){
-
         if( isset( $hook[1] ) ){
             status_header(404);
             header('HTTP/1.0 404 Not Found');
@@ -16,7 +16,6 @@ function gdk_sitemap_xml_api_handlers( $template ){
         }
 
         $sitemap = get_transient('gdk-sitemap');
-        
         if( false === $sitemap || empty( $sitemap ) ){
             $sitemap = gdk_create_sitemap();
             set_transient( 'gdk-sitemap', $sitemap );
@@ -31,11 +30,9 @@ function gdk_sitemap_xml_api_handlers( $template ){
 }
 
 
-
 add_filter( 'template_include', 'gdk_sitemap_xml_api_handlers', 99 );
 
 function gdk_create_sitemap() {
-
     if ( str_replace( '-', '', get_option( 'gmt_offset' ) ) < 10 ) {
         $tempo = '-0' . str_replace( '-', '', get_option( 'gmt_offset' ) );
     } else {
@@ -74,6 +71,6 @@ function gdk_create_sitemap() {
 function gdk_clear_sitemap_cache(){
     delete_transient( 'gdk-sitemap' );
 }
-add_action("publish_post", "gdk_clear_sitemap_cache");
-add_action("publish_page", "gdk_clear_sitemap_cache");
-add_action( "save_post", "gdk_clear_sitemap_cache" );
+add_action('publish_post', 'gdk_clear_sitemap_cache');
+add_action('publish_page', 'gdk_clear_sitemap_cache');
+add_action('save_post', 'gdk_clear_sitemap_cache' );
