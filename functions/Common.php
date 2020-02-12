@@ -1162,7 +1162,7 @@ function gdk_weauth_token(){
  * 微信登陆按钮
  */
 function weixin_login_btn(){
-    $result = '<a id="weixin_login_btn" href="javascript:;" data-action="gdk_weauth_qr_gen" class="button weixin_login_btn">微信登陆</a><span id="weauth_key" class="hide"></span>';
+    $result = '<a id="weixin_login_btn" href="javascript:;" data-action="gdk_weauth_qr_gen" class="button weixin_login_btn">微信登陆</a><span id="weauth_key" style="display:none" class="hide"></span>';
 	if(is_user_logged_in()){
     $user_id = get_current_user_id();
     $user = get_user_by('id', $user_id);

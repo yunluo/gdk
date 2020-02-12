@@ -1,18 +1,27 @@
 <?php
 
-//添加后台个人信息
-function gdk_add_contact_fields($contactmethods) {
-    $contactmethods['qq'] = 'QQ';
-    $contactmethods['sina_weibo'] = '新浪微博';
-    $contactmethods['baidu'] = '百度ID';
-    $contactmethods['twitter'] = 'Twitter';
-    $contactmethods['github'] = 'GitHub';
-    unset($contactmethods['yim']);
-    unset($contactmethods['aim']);
-    unset($contactmethods['jabber']);
-    return $contactmethods;
+
+
+//修复 WordPress 找回密码提示“抱歉，该key似乎无效”
+function gdk_reset_password_message($message, $key) {
+    if (strpos($_POST['user_login'], '@')) {
+        $user_data = get_user_by('email', trim($_POST['user_login']));
+    } else {
+        $login = trim($_POST['user_login']);
+        $user_data = get_user_by('login', $login);
+    }
+    $user_login = $user_data->user_login;
+    $msg = "有人要求重设如下帐号的密码：\r\n\r\n";
+    $msg.= network_site_url() . "\r\n\r\n";
+    $msg.= sprintf('用户名：%s', $user_login) . "\r\n\r\n";
+    $msg.= "若这不是您本人要求的，请忽略本邮件，一切如常。\r\n\r\n";
+    $msg.= "要重置您的密码，请打开下面的链接：\r\n\r\n";
+    $msg.= wp_login_url() . "?action=rp&key=$key&login=" . rawurlencode($user_login);
+    return $msg;
 }
-add_filter('user_contactmethods', 'gdk_add_contact_fields');
+add_filter('retrieve_password_message', 'gdk_reset_password_message', null, 2);
+
+
 
 if (!defined('UM_DIR')) { /*判断是否按照UM插件*/
     //注册表单
@@ -60,22 +69,76 @@ if (!defined('UM_DIR')) { /*判断是否按照UM插件*/
     }
     add_action('user_register', 'gdk_register_extra_fields', 100);
 }
-//注册之后跳转
-if (gdk_option('gdk_register_redirect_ok')) {
-    function gdk_registration_redirect() {
-        if (gdk_option('gdk_redirect_choise') == 'gdk_redirect_home') {
-            $redirect_url = home_url();
-        } elseif (gdk_option('gdk_redirect_choise') == 'gdk_redirect_author') {
-            $redirect_url = get_author_posts_url($user_id);
-        } elseif (gdk_option('gdk_redirect_choise') == 'gdk_redirect_profile') {
-            $redirect_url = admin_url('wp-admin/profile.php');
-        } elseif (gdk_option('gdk_redirect_choise') == 'gdk_redirect_profile' && gdk_option('gdk_register_redirect_url')) {
-            $redirect_url = gdk_option('gdk_register_redirect_url');
-        }
-        return $redirect_url;
+
+//后台登陆数学验证码
+if (gdk_option('gdk_login_verify')) {
+    function gdk_login_verify(){
+        $num1 = mt_rand(0, 20);
+        $num2 = mt_rand(0, 20);
+        echo "<p><label for='sum'> {$num1} + {$num2} = ?<br /><input type='text' name='sum' class='input' value='' size='25' tabindex='4'>" . "<input type='hidden' name='num1' value='{$num1}'>" . "<input type='hidden' name='num2' value='{$num2}'></label></p>";
     }
-    add_filter('registration_redirect', 'gdk_registration_redirect');
+    add_action('login_form', 'gdk_login_verify');
+	add_action('register_form', 'gdk_login_verify');
+	
+    function gdk_login_verify_val(){
+        $sum = $_POST['sum'];
+        switch ($sum) {
+            case $_POST['num1'] + $_POST['num2']:
+                break;
+            case null:
+                wp_die('错误: 请输入验证码&nbsp; <a href="javascript:;" onclick="javascript:history.back();">返回上页</a>');
+                break;
+            default:
+                wp_die('错误: 验证码错误,请重试&nbsp; <a href="javascript:;" onclick="javascript:history.back();">返回上页</a>');
+        }
+    }
+    add_action('login_form_login', 'gdk_login_verify_val');
+    add_action('register_post', 'gdk_login_verify_val');
 }
+
+//仅显示作者自己的文章
+function gdk_show_mypost($wp_query) {
+    if (strpos($_SERVER['REQUEST_URI'], '/wp-admin/edit.php') !== false) {
+        if (!current_user_can('manage_options')) {
+            $wp_query->set('author', get_current_user_id());
+        }
+    }
+}
+add_filter('parse_query', 'gdk_show_mypost');
+
+//在文章编辑页面的[添加媒体]只显示用户自己上传的文件
+function gdk_show_myupload($wp_query_obj) {
+    global $pagenow;
+    if (!is_a(wp_get_current_user(), 'WP_User')) return;
+    if ('admin-ajax.php' != $pagenow || $_REQUEST['action'] != 'query-attachments') return;
+    if (!current_user_can('manage_options') && !current_user_can('manage_media_library')) $wp_query_obj->set('author', get_current_user_id());
+    return;
+}
+add_action('pre_get_posts', 'gdk_show_myupload');
+
+//在[媒体库]只显示用户上传的文件
+function gdk_show_myupload_library($wp_query) {
+    if (strpos($_SERVER['REQUEST_URI'], '/wp-admin/upload.php') !== false) {
+        if (!current_user_can('manage_options') && !current_user_can('manage_media_library')) {
+            $wp_query->set('author', get_current_user_id());
+        }
+    }
+}
+add_filter('parse_query', 'gdk_show_myupload_library');
+
+
+//添加后台个人信息
+function gdk_contact_fields($contactmethods) {
+    $contactmethods['qq'] = 'QQ';
+    $contactmethods['sina_weibo'] = '新浪微博';
+    $contactmethods['weixin'] = '微信';
+    unset($contactmethods['yim']);
+    unset($contactmethods['aim']);
+    unset($contactmethods['jabber']);
+    return $contactmethods;
+}
+add_filter('user_contactmethods', 'gdk_contact_fields');
+
 
 //支持中文名注册，来自肚兜
 function gdk_sanitize_user($username, $raw_username, $strict) {
@@ -92,104 +155,55 @@ function gdk_sanitize_user($username, $raw_username, $strict) {
 }
 add_filter('sanitize_user', 'gdk_sanitize_user', 10, 3);
 
-//修复 WordPress 找回密码提示“抱歉，该key似乎无效”
-function gdk_reset_password_message($message, $key) {
-    if (strpos($_POST['user_login'], '@')) {
-        $user_data = get_user_by('email', trim($_POST['user_login']));
-    } else {
-        $login = trim($_POST['user_login']);
-        $user_data = get_user_by('login', $login);
-    }
-    $user_login = $user_data->user_login;
-    $msg = "有人要求重设如下帐号的密码：\r\n\r\n";
-    $msg.= network_site_url() . "\r\n\r\n";
-    $msg.= sprintf('用户名：%s', $user_login) . "\r\n\r\n";
-    $msg.= "若这不是您本人要求的，请忽略本邮件，一切如常。\r\n\r\n";
-    $msg.= "要重置您的密码，请打开下面的链接：\r\n\r\n";
-    $msg.= wp_login_url() . "?action=rp&key=$key&login=" . rawurlencode($user_login);
-    return $msg;
-}
-add_filter('retrieve_password_message', 'gdk_reset_password_message', null, 2);
-
-//仅显示作者自己的文章
-function mypo_query_useronly($wp_query) {
-    if (strpos($_SERVER['REQUEST_URI'], '/wp-admin/edit.php') !== false) {
-        if (!current_user_can('manage_options')) {
-            $wp_query->set('author', get_current_user_id());
-        }
-    }
-}
-add_filter('parse_query', 'mypo_query_useronly');
-//在文章编辑页面的[添加媒体]只显示用户自己上传的文件
-function only_my_upload_media($wp_query_obj) {
-    global $pagenow;
-    if (!is_a(wp_get_current_user(), 'WP_User')) return;
-    if ('admin-ajax.php' != $pagenow || $_REQUEST['action'] != 'query-attachments') return;
-    if (!current_user_can('manage_options') && !current_user_can('manage_media_library')) $wp_query_obj->set('author', get_current_user_id());
-    return;
-}
-add_action('pre_get_posts', 'only_my_upload_media');
-//在[媒体库]只显示用户上传的文件
-function only_my_media_library($wp_query) {
-    if (strpos($_SERVER['REQUEST_URI'], '/wp-admin/upload.php') !== false) {
-        if (!current_user_can('manage_options') && !current_user_can('manage_media_library')) {
-            $wp_query->set('author', get_current_user_id());
-        }
-    }
-}
-add_filter('parse_query', 'only_my_media_library');
-
 // 添加一个新的列 ID
-function ssid_column($cols) {
+function gdk_userid_column($cols) {
     $cols['ssid'] = 'ID';
     return $cols;
 }
-add_action('manage_users_columns', 'ssid_column');
-function ssid_return_value($value, $column_name, $id) {
+add_action('manage_users_columns', 'gdk_userid_column');
+function gdk_userid_value($value, $column_name, $id) {
     if ($column_name == 'ssid') $value = $id;
     return $value;
 }
-add_filter('manage_users_custom_column', 'ssid_return_value', 10, 3);
+add_filter('manage_users_custom_column', 'gdk_userid_value', 30, 3);
+/**
+ * WordPress 后台用户列表显示用户昵称
+ * https://www.wpdaxue.com/add-user-nickname-column.html
+ */
+add_filter('manage_users_columns', 'gdk_add_user_nickname');
+function gdk_add_user_nickname($columns) {
+	$columns['user_nickname'] = '昵称';
+	return $columns;
+}
+add_action('manage_users_custom_column',  'gdk_show_user_nickname_val', 20, 3);
+function gdk_show_user_nickname_val($value, $column_name, $user_id) {
+	$user = get_userdata( $user_id );
+	$user_nickname = $user->nickname;
+	if ( 'user_nickname' == $column_name )
+		return $user_nickname;
+	return $value;
+}
 //用户列表显示积分
-add_filter('manage_users_columns', 'my_users_columns');
-function my_users_columns($columns) {
+add_filter('manage_users_columns', 'gdk_points_columns');
+function gdk_points_columns($columns) {
     $columns['points'] = '金币';
     return $columns;
 }
-function output_my_users_columns($value, $column_name, $user_id) {
+function gdk_points_value($value, $column_name, $user_id) {
     if ($column_name == 'points') {
-        $jinbi = GDK_Points::get_user_total_points($user_id, POINTS_STATUS_ACCEPTED);
+        $jinbi = GDK_Points::get_user_total_points($user_id, 'accepted');
         if ($jinbi != "") {
             $ret = $jinbi;
             return $ret;
         } else {
-            $ret = '穷逼一个';
+            $ret = '暂无充值';
             return $ret;
         }
     }
     return $value;
 }
-add_action('manage_users_custom_column', 'output_my_users_columns', 10, 3);
-//本地头像
-function gdk_user_avatar($column_headers) {
-    $column_headers['local_avatar'] = '本地头像';
-    return $column_headers;
-}
-add_filter('manage_users_columns', 'gdk_user_avatar');
-function gdk_ripms_user_avatar($value, $column_name, $user_id) {
-    if ($column_name == 'local_avatar') {
-        $localavatar = get_user_meta($user_id, 'simple_local_avatar', true);
-        if (empty($localavatar)) {
-            $ret = '未设置';
-            return $ret;
-        } else {
-            $ret = '已设置';
-            return $ret;
-        }
-    }
-    return $value;
-}
-add_action('manage_users_custom_column', 'gdk_ripms_user_avatar', 10, 3);
+add_action('manage_users_custom_column', 'gdk_points_value', 10, 3);
+
 //用户增加评论数量
 function gdk_users_comments($columns) {
     $columns['comments'] = '评论';
@@ -216,11 +230,11 @@ function gdk_show_users_comments($value, $column_name, $user_id) {
 add_action('manage_users_custom_column', 'gdk_show_users_comments', 10, 3);
 // 添加一个字段保存IP地址
 function gdk_log_ip($user_id) {
-    $ip = $_SERVER['REMOTE_ADDR'];
+    $ip = gdk_get_ip();
     update_user_meta($user_id, 'signup_ip', $ip);
 }
 add_action('user_register', 'gdk_log_ip');
-// 添加“IP地址”这个栏目
+// 添加IP地址这个栏目
 function gdk_signup_ip($column_headers) {
     $column_headers['signup_ip'] = 'IP地址';
     return $column_headers;
@@ -246,7 +260,7 @@ function gdk_insert_last_login($login) {
     update_user_meta($user->ID, 'last_login', current_time('mysql'));
 }
 add_action('wp_login', 'gdk_insert_last_login');
-// 添加一个新栏目“上次登录”
+// 添加一个新栏目上次登录
 function gdk_add_last_login_column($columns) {
     $columns['last_login'] = '上次登录';
     unset($columns['name']);
@@ -254,7 +268,7 @@ function gdk_add_last_login_column($columns) {
 }
 add_filter('manage_users_columns', 'gdk_add_last_login_column');
 // 显示登录时间到新增栏目
-function gdk_add_last_login_column_value($value, $column_name, $user_id) {
+function gdk_add_last_login($value, $column_name, $user_id) {
     if ($column_name == 'last_login') {
         $login = get_user_meta($user_id, 'last_login', true);
         if ($login != "") {
@@ -267,81 +281,4 @@ function gdk_add_last_login_column_value($value, $column_name, $user_id) {
     }
     return $value;
 }
-add_action('manage_users_custom_column', 'gdk_add_last_login_column_value', 10, 3);
-
-//后台登陆数学验证码
-if (gdk_option('gdk_admin_captcha')) {
-    function gdk_add_login_fields(){
-        $num1 = mt_rand(0, 20);
-        $num2 = mt_rand(0, 20);
-        echo "<p><label for='sum'> {$num1} + {$num2} = ?<br /><input type='text' name='sum' class='input' value='' size='25' tabindex='4'>" . "<input type='hidden' name='num1' value='{$num1}'>" . "<input type='hidden' name='num2' value='{$num2}'></label></p>";
-    }
-    add_action('login_form', 'gdk_add_login_fields');
-    add_action('register_form', 'gdk_add_login_fields');
-    function gdk_login_val(){
-        $sum = $_POST['sum'];
-        switch ($sum) {
-            case $_POST['num1'] + $_POST['num2']:
-                break;
-            case null:
-                wp_die('错误: 请输入验证码&nbsp; <a href="javascript:;" onclick="javascript:history.back();">返回上页</a>');
-                break;
-            default:
-                wp_die('错误: 验证码错误,请重试&nbsp; <a href="javascript:;" onclick="javascript:history.back();">返回上页</a>');
-        }
-    }
-    add_action('login_form_login', 'gdk_login_val');
-    add_action('register_post', 'gdk_login_val');
-}
-//限制每个ip的注册数量
-if (gdk_option('gdk_regist_ips')) {
-    function validate_reg_ips(){
-        global $err_msg;
-        $allow_time = gdk_option('gdk_regist_ips_num');
-        //每个IP允许注册的用户数
-        $allowed = true;
-        $ipsfile = ABSPATH . '/ips.txt';
-        $ips = file_get_contents($ipsfile);
-        $times = substr_count($ips, getIp());
-        if ($times >= $allow_time) {
-            $allowed = false;
-            $err_msg = "该IP注册用户超过上限，无法继续注册！";
-        }
-        $ips = '';
-        return $allowed;
-    }
-    add_filter('validate_username', 'validate_reg_ips', 10, 1);
-    function ip_restrict_errors($errors){
-        global $err_msg;
-        if (isset($errors->errors['invalid_username'])) {
-            $errors->errors['invalid_username'][0] = $err_msg;
-        }
-        return $errors;
-    }
-    add_filter('registration_errors', 'ip_restrict_errors');
-    function update_reg_ips(){
-        $ipsfile = ABSPATH . '/ips.txt';
-        file_put_contents($ipsfile, getIp() . "\r\n", FILE_APPEND);
-    }
-    add_action('user_register', 'update_reg_ips');
-    function getIp(){
-        if (getenv("HTTP_CLIENT_IP") && strcasecmp(getenv("HTTP_CLIENT_IP"), "unknown")) {
-            $ip = getenv("HTTP_CLIENT_IP");
-        } else {
-            if (getenv("HTTP_X_FORWARDED_FOR") && strcasecmp(getenv("HTTP_X_FORWARDED_FOR"), "unknown")) {
-                $ip = getenv("HTTP_X_FORWARDED_FOR");
-            } else {
-                if (getenv("REMOTE_ADDR") && strcasecmp(getenv("REMOTE_ADDR"), "unknown")) {
-                    $ip = getenv("REMOTE_ADDR");
-                } else {
-                    if (isset($_SERVER['REMOTE_ADDR']) && $_SERVER['REMOTE_ADDR'] && strcasecmp($_SERVER['REMOTE_ADDR'], "unknown")) {
-                        $ip = $_SERVER['REMOTE_ADDR'];
-                    } else {
-                        $ip = "unknown";
-                    }
-                }
-            }
-        }
-        return $ip;
-    }
-}
+add_action('manage_users_custom_column', 'gdk_add_last_login', 10, 3);

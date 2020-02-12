@@ -9,6 +9,7 @@ include( 'security.php' );//安全功能
 
 include( 'shortcode.php' );//短代码
 include( 'seo.php' );//seo功能
+include( 'user.php' );//用户功能
 
 include(GDK_ROOT_PATH.'public/download.php');//单页下载
 include(GDK_ROOT_PATH.'public/go.php');//跳转中间页

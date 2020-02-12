@@ -309,7 +309,7 @@ add_action('wp_network_dashboard_setup', 'gdk_dweandw_remove', 20);
 add_action('wp_user_dashboard_setup', 'gdk_dweandw_remove', 20);
 add_action('wp_dashboard_setup', 'gdk_dweandw_remove', 20);
 
-//国内更新word press加速
+//国内更新WordPress加速
 if (gdk_option('gdk_porxy_update') && !gdk_option('gdk_diasble_wp_update')) {
 	add_filter('site_transient_update_core',function($value) {
 		foreach($value->updates as &$update) {
@@ -322,7 +322,6 @@ if (gdk_option('gdk_porxy_update') && !gdk_option('gdk_diasble_wp_update')) {
 	}
 	);
 }
-
 
 
 //文件自动重命名
@@ -491,163 +490,6 @@ function gdk_notify_admin($notify_message,$comment_ID) {
     return $notify;
 }
 add_filter('comment_notification_text', 'gdk_notify_admin', 10, 2);
-
-//添加后台个人信息
-function gdk_contact_fields($contactmethods) {
-    $contactmethods['qq'] = 'QQ';
-    $contactmethods['sina_weibo'] = '新浪微博';
-    $contactmethods['weixin'] = '微信';
-    unset($contactmethods['yim']);
-    unset($contactmethods['aim']);
-    unset($contactmethods['jabber']);
-    return $contactmethods;
-}
-add_filter('user_contactmethods', 'gdk_contact_fields');
-
-
-//支持中文名注册，来自肚兜
-function gdk_sanitize_user($username, $raw_username, $strict) {
-    $username = wp_strip_all_tags($raw_username);
-    $username = remove_accents($username);
-    $username = preg_replace('|%([a-fA-F0-9][a-fA-F0-9])|', '', $username);
-    $username = preg_replace('/&.+?;/', '', $username); // Kill entities
-    if ($strict) {
-        $username = preg_replace('|[^a-z\p{Han}0-9 _.\-@]|iu', '', $username);
-    }
-    $username = trim($username);
-    $username = preg_replace('|\s+|', ' ', $username);
-    return $username;
-}
-add_filter('sanitize_user', 'gdk_sanitize_user', 10, 3);
-
-// 添加一个新的列 ID
-function gdk_userid_column($cols) {
-    $cols['ssid'] = 'ID';
-    return $cols;
-}
-add_action('manage_users_columns', 'gdk_userid_column');
-function gdk_userid_value($value, $column_name, $id) {
-    if ($column_name == 'ssid') $value = $id;
-    return $value;
-}
-add_filter('manage_users_custom_column', 'gdk_userid_value', 30, 3);
-/**
- * WordPress 后台用户列表显示用户昵称
- * https://www.wpdaxue.com/add-user-nickname-column.html
- */
-add_filter('manage_users_columns', 'gdk_add_user_nickname');
-function gdk_add_user_nickname($columns) {
-	$columns['user_nickname'] = '昵称';
-	return $columns;
-}
-add_action('manage_users_custom_column',  'gdk_show_user_nickname_val', 20, 3);
-function gdk_show_user_nickname_val($value, $column_name, $user_id) {
-	$user = get_userdata( $user_id );
-	$user_nickname = $user->nickname;
-	if ( 'user_nickname' == $column_name )
-		return $user_nickname;
-	return $value;
-}
-//用户列表显示积分
-add_filter('manage_users_columns', 'gdk_points_columns');
-function gdk_points_columns($columns) {
-    $columns['points'] = '金币';
-    return $columns;
-}
-function gdk_points_value($value, $column_name, $user_id) {
-    if ($column_name == 'points') {
-        $jinbi = GDK_Points::get_user_total_points($user_id, 'accepted');
-        if ($jinbi != "") {
-            $ret = $jinbi;
-            return $ret;
-        } else {
-            $ret = '暂无充值';
-            return $ret;
-        }
-    }
-    return $value;
-}
-add_action('manage_users_custom_column', 'gdk_points_value', 10, 3);
-
-//用户增加评论数量
-function gdk_users_comments($columns) {
-    $columns['comments'] = '评论';
-    return $columns;
-}
-add_filter('manage_users_columns', 'gdk_users_comments');
-function gdk_show_users_comments($value, $column_name, $user_id) {
-    if ($column_name == 'comments') {
-        $comments_counts = get_comments(array(
-            'status' => '1',
-            'user_id' => $user_id,
-            'count' => true
-        ));
-        if ($comments_counts != "") {
-            $ret = $comments_counts;
-            return $ret;
-        } else {
-            $ret = '暂未评论';
-            return $ret;
-        }
-    }
-    return $value;
-}
-add_action('manage_users_custom_column', 'gdk_show_users_comments', 10, 3);
-// 添加一个字段保存IP地址
-function gdk_log_ip($user_id) {
-    $ip = gdk_get_ip();
-    update_user_meta($user_id, 'signup_ip', $ip);
-}
-add_action('user_register', 'gdk_log_ip');
-// 添加IP地址这个栏目
-function gdk_signup_ip($column_headers) {
-    $column_headers['signup_ip'] = 'IP地址';
-    return $column_headers;
-}
-add_filter('manage_users_columns', 'gdk_signup_ip');
-function gdk_ripms_columns($value, $column_name, $user_id) {
-    if ($column_name == 'signup_ip') {
-        $ip = get_user_meta($user_id, 'signup_ip', true);
-        if ($ip != "") {
-            $ret = $ip;
-            return $ret;
-        } else {
-            $ret = '没有记录';
-            return $ret;
-        }
-    }
-    return $value;
-}
-add_action('manage_users_custom_column', 'gdk_ripms_columns', 10, 3);
-// 创建一个新字段存储用户登录时间
-function gdk_insert_last_login($login) {
-    $user = get_user_by('login', $login);
-    update_user_meta($user->ID, 'last_login', current_time('mysql'));
-}
-add_action('wp_login', 'gdk_insert_last_login');
-// 添加一个新栏目上次登录
-function gdk_add_last_login_column($columns) {
-    $columns['last_login'] = '上次登录';
-    unset($columns['name']);
-    return $columns;
-}
-add_filter('manage_users_columns', 'gdk_add_last_login_column');
-// 显示登录时间到新增栏目
-function gdk_add_last_login($value, $column_name, $user_id) {
-    if ($column_name == 'last_login') {
-        $login = get_user_meta($user_id, 'last_login', true);
-        if ($login != "") {
-            $ret = $login;
-            return $ret;
-        } else {
-            $ret = '暂未登录';
-            return $ret;
-        }
-    }
-    return $value;
-}
-add_action('manage_users_custom_column', 'gdk_add_last_login', 10, 3);
-
 
 
 // 评论添加@，来自：http://www.ludou.org/wordpress-comment-reply-add-at.html
