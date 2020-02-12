@@ -29,7 +29,8 @@ function gdk_add_custom_rewrite_rule() {
     add_rewrite_rule('^sitemap(.*?)\.xml$','index.php?sitemap=gdk$matches[1]','top');//xml地图规则
     add_rewrite_rule('^sitemap(.*?)\.html$','index.php?sitemap=gdkk$matches[1]','top');//html地图规则
     add_rewrite_rule('^daohang(.*?)\.html$','index.php?daohang=gdkk$matches[1]','top');//导航页面规则
-    add_rewrite_rule('^weauth','index.php?user=$matches[1]&sk=$matches[2]','top');//微信登陆二维码规则
+    add_rewrite_rule('^weauth','index.php?user=$matches[1]&sk=$matches[2]','top');//WeAuth微信登陆二维码规则
+    add_rewrite_rule('^goauth','index.php?userinfo=$matches[1]&sk=$matches[2]','top');//GoAuth微信登陆二维码规则
 }
 add_action( 'init', 'gdk_add_custom_rewrite_rule' , 10, 0);
 

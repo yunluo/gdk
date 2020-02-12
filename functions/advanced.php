@@ -27,6 +27,7 @@ function get_weauth_oauth(){
     $weauth_user = json_decode($weauth_user, true);
     $oauth_result = implode('|',$weauth_user);
     set_transient($weauth_sk.'-info', $oauth_result, 60);//1分钟缓存
+    header('goauth: ok');
     echo 'success';//给对方服务器打个招呼
     exit;
     }
