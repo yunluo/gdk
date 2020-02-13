@@ -95,6 +95,7 @@ function gdk_prettify_replace($text) {
     return $text;
 }
 add_filter('content_save_pre', 'gdk_prettify_replace');
+add_filter('the_content', 'gdk_prettify_replace');
 
 //强制阻止WordPress代码转义,适用于<pre class="prettyprint linenums"> </pre>
 function gdk_esc_html($content) {

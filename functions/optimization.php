@@ -242,11 +242,12 @@ add_filter( 'wp_resource_hints', 'gdk_remove_dns', 10, 2 );
 
 
 //第一段
+/*
 function first_paragraph( $content ) {
-    return preg_replace( '/<p([^>]+)?>/', '<p$1 class="lead">', $content, 1 );
+    return preg_replace( '/<p ([^>]+)?>/', '<p $1 class="lead">', $content, 1 );
 }
 add_filter( 'the_content', 'first_paragraph' );
-
+*/
 
 //禁用emoji功能
 if (gdk_option('gdk_disable_emojis')) {

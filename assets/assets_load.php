@@ -15,8 +15,8 @@ add_action('admin_enqueue_scripts', 'gdk_admin_enqueue_script');
 
 function gdk_enqueue_script_frontend() {
     if (!is_admin()) {
-        //wp_enqueue_style( 'pure_css', GDK_BASE_URL.'assets/css/pure.css', [], GDK_PLUGIN_VER, 'all' );
-        wp_enqueue_style( 'milligram_css', GDK_BASE_URL.'assets/css/milligram.min.css', false, GDK_PLUGIN_VER, 'all' );
+        wp_enqueue_style( 'pure_css', 'https://cdn.jsdelivr.net/npm/css-mint@2.0.7/build/css-mint.min.css', false, GDK_PLUGIN_VER, 'all' );
+        //wp_enqueue_style( 'milligram_css', GDK_BASE_URL.'assets/css/milligram.min.css', false, GDK_PLUGIN_VER, 'all' );
         wp_enqueue_style( 'gdk_css', GDK_BASE_URL.'assets/css/gdk.css', false, GDK_PLUGIN_VER, 'all' );
         wp_deregister_script('jquery');
         wp_enqueue_script('jquery', GDK_BASE_URL.'assets/js/jQuery.min.js', false, GDK_PLUGIN_VER, true);//加载自定义jQuery2.0.3
