@@ -375,6 +375,12 @@ $gdk_options = [
 				'std'   => '1'
 			],
 			[
+				'name'  => '友情链接分类ID',
+				'desc'  => '请选择专门用来存放友链的链接分类ID',
+				'id'    => 'gdk_link_id',
+				'type'  => 'number'
+			],
+			[
 				'name'  => 'HTML代码压缩',
 				'desc'  => '启用 【开启后，将压缩网页HTML代码，可读性会降低，但是性能略有提升】',
 				'id'    => 'gdk_compress',

@@ -13,4 +13,4 @@ include( 'user.php' );//用户功能
 
 include(GDK_ROOT_PATH.'public/download.php');//单页下载
 include(GDK_ROOT_PATH.'public/go.php');//跳转中间页
-include(GDK_ROOT_PATH.'public/daohang.php');//跳转中间页
+include(GDK_ROOT_PATH.'public/daohang.php');//导航页面

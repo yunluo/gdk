@@ -2,7 +2,7 @@
 /**
  * 支付推送服务消息接收文件
  */
-require( '../../../../wp-load.php' );
+require( '../../../../wp-load.php' );//此路径位于根目录
 
 /* Payjs支付通知开始 */
 $data = payjs_notify();//获取payjs支付成功的信息
@@ -22,7 +22,7 @@ if(in_string($userid,'PP')){//免登陆支付,插入缓存,然后直接停止推
 
 if(gdk_check($data['out_trade_no']) !== 0) exit('Repeat push');//在入库前,数据库不应该有同样的订单号
 
-if( empty($userid) || empty($money) )exit('data null');//阻止某些极少数空值的
+if( empty($userid) || empty($money) ) exit('data null');//阻止某些极少数空值的
 
 
 /* Payjs支付通知结束 */

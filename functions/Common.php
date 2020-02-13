@@ -951,6 +951,30 @@ function gdk_thumbnail_src() {
 }
 
 
+/**
+ * 获取略缩图，输出img标签代码
+ * @param  [init] $way     缩略图方案代码，1=cdn，2=timthumb，3=aq_resize
+ * @param  [string] $url   缩略图原图链接，调用gdk_thumbnail_src()
+ * @param  [init] $width   缩略图宽度
+ * @param  [init] $height  缩略图高度
+ * @param  [string] $style 图片样式，cdn方案时有效
+ * @param  [string] $atrr  img标签的属性
+ * @return [string]        img标签的图片代码
+ */
+function gdk_thumb_img($way,$url,$width,$height,$style,$atrr = 'class="thumb_img"'){
+    if ($way === 1) {//cdn
+        $src = $url.'!'.$style;
+    }elseif ($way === 2) {
+        $src = GDK_BASE_URL . '/public/timthumb.php?src='.$url.'&h='.$height.'&w='.$width.'&q=90&zc=1&ct=1';
+    }elseif ($way === 3) {
+        $src = aq_resize( $url, $width , $height , true);
+    }else{
+        return false;
+    }
+    echo '<img '.$atrr.' src="'.$src.'">';
+}
+
+
 //生成订单号编码
 function gdk_order_id(){
 	date_default_timezone_set('Asia/Shanghai');
@@ -1007,7 +1031,7 @@ function gdk_get_the_link_items($id = null) {
 }
 
 function gdk_get_link_items() {
-    $linkcats = get_terms('link_category', 'orderby=count&hide_empty=1&exclude=7');
+    $linkcats = get_terms('link_category', 'orderby=count&hide_empty=1&exclude='.gdk_option('gdk_link_id'));
     $result = '';
         foreach ($linkcats as $linkcat) {
             $result.= '<a id="' . $linkcat->term_id . '"></a><div class="panel">
@@ -1153,10 +1177,9 @@ function gdk_weauth_token(){
     $qr64 = [];
     $qr64['key'] = gdk_weauth_token();
     $qr64['qrcode'] = gdk_http_request('https://wa.isdot.net/qrcode?str='.$qr64['key'])['qrcode'];
-    // https://api.goauth.jysafe.cn/
+    //$qr64['qrcode'] = gdk_http_request('https://api.goauth.jysafe.cn/qrcode?str='.$qr64['key'])['qrcode'];//预备使用，备胎
     return $qr64;
   }
-
 
 
 /**

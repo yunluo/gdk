@@ -22,7 +22,6 @@ function gdk_reset_password_message($message, $key) {
 add_filter('retrieve_password_message', 'gdk_reset_password_message', null, 2);
 
 
-
 if (!defined('UM_DIR')) { /*判断是否按照UM插件*/
     //注册表单
     function gdk_show_extra_register_fields() {
@@ -126,7 +125,6 @@ function gdk_show_myupload_library($wp_query) {
 }
 add_filter('parse_query', 'gdk_show_myupload_library');
 
-
 //添加后台个人信息
 function gdk_contact_fields($contactmethods) {
     $contactmethods['qq'] = 'QQ';
@@ -166,10 +164,9 @@ function gdk_userid_value($value, $column_name, $id) {
     return $value;
 }
 add_filter('manage_users_custom_column', 'gdk_userid_value', 30, 3);
-/**
- * WordPress 后台用户列表显示用户昵称
- * https://www.wpdaxue.com/add-user-nickname-column.html
- */
+
+
+//WordPress 后台用户列表显示用户昵称
 add_filter('manage_users_columns', 'gdk_add_user_nickname');
 function gdk_add_user_nickname($columns) {
 	$columns['user_nickname'] = '昵称';

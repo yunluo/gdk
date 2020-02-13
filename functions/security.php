@@ -329,3 +329,67 @@ function log_login( $username, $password ) {
         }
     }
 }
+
+//ban yonghu
+function gdk_edit_user_profile( $user ) {
+	if ( ! current_user_can( 'edit_users' ) ) return;
+	if ( get_current_user_id() == $user->ID ) return;
+	?>
+	<table class="form-table">
+		<tr>
+			<th scope="row">封禁用户</th>
+			<td>
+			<label for="gdk_ban">
+				<input name="gdk_ban" type="checkbox" id="gdk_ban" <?php
+					checked( gdk_is_user_banned( $user->ID ), TRUE )?> value="1">
+					封禁此用户</label>
+			</td>
+		</tr>
+	</table>
+	<?php
+}
+
+
+function gdk_edit_user_profile_update( $user_id ) {
+	if ( ! current_user_can( 'edit_users' ) ) return;
+	if ( get_current_user_id() == $user_id ) return;
+	if ( empty( $_POST['gdk_ban'] ) ) {
+		gdk_unban_user( $user_id );
+	} else {
+		gdk_ban_user( $user_id );
+	}
+}
+
+
+function gdk_ban_user( $user_id ) {
+	if ( ! gdk_is_user_banned( $user_id ) ) {
+		update_user_option( $user_id, 'gdk_banned', TRUE, FALSE );
+	}
+}
+
+
+function gdk_unban_user( $user_id ) {
+	if ( gdk_is_user_banned( $user_id ) ) {
+		update_user_option( $user_id, 'gdk_banned', FALSE, FALSE );
+	}
+}
+
+
+function gdk_is_user_banned( $user_id ) {
+	return get_user_option( 'gdk_banned', $user_id );
+}
+
+function gdk_authenticate_user( $user, $password ) {
+	if ( is_wp_error( $user ) ) return $user;
+	if ( get_user_option( 'gdk_banned', $user->ID, FALSE ) ) {
+		return new WP_Error(
+			'gdk_banned','<strong>ERROR</strong>: 此账号已被封禁.'
+		);
+	}
+	return $user;
+}
+
+
+add_action( 'edit_user_profile', 'gdk_edit_user_profile' );
+add_action( 'edit_user_profile_update', 'gdk_edit_user_profile_update' );
+add_filter( 'wp_authenticate_user', 'gdk_authenticate_user', 10, 2 );
