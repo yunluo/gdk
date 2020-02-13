@@ -954,20 +954,23 @@ function gdk_thumbnail_src() {
 /**
  * 获取略缩图，输出img标签代码
  * @param  [init] $way     缩略图方案代码，1=cdn，2=timthumb，3=aq_resize
- * @param  [string] $url   缩略图原图链接，调用gdk_thumbnail_src()
  * @param  [init] $width   缩略图宽度
  * @param  [init] $height  缩略图高度
  * @param  [string] $style 图片样式，cdn方案时有效
  * @param  [string] $atrr  img标签的属性
  * @return [string]        img标签的图片代码
  */
-function gdk_thumb_img($way,$url,$width,$height,$style,$atrr = 'class="thumb_img"'){
+function gdk_thumb_img($way,$width,$height,$style = '',$atrr = 'class="thumb_img"'){
+    $url = gdk_thumbnail_src();
     if ($way === 1) {//cdn
         $src = $url.'!'.$style;
     }elseif ($way === 2) {
         $src = GDK_BASE_URL . '/public/timthumb.php?src='.$url.'&h='.$height.'&w='.$width.'&q=90&zc=1&ct=1';
     }elseif ($way === 3) {
         $src = aq_resize( $url, $width , $height , true);
+        if(empty($src)){
+        $src = GDK_BASE_URL . '/public/timthumb.php?src='.$url.'&h='.$height.'&w='.$width.'&q=90&zc=1&ct=1'; 
+        }
     }else{
         return false;
     }

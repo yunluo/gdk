@@ -1,3 +1,4 @@
 desktop.ini
 .ecloud/*
 .git/
+public/cache/*.txt
