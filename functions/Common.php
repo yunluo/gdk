@@ -34,7 +34,7 @@ function nc_reverse_strrchr($haystack, $needle, $trail)
 /**
  * 获取完整的句子
  */
-function nc_print_excerpt($length, $post = null, $echo = true)
+function gdk_print_excerpt($length, $post = null, $echo = true)
 {
     global $post;
     $text = $post->post_excerpt;
@@ -63,6 +63,9 @@ function nc_print_excerpt($length, $post = null, $echo = true)
         return $result;
     }
 }
+
+
+
 
 function nc_comment_add_at($comment_text, $comment = '')
 {
@@ -965,11 +968,11 @@ function gdk_thumb_img($way,$width,$height,$style = '',$atrr = 'class="thumb_img
     if ($way === 1) {//cdn
         $src = $url.'!'.$style;
     }elseif ($way === 2) {
-        $src = GDK_BASE_URL . '/public/timthumb.php?src='.$url.'&h='.$height.'&w='.$width.'&q=90&zc=1&ct=1';
+        $src = GDK_BASE_URL . 'public/timthumb.php?src='.$url.'&h='.$height.'&w='.$width.'&q=90&zc=1&ct=1';
     }elseif ($way === 3) {
         $src = aq_resize( $url, $width , $height , true);
         if(empty($src)){
-        $src = GDK_BASE_URL . '/public/timthumb.php?src='.$url.'&h='.$height.'&w='.$width.'&q=90&zc=1&ct=1'; 
+        $src = GDK_BASE_URL . 'public/timthumb.php?src='.$url.'&h='.$height.'&w='.$width.'&q=90&zc=1&ct=1'; 
         }
     }else{
         return false;
@@ -1027,7 +1030,7 @@ function gdk_get_the_link_items($id = null) {
     if (!empty($bookmarks)) {
         foreach ($bookmarks as $bookmark) {
             $output.= '<div class="sm-6 md-4 lg-3">
-            <div class="card"><a class="card-heading link-tooltip bg-lvs' . $bookmark->link_rating . '" href="' . $bookmark->link_url . '" target="_blank"><span class="card-icon"><img src="https://ico.mikelin.cn/' . $bookmark->link_url . '"></span><span class="card-title">' . $bookmark->link_name . '</span></a><div class="card-body">'.$bookmark->link_description.' : '.$bookmark->link_notes.'</div></div></div>';
+            <div class="card"><a class="card-heading link-tooltip bg-lvs' . $bookmark->link_rating . '" href="' . $bookmark->link_url . '" target="_blank"><span class="card-icon"><img src="' . $bookmark->link_image . '"></span><span class="card-title">' . $bookmark->link_name . '</span></a><div class="card-body">'.$bookmark->link_description.' : '.$bookmark->link_notes.'</div></div></div>';
         }
     }
     return $output;
@@ -1116,11 +1119,11 @@ function payjs_notify() {
 function buy_points(){
     if(is_user_logged_in()) {//logined
         $result = '
-        <a data-fancybox="pay_fancybox" data-src="#pay_fancybox" href="javascript:;" class="button">点击充值</a>
+        <a data-fancybox="pay_fancybox" data-src="#pay_fancybox" href="javascript:;" class="cm-btn primary">点击充值</a>
         <form id="pay_fancybox" name="pay_form" style="display: none; width: 100%; max-width: 500px;" class="pure-form">
                 <h2 class="mb-3">积分充值</h2>
                 <p>请在下面输入充值金额以及支付工具,微信支付宝都可以,如果下面选项中有支付宝一般建议支付宝</p>
-                <p class="alert info">本站支付比例为: 1 RMB = '.gdk_option('gdk_rate').'金币</p></blockquote>
+                <p class="cm-alert success">本站支付比例为: 1 RMB = '.gdk_option('gdk_rate').'金币</p></blockquote>
                 <label for="money">支付金额</label>
                 <input name="money" id="money" min="1" value="2" type="number" required>
                 <br /><label for="pay_way">支付方式</label>';
@@ -1131,12 +1134,12 @@ function buy_points(){
                     $result .= '<br /><label><input name="pay_way" type="radio" value = "wechat" checked/> 微信</label>';
                 }
                 $result .= '
-                <p class="mb-0 text-right">
-                    <input data-fancybox-close type="button" id="submit_pay" data-action="pay_points" data-id="'.get_current_user_id().'" class="pure-button pure-button-primary" value="提交">
+                <p class="mb-0 cm-text-right">
+                    <input data-fancybox-close type="button" id="submit_pay" data-action="pay_points" data-id="'.get_current_user_id().'" class="cm-btn primary" value="提交">
                 </p>
             </form>';
     }else{// no login
-        $result = '<div class=\'alert info\'>本页面需要您登录才可以操作，请先 <a target="_blank" href="'.esc_url( wp_login_url( get_permalink() ) ).'">点击登录</a>  或者<a href="'.esc_url( wp_registration_url() ).'">立即注册</a></div>';
+        $result = '<div class=\'cm-alert error\'>本页面需要您登录才可以操作，请先 <a target="_blank" href="'.esc_url( wp_login_url( get_permalink() ) ).'">点击登录</a>  或者<a href="'.esc_url( wp_registration_url() ).'">立即注册</a></div>';
     }
     return $result;
 }
@@ -1240,3 +1243,69 @@ function create_user_id( $userdata ){
     return $user_id;
 }
 
+
+//生成hover颜色
+function editorial_hover_color( $hex, $steps ) {
+	// Steps should be between -255 and 255. Negative = darker, positive = lighter
+	$steps = max( -255, min( 255, $steps ) );
+	// Normalize into a six character long hex string
+	$hex = str_replace( '#', '', $hex );
+	if ( strlen( $hex ) == 3) {
+		$hex = str_repeat( substr( $hex,0,1 ), 2 ).str_repeat( substr( $hex, 1, 1 ), 2 ).str_repeat( substr( $hex,2,1 ), 2 );
+	}
+	// Split into three parts: R, G and B
+	$color_parts = str_split( $hex, 2 );
+	$return = '#';
+	foreach ( $color_parts as $color ) {
+		$color   = hexdec( $color );
+		// Convert to decimal
+		$color   = max( 0, min( 255, $color + $steps ) );
+		// Adjust color
+		$return .= str_pad( dechex( $color ), 2, '0', STR_PAD_LEFT );
+		// Make two char hex code
+	}
+	return $return;
+}
+
+
+
+/**
+ * Get minified css and removed space
+ *
+ * @since 1.2.5
+ */
+/**
+ * Minify CSS
+ *
+ * @since 1.0.0
+ */
+function pwd_minify_css( $css ) {
+
+	// Normalize whitespace
+	$css = preg_replace( '/\s+/', ' ', $css );
+	// Remove ; before }
+	$css = preg_replace( '/;(?=\s*})/', '', $css );
+	// Remove space after , : ; { } */ >
+	$css = preg_replace( '/(,|:|;|\{|}|\*\/|>) /', '$1', $css );
+	// Remove space before , ; { }
+	$css = preg_replace( '/ (,|;|\{|})/', '$1', $css );
+	// Strips leading 0 on decimal values (converts 0.5px into .5px)
+	$css = preg_replace( '/(:| )0\.([0-9]+)(%|em|ex|px|in|cm|mm|pt|pc)/i', '${1}.${2}${3}', $css );
+	// Strips units if value is 0 (converts 0px to 0)
+	$css = preg_replace( '/(:| )(\.?)0(%|em|ex|px|in|cm|mm|pt|pc)/i', '${1}0', $css );
+	// Return minified CSS
+	return trim( $css );
+}
+
+//生成微信验证码
+function wx_captcha(){
+	date_default_timezone_set('Asia/Shanghai');
+	$min = floor(date("i")/2);
+	$day = date("d");
+	$day = ltrim($day,0);
+	$url = 'https://gitcafe.net';//home_url();
+	$captcha = sha1($min.$url);
+	$captcha = substr($captcha , $day , 6);
+	return $captcha;
+
+}

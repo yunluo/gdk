@@ -86,6 +86,7 @@ jQuery(function ($) { /**声明加载jQuery */
 	 * 已经密码可见的自动从浏览器读取内容
 	 * 并显示,这里加个延时处理
 	 */
+	 
 	(function () {
 		if ($("#submit_pass_view").length > 0) { /**如果网站有密码可见,就执行 */
 			setTimeout(function () {
@@ -94,7 +95,7 @@ jQuery(function ($) { /**声明加载jQuery */
 				for (var i = 0; i < length; i++) {
 					var key = localStorage.key(i),
 						value = localStorage.getItem(key);
-					if (key.indexOf(id) >= 0) { /**发现目标 */
+					if (key.indexOf(id) >= 0) { /*发现目标 */
 						show_hide_content('.pass_viewbox', value);
 						break;
 					}
@@ -103,6 +104,7 @@ jQuery(function ($) { /**声明加载jQuery */
 			}, 900);
 		}
 	}());
+
 	/**密码可见end */
 
 

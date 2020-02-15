@@ -72,8 +72,9 @@ function gdk_pass_view() {
 	$action = $_POST['action'];
 	$post_id = $_POST['id'];
 	$pass = $_POST['pass'];
+	$wxcaptcha = wx_captcha();
 	if(!isset( $action )  ||  !isset( $post_id )  ||  !isset( $pass )   ) exit('400');
-	if($pass == '2233') {
+	if($pass == $wxcaptcha ) {
 	$pass_content = get_post_meta($post_id, '_pass_content')[0];
 	exit($pass_content);
 	}else{

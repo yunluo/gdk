@@ -204,14 +204,26 @@ add_shortcode('vip', 'gdk_login_to_read');
 
 // 部分内容输入密码可见
 function gdk_secret_view($atts, $content = null) {
-    extract(shortcode_atts(array('wx' => null) , $atts));
     $pid = get_the_ID();
     add_post_meta($pid, '_pass_content', $content, true) or update_post_meta($pid, '_pass_content', $content);
     if ( current_user_can( 'administrator' ) || gdk_is_weixin()) { return $content; }//admin show
-        return '<div class="pass_viewbox"><input id="pass_view" type="text">    <input id="submit_pass_view" data-action="gdk_pass_view" data-id="'.$pid.'" type="button" value="提交"></div>';
+        return '<div class="cm-grid cm-card pass_viewbox">
+   <div class="cm-row">
+      <div class="cm-col-md-4">
+         <img src="https://p.ssl.qhimg.com/t0162cc8398cbf7dea3.jpg" class="cm-resp-img">
+      </div>
+      <div class="cm-col-md-8">
+         <div class="hide_content_info" style="margin:10px 0">
+			<div class="cm-alert primary">本段内容已被隐藏，您需要扫码关注微信公众号申请验证码查看，发送【验证码】获取验证码，验证码2分钟有效</div>
+		<input type="text" id="pass_view" placeholder="输入验证码并提交" style="width:70%"> &nbsp;&nbsp;<input id="submit_pass_view" class="cm-btn success" data-action="gdk_pass_view" data-id="'.$pid.'" type="button" value="提交">
+         </div>
+      </div>
+   </div>
+</div>';
 
 }
-add_shortcode('secret', 'gdk_secret_view');
+add_shortcode('wxcaptcha', 'gdk_secret_view');
+
 
 // 支持文章和页面运行PHP代码
 function gdk_php_include($attr) {
