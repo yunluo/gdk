@@ -1303,9 +1303,59 @@ function wx_captcha(){
 	$min = floor(date("i")/2);
 	$day = date("d");
 	$day = ltrim($day,0);
-	$url = 'https://gitcafe.net';//home_url();
+	$url = home_url();
 	$captcha = sha1($min.$url);
 	$captcha = substr($captcha , $day , 6);
 	return $captcha;
 
+}
+
+function gdk_post_dropdown(){
+    /* Option list of all post */	
+    $gdk_options_posts     = [];
+    $gdk_options_posts_obj = get_posts('posts_per_page=-1');
+    $gdk_options_posts[''] = '选择文章';
+    foreach ( $gdk_options_posts_obj as $gdk_posts ) {
+    	$gdk_options_posts[$gdk_posts->ID] = $gdk_posts->post_title;
+    }
+    return $gdk_options_posts;
+}
+
+
+function gdk_categories_dropdown(){
+    /* Option list of all categories */
+    $gdk_args = array(
+	   'type'                     => 'post',
+	   'orderby'                  => 'name',
+	   'order'                    => 'ASC',
+	   'hide_empty'               => 1,
+	   'hierarchical'             => 1,
+	   'taxonomy'                 => 'category'
+    ); 
+    $gdk_option_categories     = [];
+    $gdk_category_lists        = get_categories( $gdk_args );
+    $gdk_option_categories[''] = '选择分类';
+    foreach( $gdk_category_lists as $gdk_category ){
+        $gdk_option_categories[$gdk_category->term_id] = $gdk_category->name;
+    }
+    return $gdk_option_categories;
+}
+
+function gdk_tag_dropdown(){
+    /* Option list of all tags */
+    $gdk_args = array(
+	   'type'                     => 'post',
+	   'orderby'                  => 'name',
+	   'order'                    => 'ASC',
+	   'hide_empty'               => 1,
+	   'hierarchical'             => 1,
+	   'taxonomy'                 => 'tag'
+    ); 
+    $gdk_option_tags     = [];
+    $gdk_tag_lists        = get_tags( $gdk_args );
+    $gdk_option_tags[''] = '选择标签';
+    foreach( $gdk_tag_lists as $gdk_tag ){
+        $gdk_option_tags[$gdk_tag->term_id] = $gdk_tag->name;
+    }
+    return $gdk_option_tag;
 }
