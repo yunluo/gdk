@@ -16,17 +16,18 @@ add_action('admin_enqueue_scripts', 'gdk_admin_enqueue_script');
 function gdk_enqueue_script_frontend() {
     if (!is_admin()) {
         wp_enqueue_style( 'pure_css', 'https://cdn.jsdelivr.net/npm/css-mint@2.0.7/build/css-mint.min.css', false, GDK_PLUGIN_VER, 'all' );
+		wp_enqueue_style( 'font-awesome', GDK_BASE_URL.'assets/css/font-awesome.min.css', false, GDK_PLUGIN_VER, 'all' );
         //wp_enqueue_style( 'milligram_css', GDK_BASE_URL.'assets/css/milligram.min.css', false, GDK_PLUGIN_VER, 'all' );
         wp_enqueue_style( 'gdk_css', GDK_BASE_URL.'assets/css/gdk.css', false, GDK_PLUGIN_VER, 'all' );
         wp_deregister_script('jquery');
-        wp_enqueue_script('jquery', GDK_BASE_URL.'assets/js/jQuery.min.js', false, GDK_PLUGIN_VER, true);//加载自定义jQuery2.0.3
+        wp_enqueue_script('jquery', 'https://cdn.jsdelivr.net/npm/jquery@2.1.0/dist/jquery.min.js', false, GDK_PLUGIN_VER, true);//加载自定义jQuery2.0.3
         wp_enqueue_script('code_prettify_js', GDK_BASE_URL.'assets/js/prettify.min.js', array('jquery'), GDK_PLUGIN_VER, true);
         wp_enqueue_script('fancybox_js', GDK_BASE_URL.'assets/js/fancybox.min.js', array('jquery'), GDK_PLUGIN_VER, true);
         wp_enqueue_script('lazyload_js', GDK_BASE_URL.'assets/js/lazyload.min.js', array('jquery'), GDK_PLUGIN_VER, true);
         wp_enqueue_script('sweetalert_js','https://cdn.jsdelivr.net/combine/npm/sweetalert@2.0.0,npm/qrious@4.0.2', [], GDK_PLUGIN_VER, true);
         wp_enqueue_script('gdk_js', GDK_BASE_URL.'assets/js/gdk.js', array('jquery'), GDK_PLUGIN_VER, true);
         wp_localize_script('gdk_js', 'ajax', [
-            'url'=> admin_url('admin-ajax.php'), 
+            'url'=> admin_url('admin-ajax.php'),
             'pass_nonce' => wp_create_nonce('pass_nonce'),
             'pay_points' => wp_create_nonce('pay_points'),
             'check_pay_points' => wp_create_nonce('check_pay_points'),
@@ -59,7 +60,7 @@ jQuery(function($) {
         }
     });
     $(".add-shortcode").click(function() {
-        send_to_editor(" " + $(this).data("shortcodes") + " ");
+        send_to_editor("" + $(this).data("shortcodes") + "");
         $(".shortcodes-wrap").removeClass("is-active");
         return false
     });
@@ -73,18 +74,18 @@ if ($("#replysubmit").length > 0) {
         }
     });
 }
-	
 
 
 
 
-    
+
+
     /**end**/
-     
+
 });
     </script>
             <?php
-	
+
 }
 add_action('admin_footer','gdk_admin_script');
 

@@ -366,7 +366,7 @@ jQuery(function ($) { /**声明加载jQuery */
 					content: "input",
 					button: "验证提取码"
 				}).then((code) => {
-					check_code(a, `$ {code}`); /**文章id, 提取码 */
+					check_code(a, `${code}`); /**文章id, 提取码 */
 				});
 			} else { /* 未支付,选择支付方式*/
 				pay_way(a, b, c);

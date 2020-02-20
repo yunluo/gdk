@@ -526,6 +526,13 @@ $gdk_options = [
 			'type'  => 'checkbox'
 		],
 		[
+			'name'  => '微信公众号TOKEN',
+			'desc'  => '请输入您的微信公众号TOKEN,微信公众号后台获取',
+			'id'    => 'gdk_wxmp_token',
+			'type'  => 'text',
+			'std'   => ''
+		],
+		[
 			'name'  => '微信推送KEY',
 			'desc'  => '请输入您的微信推送KEY',
 			'id'    => 'gdk_Server_key',

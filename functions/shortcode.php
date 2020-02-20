@@ -79,41 +79,37 @@ add_shortcode('reply', 'gdk_reply_to_read');
 
 //绿色提醒框
 function gdk_toz($atts, $content = null) {
-    return '<div id="sc_notice">' . $content . '</div>';
+    return '<div class="alert success">' . $content . '</div>';
 }
 add_shortcode('v_notice', 'gdk_toz');
 //红色提醒框
 function gdk_toa($atts, $content = null) {
-    return '<div id="sc_error">' . $content . '</div>';
+    return '<div class="alert error">' . $content . '</div>';
 }
 add_shortcode('v_error', 'gdk_toa');
 //黄色提醒框
 function gdk_toc($atts, $content = null) {
-    return '<div id="sc_warn">' . $content . '</div>';
+    return '<div class="alert warning">' . $content . '</div>';
 }
 add_shortcode('v_warn', 'gdk_toc');
-//灰色提醒框
-function gdk_tob($atts, $content = null) {
-    return '<div id="sc_tips">' . $content . '</div>';
-}
-add_shortcode('v_tips', 'gdk_tob');
+
 //蓝色提醒框
 function gdk_tod($atts, $content = null) {
-    return '<div id="sc_blue">' . $content . '</div>';
+    return '<div class="alert primary">' . $content . '</div>';
 }
 add_shortcode('v_blue', 'gdk_tod');
 //蓝边文本框
 function gdk_toe($atts, $content = null) {
-    return '<div  class="sc_act">' . $content . '</div>';
+    return '<div  class="alert">' . $content . '</div>';
 }
-add_shortcode('v_act', 'gdk_toe');
+add_shortcode('v_tips', 'gdk_toe');
 
 //灵魂按钮
 function gdk_tom($atts, $content = null) {
     extract(shortcode_atts(array(
         "href" => 'http://'
     ) , $atts));
-    return '<a class="lhb" href="' . $href . '" target="_blank" rel="nofollow">' . $content . '</a>';
+    return '<a class="cm-btn success" href="' . $href . '" target="_blank" rel="nofollow">' . $content . '</a>';
 }
 add_shortcode('lhb', 'gdk_tom');
 //添加视频按钮
@@ -254,7 +250,7 @@ function gdk_insert_posts($atts, $content = null) {
         $content.= '</a><p class="note">';
         $content.= get_the_excerpt();
         $content.= '</p></div><div class="frr"><a target="_blank" href="' . get_permalink() . '"><img src=';
-        $content.= link_the_thumbnail_src();
+        $content.= gdk_thumbnail_src();
         $content.= ' class="neilian-thumb"></a></div></div>';
     }
     wp_reset_postdata();
@@ -418,23 +414,45 @@ function gdk_shortcode_list() {
         '透明按钮'=>'[lhb href=] [/lhb]',
         '视频按钮'=>'[video play=0] [/video]',
         '音频按钮'=>'[audio play=0] [/audio]',
-        '绿色通知'=>'[v_notice] [/v_notice]',
-        '红色警告'=>'[v_error] [/v_error]',
-        '黄色错误'=>'[v_warn] [/v_warn]',
-        '灰色提示'=>'[v_tips] [/v_tips]',
-        '蓝边提示'=>'[v_act] [/v_act]',
-        '隐藏收缩'=>'[collapse title=\'\'] [/collapse]',
-        '回复可见'=>'[reply] [/reply]',
-        '登陆可见'=>'[vip] [/vip]',
-        '密码可见'=>'[secret wx=0] [/secret]',
+        '绿色通知'=>'[v_notice]
+
+[/v_notice]',
+        '红色警告'=>'[v_error]
+
+[/v_error]',
+        '黄色错误'=>'[v_warn]
+
+[/v_warn]',
+        '蓝色提示'=>'[v_blue]
+
+[/v_blue]',
+        '默认提示'=>'[v_tips]
+
+[/v_tips]',
+        '隐藏收缩'=>'[collapse title=\'\']
+
+[/collapse]',
+        '回复可见'=>'[reply]
+
+[/reply]',
+        '登陆可见'=>'[vip]
+
+[/vip]',
+        '微信验证码可见'=>'[wxcaptcha]
+
+[/wxcaptcha]',
         '积分购买可见'=>'[pay point=\'10\']这里是需要付费的内容[/pay]',
         '游客付费可见'=>'[pax money=1]',
         '弹窗下载'=>'[fanctdl filename=\'这里填写文件名\' filepass=\'这里填写文件密码什么的\' href=\'这里填写的主下载链接\' filedown=\'这里填写的是文件的主下载名称\']这里填写的文件的辅助下载链接，可写多个,空格间隔[/fanctdl]',
         '面板下载'=>'[dltable file=\'在此处写下文件名称\' pass=\'在这里写下文件密码\']这里填写的文件的辅助下载链接，可写多个,空格间隔[/dltable]',
         '单页下载'=>'[pdownload title=]',
         '文章内链'=>'[neilian ids=]',
-        '无序列表'=>'[list] [/list]',
-        '表格简码'=>'[table] [/table]'
+        '无序列表'=>'[list]
+
+[/list]',
+        '表格简码'=>'[table]
+
+[/table]'
     ];
     $output = '';
     foreach ($wpshortcodes as $name => $alt) {

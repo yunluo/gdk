@@ -238,8 +238,6 @@ class WeChat
 
 
 
-
-define("TOKEN", 'wxcaptcha');  //TOKEN值
 define("WX_WELCOME", '欢迎关注极客公园');  //欢迎词
 define("POSTNUM", '5');  //文章数量
 define("DEFAULT_THUMB", '');//封面
@@ -255,9 +253,10 @@ add_action('pre_get_posts', 'wm_preprocess', 4);
 function wm_preprocess($wp_query)
 {
     global $object;
+	$wx_token = trim(gdk_option('gdk_wxmp_token'));
     if (!isset($object)) {
         //创建一个WeChat类的实例, 回调函数名称为"onMessage",即消息处理函数
-        $object = new WeChat(TOKEN, "onMessage");
+        $object = new WeChat($wx_token, "onMessage");
         $object->process();  //处理消息
         return;
     }
