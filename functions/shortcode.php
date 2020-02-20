@@ -314,7 +314,7 @@ function gdk_table_shortcode_handler( $atts, $content='' ) {
     }
     $output .= '</tbody>';
     $width = ' width="'.$width.'"';
-    $output = '<table class="gdk-table"'.$width.' >'.$output.'</table>';
+    $output = '<table class="gdk-table"'.$width.' >'.$output.'</table>\n';
 
     return $output;
 }
