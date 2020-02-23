@@ -4,9 +4,9 @@
 /**
  * 获取摘要
  */
-function gdk_print_excerpt($length, $post = null, $echo = true, $more = '...')
-{
-    $text = get_the_excerpt($post);//自带的摘要
+function gdk_print_excerpt($length, $post = null, $echo = true, $more = '...') {
+    global $post;
+    $text = $post->post_excerpt;
 
     if ('' == $text) {
         $text = get_the_content();//获取文字
@@ -20,7 +20,7 @@ function gdk_print_excerpt($length, $post = null, $echo = true, $more = '...')
 	$excerpt = wp_trim_words( $text, $length, $more );
 
     if ($excerpt) {
-        $result = $excerpt;
+        $result = apply_filters( 'the_excerpt', $excerpt );
     }
     if ($echo == true) {
         echo $result;
@@ -1218,4 +1218,12 @@ function gdk_tag_dropdown(){
         $gdk_option_tags[$gdk_tag->term_id] = $gdk_tag->name;
     }
     return $gdk_option_tag;
+}
+
+function base64EncodeImage ($image_file) {
+    $base64_image = '';
+    $image_info = getimagesize($image_file);
+    $image_data = file_get_contents($image_file);
+    $base64_image = 'data:' . $image_info['mime'] . ';base64,' . base64_encode($image_data);
+    return $base64_image;
 }
