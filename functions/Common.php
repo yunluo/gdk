@@ -213,7 +213,7 @@ function gdk_is_mobile() {
 
 //判断是否是登陆页面
 function is_login() {
-    return in_array($GLOBALS['pagenow'], array('wp-login.php', 'wp-register.php'));
+    return in_array($GLOBALS['pagenow'], ['wp-login.php', 'wp-register.php']);
 }
 
 //判断字符串内是否有指定字符串
