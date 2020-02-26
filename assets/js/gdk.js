@@ -541,6 +541,24 @@ jQuery(function ($) { /**声明加载jQuery */
 	});
 
 
+/**
+ * 积分可见
+ */
+	$("#pay_points").click(function () {
+		var ajax_data = {
+			action: $("#pay_points").data("action"),
+			userid : $("#pay_points").data("userid"),
+			id : $("#pay_points").data("id"),
+			point : $("#pay_points").data("point")
+
+		};
+		$.post(ajax.url, ajax_data, function (b) {
+			b = $.trim(b);
+			if ('' !== b) {
+				show_hide_content('#hide_notice', b);
+			}
+		});
+	});
 
 
 

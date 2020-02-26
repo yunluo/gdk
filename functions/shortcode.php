@@ -202,7 +202,9 @@ add_shortcode('vip', 'gdk_login_to_read');
 function gdk_secret_view($atts, $content = null) {
     $pid = get_the_ID();
     add_post_meta($pid, '_pass_content', $content, true) or update_post_meta($pid, '_pass_content', $content);
-    if ( current_user_can( 'administrator' ) || gdk_is_weixin()) { return $content; }//admin show
+    if ( current_user_can( 'administrator' ) ) { 
+        return '<fieldset class="fieldset"><legend class="legend">隐藏内容</legend><p>' . $content . '</p></fieldset>'; 
+    }//admin show
         return '<div class="cm-grid cm-card pass_viewbox">
    <div class="cm-row">
       <div class="cm-col-md-4">

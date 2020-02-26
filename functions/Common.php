@@ -5,6 +5,7 @@
  * 获取摘要
  */
 function gdk_print_excerpt($length, $post = null, $echo = true, $more = '...') {
+
     global $post;
     $text = $post->post_excerpt;
 
@@ -144,7 +145,7 @@ function nc_like_init($key, $direct = false)
     if ($action == 'do') {
         $expire = time() + 99999999;
         if (!isset($_COOKIE[$key.'_'.$id]) || $direct) {
-            setcookie($key.'_'.$id, $id, $expire, '/', $domain, false);
+            gdk_set_cookie($key.'_'.$id, $id, $expire);
             if (!$lh_raters || !is_numeric($lh_raters)) {
                 update_post_meta($id, $key, 1);
             } else {
@@ -155,7 +156,7 @@ function nc_like_init($key, $direct = false)
     if ($action == 'undo' && !$direct) {
         $expire = time() - 1;
         if (isset($_COOKIE[$key.'_'.$id])) {
-            setcookie($key.'_'.$id, $id, $expire, '/', $domain, false);
+            gdk_set_cookie($key.'_'.$id, $id, $expire);
             update_post_meta($id, $key, ($lh_raters - 1));
         }
     }
@@ -997,7 +998,7 @@ function buy_points(){
                 </p>
             </form>';
     }else{// no login
-        $result = '<div class=\'cm-alert error\'>本页面需要您登录才可以操作，请先 <a target="_blank" href="'.esc_url( wp_login_url( get_permalink() ) ).'">点击登录</a>  或者<a href="'.esc_url( wp_registration_url() ).'">立即注册</a></div>';
+        $result = '<div class=\'cm-alert error\'>本页面需要您登录才可以操作，请先 '.weixin_login_btn().'  或者<a href="'.esc_url( wp_registration_url() ).'">立即注册</a></div>';
     }
     return $result;
 }
@@ -1059,7 +1060,7 @@ function weixin_login_btn(){
             $result .= '<script>window.localStorage.setItem(\'ls-bind\',1);</script>';
         }
     }
-	$result .= '<p>您已登陆</p><p>您的ID是:'.$user_id.'</p><p>您的昵称是:'.$user->nickname.'</p>';
+	//$result .= '<p>您已登陆</p><p>您的ID是:'.$user_id.'</p><p>您的昵称是:'.$user->nickname.'</p>';
     }
     return $result;
 }
@@ -1129,13 +1130,6 @@ function editorial_hover_color( $hex, $steps ) {
 
 /**
  * Get minified css and removed space
- *
- * @since 1.2.5
- */
-/**
- * Minify CSS
- *
- * @since 1.0.0
  */
 function pwd_minify_css( $css ) {
 
@@ -1220,7 +1214,8 @@ function gdk_tag_dropdown(){
     return $gdk_option_tag;
 }
 
-function base64EncodeImage ($image_file) {
+//转化图片为base64格式
+function base64img ($image_file) {
     $base64_image = '';
     $image_info = getimagesize($image_file);
     $image_data = file_get_contents($image_file);

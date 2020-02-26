@@ -63,50 +63,37 @@ class GDK_Points_Shortcodes {
 public static function pay($atts, $content = null) {
     global $wpdb;
     $user_id = get_current_user_id();
-    $description = get_the_ID();
-    $result = $wpdb->get_row("SELECT description FROM " . GDK_Points_Database::points_get_table("users") . " WHERE user_id=" . $user_id . " AND description=" . $description . " AND status='accepted' LIMIT 0, 3;", ARRAY_A )['description']; //验证是否支付
+    $pid = get_the_ID();
+    $result = $wpdb->get_row("SELECT description FROM " . GDK_Points_Database::points_get_table("users") . " WHERE user_id=" . $user_id . " AND description=" . $pid . " AND status='accepted' LIMIT 0, 3;", ARRAY_A )['description']; //验证是否支付
     extract(shortcode_atts(['point' => "10"], $atts));
     $notice = '';
-    $pay_content = get_post_meta($description, 'pay_content', true);
-    if (!empty($pay_content) && $pay_content != $content) {
-        update_post_meta($description, 'pay_content', $content, true);
-    } else {
-        add_post_meta($description, 'pay_content', $content, true);
-    }
+	add_post_meta($pid, '_point_content', $content, true) or update_post_meta($pid, '_point_content', $content);//没有新建,有就更新
     if (is_user_logged_in()) {
-        if ($result == $description || current_user_can('administrator')) {
-            $notice.= '<div class="alert alert-info"">';
+        if ($result == $pid || current_user_can('administrator')) {
+            $notice.= '<div class="cm-alert success">';
             $notice.= $content;
-            $notice.= '</div>';
+			$notice.= '</div>';
         } else {
             if (GDK_Points::get_user_total_points($user_id, 'accepted') < $point) {
-                $notice.= '<div class="alert alert-info"">';
-                $notice.= '<p style="color:red;">本段内容需要支付 ' . $point . '金币查看</p>';
-                $notice.= '<p style="color:red;">您当前拥有 <em><strong>' . GDK_Points::get_user_total_points($user_id, 'accepted') . '</strong></em> 金币，您的金币不足，请充值</p>';
-                $notice.= '<p><a class="lhb" href="' . get_permalink(gdk_page_id('chongzhi')) . '" target="_blank" rel="nofollow" data-original-title="立即充值" title="">立即充值</a></p>';
-                $notice.= '</div>';
+                $notice.= '<fieldset id="hide_notice" class="fieldset"><legend class="legend">付费内容</legend>';
+                $notice.= '<p>当前隐藏内容需要支付</p><span class="cm-coin">'.$point.'金币</span>';
+                $notice.= '<p>您当前拥有<span class="red">'.GDK_Points::get_user_total_points($user_id, 'accepted').'</span>金币，金币不足，请充值</p>';
+                $notice.= buy_points();
+                $notice.= '</fieldset>';
             } else {
-                $notice.= '<div id="pay_notice" class="alert alert-info"">';
-                $notice.= '<p style="color:red;">本段内容需要付费查看，您当前拥有 <em><strong>' . GDK_Points::get_user_total_points($user_id, 'accepted') . '</strong></em> 金币</p>';
-                $notice.= '<p><a class="lhb" style="cursor: pointer;" onclick="pay_point();">点击购买</a></p>';
-                $notice.= '</div>';
-                $notice.= '<p id="pay_success"></p>';
-                echo '<script type="text/javascript">
-function pay_point() {
-    ajax.post("' . admin_url('admin-ajax.php') . '", "action=gdk_pay_buy&point=' . $point . '&userid=' . $user_id . '&id=' . $description . '", function(n) {
-        null != n && (document.getElementById("pay_notice").style.display = "none", document.getElementById("pay_success").innerHTML = "<div class=\"alert alert-info\">" + n + "</div>");
-    });
-}</script>';
+                $notice.= '<fieldset id="hide_notice" class="fieldset"><legend class="legend">付费内容</legend>';
+                $notice.= '<p>当前隐藏内容需要支付</p><span class="cm-coin">'.$point.'金币</span>';
+                $notice.= '<p>您当前拥有<span class="red">'.GDK_Points::get_user_total_points($user_id, 'accepted').'</span>金币</p>';
+                $notice.= '<p><button class="cm-btn primary" id="pay_points" data-point="'.$point.'" data-userid="'.$user_id.'" data-action="gdk_pay_buy" data-id="'.$pid.'">点击购买</button></p>';
+				$notice.= '</fieldset>';
             }
         }
     } else {
-        global $wp;
-        $current_url = home_url(add_query_arg([] , $wp->request));
-        $login_uri = '<a href="' . esc_url(wp_login_url($current_url)) . '" data-original-title="点击登录">点击登录</a>';
-        $notice.= '<div class="alert alert-info"">';
-        $notice.= '<p style="color:red;">查看本段内容需要支付 ' . $point . ' 金币</p>';
-        $notice.= '<p style="color:red;">您尚未登录，请 ' . $login_uri . '  或者 <a href="' . esc_url(wp_registration_url()) . '">立即注册</a> </p>';
-        $notice.= '</div>';
+		$notice.= '<fieldset id="hide_notice" class="fieldset"><legend class="legend">付费内容</legend>';
+		$notice.= '<p>当前隐藏内容需要支付</p><span class="cm-coin">'.$point.'金币</span>';
+		$notice.= '<p>您当前尚未登陆,请登陆后查看</p>';
+		$notice.= weixin_login_btn();
+		$notice.= '</fieldset>';
     }
     return $notice;
 }
