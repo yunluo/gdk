@@ -121,7 +121,7 @@ function pay_view() {
     if( !isset( $_POST['action'] ) || $_POST['action'] !== 'pay_view' ) exit('400');
     if (!isset($_POST['money']) || !isset($_POST['way'])) exit('400');//无脑输出400错误
 	if (isset($_POST['id'])) {
-        payjs_action('在线付费查看',$_POST['id']);//标题,文章id
+        payjs_action('在线付费查看','PP'.$_POST['id']);//标题,文章id
 	}
 }
 add_action( 'wp_ajax_pay_view', 'pay_view' );
@@ -187,7 +187,7 @@ function check_pay_view() {
 	if (!isset($_POST['id']) || !isset($_POST['orderid'])) exit('400');//无脑输出400错误
 	if ( $_POST['action'] == 'check_pay_view') {
 		$sid = get_transient('PP'.$_POST['id']);
-		if(in_string($sid,'E20') && $orderid == $sid) {
+		if(in_string($sid,'E20') && $_POST['orderid'] == $sid) {
 			exit('200');//OK
 		} else {
 			exit('400');//no

@@ -915,7 +915,7 @@ function gdk_get_link_items() {
  * 订单备注
  * $_POST['money'] = 提交的金额,$_POST['way'] = 支付方式,支付宝为alipay,不设置默认微信,
  */
-function payjs_action($body,$attach){
+function payjs_action($body,$attach,$money){
 	$config = [
 	    'mchid' => gdk_option('gdk_payjs_id'),   // 配置商户号
 	    'key'   => gdk_option('gdk_payjs_key'),   // 配置通信密钥
@@ -926,11 +926,11 @@ function payjs_action($body,$attach){
 	    'body' => $body,   // 订单标题
 	    'attach' => $attach,   // 订单备注
 	    'out_trade_no' => gdk_order_id(),// 订单号
-	    'total_fee' => intval($_POST['money'])*100,// 金额,单位:分
+	    'total_fee' => intval($money)*100,// 金额,单位:分
 	    'notify_url' => GDK_BASE_URL.'/public/notify.php',//异步通知文件
 	    'hide' => '1'
 	];
-	$result['money'] = intval($_POST['money']);//RMB金额
+	$result['money'] = intval($money);//RMB金额
 	$result['trade_no'] = $data['out_trade_no'];
 	if( $_POST['way'] == 'alipay' ) {
 		$data['type'] = 'alipay';

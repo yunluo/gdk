@@ -193,10 +193,10 @@ jQuery(function ($) { /**声明加载jQuery */
 					closeOnClickOutside: false,
 					button: "" + f[2] + "支付已完成",
 				}).then(() => {
-					if (f[4]) {
-						check_pay_points(c, f[1]); /**用户id,订单号,积分充值检测 */
-					} else {
+					if (f[4] == '1') {
 						check_pay_view(c, f[1]); /**文章id,订单号,付费可见检测 */
+					} else {
+						check_pay_points(c, f[1]); /**用户id,订单号,积分充值检测 */
 					}
 				});
 				new QRious({
