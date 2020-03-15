@@ -3,59 +3,74 @@
  * Git 插件后台选项
  */
 
- if ( ! defined( 'WPINC' ) ) {
-	 die;
- }
+if (!defined('WPINC')) {
+    die;
+}
 
-$current_theme = wp_get_theme();
+$current_theme       = wp_get_theme();
 $gdk_default_options = [];
-$gdk_options = array();
-include('options-config.php');
+$gdk_options         = array();
+include 'options-config.php';
 $gdk_current_options = get_option('gdk_options_setup');
 
-function gdk_update_options() {
-	global $gdk_default_options, $gdk_options, $gdk_current_options;
-	foreach ($gdk_options as $panel) {
-		foreach ($panel as $option) {
-			$id = $option['id'] ?? '';
-			$type = $option['type'] ?? '';
-			$std = $option['std'] ?? '';
-			if ( !$id ) continue;
-			$gdk_default_options[$id] = $std;
-			if ( isset($gdk_current_options[$id]) ) continue;
-			$gdk_current_options[$id] = $std;
-		}
-	}
+function gdk_update_options()
+{
+    global $gdk_default_options, $gdk_options, $gdk_current_options;
+    foreach ($gdk_options as $panel) {
+        foreach ($panel as $option) {
+            $id   = $option['id'] ?? '';
+            $type = $option['type'] ?? '';
+            $std  = $option['std'] ?? '';
+            if (!$id) {
+                continue;
+            }
+
+            $gdk_default_options[$id] = $std;
+            if (isset($gdk_current_options[$id])) {
+                continue;
+            }
+
+            $gdk_current_options[$id] = $std;
+        }
+    }
 }
 gdk_update_options();
 
 //获取设置选项
-function gdk_option($id, $returnDefault = false) {
-	global $gdk_default_options, $gdk_current_options;
-	return stripslashes( $returnDefault ? $gdk_default_options[$id] : $gdk_current_options[$id] );
+function gdk_option($id, $returnDefault = false)
+{
+    global $gdk_default_options, $gdk_current_options;
+    return stripslashes($returnDefault ? $gdk_default_options[$id] : $gdk_current_options[$id]);
 }
 
 //设置页面模板
-function gdk_options_page() {
-	global $gdk_options;
-?>
+function gdk_options_page()
+{
+    global $gdk_options;
+    ?>
 
 <div class="wrap">
 	<h2>GDK选项</h2>
 	<hr/>
 <?php
-	if (isset($_GET['update'])) echo '<div class="updated"><p><strong>设置已保存。</strong></p></div>';
-	if (isset($_GET['reset'])) echo '<div class="updated"><p><strong>设置已重置。</strong></p></div>';
-?>
+if (isset($_GET['update'])) {
+        echo '<div class="updated"><p><strong>设置已保存。</strong></p></div>';
+    }
+
+    if (isset($_GET['reset'])) {
+        echo '<div class="updated"><p><strong>设置已重置。</strong></p></div>';
+    }
+
+    ?>
 
 	<div class="wp-filter">
 		<ul class="filter-links">
 <?php
 $activePanelIdx = empty($_GET['panel']) ? 0 : $_GET['panel'];
-foreach ( array_keys($gdk_options) as $i => $name ) {
-	echo '<li><a href="#panel_' . $i . '" data-panel="' . $i . '" ' . ( $i == $activePanelIdx ? 'class="current"' : '' ) . '>' . $name . '</a></li>';
-}
-?>
+    foreach (array_keys($gdk_options) as $i => $name) {
+        echo '<li><a href="#panel_' . $i . '" data-panel="' . $i . '" ' . ($i == $activePanelIdx ? 'class="current"' : '') . '>' . $name . '</a></li>';
+    }
+    ?>
 			<li><a href="#panel_data" data-panel="data">数据清理</a></li>
 			<li><a href="#panel_about" data-panel="about">关于插件</a></li>
 		</ul>
@@ -65,104 +80,110 @@ foreach ( array_keys($gdk_options) as $i => $name ) {
 <form method="post">
 <?php
 $index = 0;
-foreach ( $gdk_options as $panel ) {
-	echo '<div class="panel gdk_option" id="panel_' . $index . '" ' . ( $index == $activePanelIdx ? ' style="display:block"' : '' ) . '><table class="form-table">';
-	foreach ( $panel as $option ) {
-		$type = $option['type'];
-		if ( $type == 'title' ) {
-?>
+    foreach ($gdk_options as $panel) {
+        echo '<div class="panel gdk_option" id="panel_' . $index . '" ' . ($index == $activePanelIdx ? ' style="display:block"' : '') . '><table class="form-table">';
+        foreach ($panel as $option) {
+            $type = $option['type'];
+            if ($type == 'title') {
+                ?>
 <tr class="title">
 	<th colspan="2">
 		<h3><?php echo $option['title']; ?></h3>
-		<?php if ( isset( $option['desc'] ) ) echo '<p>' . $option['desc'] . '</p>'; ?>
+		<?php if (isset($option['desc'])) {
+                    echo '<p>' . $option['desc'] . '</p>';
+                }
+                ?>
 	</th>
 </tr>
 <?php
-			continue;
-		}
-		$id = $option['id'];
-?>
+continue;
+            }
+            $id = $option['id'];
+            ?>
 <tr id="row-<?php echo $id; ?>">
 	<th><label for="<?php echo $id; ?>"><?php echo $option['name']; ?></label></th>
 	<td>
 <?php
-switch ( $type ) {
-	case 'text':
-?>
+switch ($type) {
+                case 'text':
+                    ?>
 		<label>
-		<input name="<?php echo $id; ?>" class="regular-text" id="<?php echo $id; ?>" type="text" value="<?php echo esc_attr(gdk_option( $id )) ?>" />
+		<input name="<?php echo $id; ?>" class="regular-text" id="<?php echo $id; ?>" type="text" value="<?php echo esc_attr(gdk_option($id)) ?>" />
 		</label>
 		<p class="description"><?php echo $option['desc']; ?></p>
 <?php
-	break;
-	case 'number':
-?>
+break;
+                case 'number':
+                    ?>
 		<label>
-		<input name="<?php echo $id; ?>" class="small-text" id="<?php echo $id; ?>" type="number" value="<?php echo esc_attr(gdk_option( $id )) ?>" />
+		<input name="<?php echo $id; ?>" class="small-text" id="<?php echo $id; ?>" type="number" value="<?php echo esc_attr(gdk_option($id)) ?>" />
 		<span class="description"><?php echo $option['desc']; ?></span>
 		</label>
 <?php
-	break;
-	case 'textarea':
-?>
+break;
+                case 'textarea':
+                    ?>
 		<p><label for="<?php echo $id; ?>"><?php echo $option['desc']; ?></label></p>
-		<p><textarea name="<?php echo $id; ?>" id="<?php echo $id; ?>" rows="10" cols="50" class="large-text code"><?php echo esc_textarea(gdk_option( $id )) ?></textarea></p>
+		<p><textarea name="<?php echo $id; ?>" id="<?php echo $id; ?>" rows="10" cols="50" class="large-text code"><?php echo esc_textarea(gdk_option($id)) ?></textarea></p>
 <?php
-	break;
-	case 'radio':
-?>
+break;
+                case 'radio':
+                    ?>
 		<fieldset>
-		<?php foreach ($option['options'] as $val => $name) : ?>
+		<?php foreach ($option['options'] as $val => $name): ?>
 		<label>
-			<input type="radio" name="<?php echo $id; ?>" id="<?php echo $id . '_' . $val; ?>" value="<?php echo $val; ?>" <?php checked( gdk_option( $id ), $val); ?>>
+			<input type="radio" name="<?php echo $id; ?>" id="<?php echo $id . '_' . $val; ?>" value="<?php echo $val; ?>" <?php checked(gdk_option($id), $val); ?>>
 			<?php echo $name; ?>
 		</label>
 		<?php endforeach; ?>
 		</fieldset>
 		<p class="description"><?php echo $option['desc']; ?></p>
 <?php
-	break;
-	case 'checkbox':
-?>
+break;
+                case 'checkbox':
+                    ?>
 		<label>
 			<input type='checkbox' name="<?php echo $id; ?>" id="<?php echo $id; ?>" value="1" <?php echo checked(gdk_option($id)); ?> />
 			<span><?php echo $option['desc']; ?></span>
 		</label>
 <?php
-	break;
-	case 'checkboxs':
-?>
+break;
+                case 'checkboxs':
+                    ?>
 		<fieldset>
-		<?php $checkboxValues = gdk_option( $id );
-		if ( !is_array($checkboxValues) ) $checkboxValues = [];
-		foreach ( $option['options'] as $id => $name ) : ?>
+		<?php $checkboxValues = gdk_option($id);
+                    if (!is_array($checkboxValues)) {
+                        $checkboxValues = [];
+                    }
+
+                    foreach ($option['options'] as $id => $name): ?>
 		<label>
-			<input type="checkbox" name="<?php echo $id; ?>[]" id="<?php echo $id; ?>[]" value="<?php echo $id; ?>" <?php checked( in_array($id, $checkboxValues), true); ?>>
+			<input type="checkbox" name="<?php echo $id; ?>[]" id="<?php echo $id; ?>[]" value="<?php echo $id; ?>" <?php checked(in_array($id, $checkboxValues), true); ?>>
 			<?php echo $name; ?>
 		</label>
 		<?php endforeach; ?>
 		</fieldset>
 		<p class="description"><?php echo $option['desc']; ?></p>
 <?php
-	break;
-	default:
-?>
+break;
+                default:
+                    ?>
 		<label>
-		<input name="<?php echo $id; ?>" class="regular-text" id="<?php echo $id; ?>" type="<?php echo $type; ?>" value="<?php echo esc_attr(gdk_option( $id )) ?>" />
+		<input name="<?php echo $id; ?>" class="regular-text" id="<?php echo $id; ?>" type="<?php echo $type; ?>" value="<?php echo esc_attr(gdk_option($id)) ?>" />
 		</label>
 		<p class="description"><?php echo $option['desc']; ?></p>
 <?php
-	break;
-}
-	echo '</td></tr>';
-	}
-		echo '</table></div>';
-		$index++;
-}
-?>
+break;
+            }
+            echo '</td></tr>';
+        }
+        echo '</table></div>';
+        $index++;
+    }
+    ?>
 	<div class="panel" id="panel_data">
 	<table class="form-table">
-	<?php echo gdk_clean_up_page();?>
+	<?php echo gdk_clean_up_page(); ?>
 	</table>
 	</div>
 	<div class="panel" id="panel_about">
@@ -360,27 +381,26 @@ jQuery(function ($) {
 <?php
 }
 
-
-
-function gdk_add_options_page() {
-	global $gdk_options;
-	if ( isset($_POST['action']) && isset($_GET['page']) && $_GET['page'] == 'gdk-options' ) {
-		$action = $_POST['action'];
-		switch ( $action ) {
-			case 'update':
-				$_POST['uid'] = uniqid();
-				update_option('gdk_options_setup', $_POST);
-				gdk_update_options();
-				header('Location: admin.php?page=gdk-options&update=true&panel=' . $_POST['panel']);
-				break;
-			case 'reset':
-				delete_option('gdk_options_setup');
-				gdk_update_options();
-				header('Location: admin.php?page=gdk-options&reset=true&panel=' . $_POST['panel']);
-				break;
-		}
-		exit;
-	}
-	add_menu_page( 'GDK选项', 'GDK选项', 'manage_options', 'gdk-options', 'gdk_options_page','dashicons-buddicons-replies' );
+function gdk_add_options_page()
+{
+    global $gdk_options;
+    if (isset($_POST['action']) && isset($_GET['page']) && $_GET['page'] == 'gdk-options') {
+        $action = $_POST['action'];
+        switch ($action) {
+            case 'update':
+                $_POST['uid'] = uniqid();
+                update_option('gdk_options_setup', $_POST);
+                gdk_update_options();
+                header('Location: admin.php?page=gdk-options&update=true&panel=' . $_POST['panel']);
+                break;
+            case 'reset':
+                delete_option('gdk_options_setup');
+                gdk_update_options();
+                header('Location: admin.php?page=gdk-options&reset=true&panel=' . $_POST['panel']);
+                break;
+        }
+        exit;
+    }
+    add_menu_page('GDK选项', 'GDK选项', 'manage_options', 'gdk-options', 'gdk_options_page', 'dashicons-buddicons-replies');
 }
-add_action( 'admin_menu', 'gdk_add_options_page' );
+add_action('admin_menu', 'gdk_add_options_page');

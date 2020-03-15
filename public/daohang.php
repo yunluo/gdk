@@ -3,40 +3,41 @@
  * SiteMap HTML 版
  */
 
-function gdk_daohang_html_api_handlers( $template ){
-    $hook = explode('-', get_query_var( 'daohang' ) );
-    if( isset( $hook[0] ) && $hook[0] === 'gdkk' ){
+function gdk_daohang_html_api_handlers($template)
+{
+    $hook = explode('-', get_query_var('daohang'));
+    if (isset($hook[0]) && $hook[0] === 'gdkk') {
 
-        if( isset( $hook[1] ) ){
+        if (isset($hook[1])) {
             status_header(404);
             header('HTTP/1.0 404 Not Found');
             $GLOBALS['wp_query']->set_404();
-            include( get_query_template( '404' ) );
+            include get_query_template('404');
             exit;
         }
         $daohang = get_transient('gdk-daohang-html');
 
-        if( false === $daohang || empty( $daohang ) ){
+        if (false === $daohang || empty($daohang)) {
             $daohang = gdk_create_html_daohang();
-            set_transient( 'gdk-daohang-html', $daohang );
+            set_transient('gdk-daohang-html', $daohang);
         }
         $daohang;
         return;
     }
 
-	return $template;
+    return $template;
 }
 
+add_filter('template_include', 'gdk_daohang_html_api_handlers', 99);
 
-add_filter( 'template_include', 'gdk_daohang_html_api_handlers', 99 );
-
-function gdk_create_html_daohang() {
+function gdk_create_html_daohang()
+{
     ?>
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>网址导航 - <?php echo get_bloginfo('name');?></title>
+    <title>网址导航 - <?php echo get_bloginfo('name'); ?></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta http-equiv="X-UA-COMPATIBLE" content="IE=edge">
     <style type="text/css">
@@ -46,7 +47,7 @@ function gdk_create_html_daohang() {
 </head>
 <body>
     <header class="mobile-header-wrap">
-        <a class="mobile-logo" href="/"><img src="<?php echo GDK_BASE_URL?>assets/img/logo.png" alt="logo"></a>
+        <a class="mobile-logo" href="/"><img src="<?php echo GDK_BASE_URL ?>assets/img/logo.png" alt="logo"></a>
     </header>
     <div class="btn-mobile-sidenav">
         <div class="nav-bar">
@@ -58,26 +59,26 @@ function gdk_create_html_daohang() {
     <!-- sidenav -->
     <div class="sidenav">
         <a class="logo" href="">
-            <img src="<?php echo GDK_BASE_URL;?>assets/img/logo.png" alt="logo">
+            <img src="<?php echo GDK_BASE_URL; ?>assets/img/logo.png" alt="logo">
         </a>
         <div class="site-description">
-            <?php echo get_bloginfo( 'description', 'display' );?>
+            <?php echo get_bloginfo('description', 'display'); ?>
         </div>
 
         <!-- tool -->
         <?php
-            $linkcats1 = get_terms('link_category', 'orderby=count&hide_empty=1&exclude=7');
-            echo '<ul class="nav-tags">';
-                foreach ($linkcats1 as $linkcat) {
-                    echo '<li><a href="#' . $linkcat->term_id . '">' . $linkcat->name . '</a></li>';
-                }
-                echo '</ul>';
-                echo '<a class="copyright" href="/">&#169; '.get_bloginfo('name').'</a>
+$linkcats1 = get_terms('link_category', 'orderby=count&hide_empty=1&exclude=7');
+    echo '<ul class="nav-tags">';
+    foreach ($linkcats1 as $linkcat) {
+        echo '<li><a href="#' . $linkcat->term_id . '">' . $linkcat->name . '</a></li>';
+    }
+    echo '</ul>';
+    echo '<a class="copyright" href="/">&#169; ' . get_bloginfo('name') . '</a>
                 </div>
                 <div class="main-wrap">
                     <div class="main">';
-                    echo  gdk_get_link_items();
-        ?>
+    echo gdk_get_link_items();
+    ?>
             <div class="footer-at row">
                 <div class="xs-12 sm-12 md-6" style="margin-bottom: 10px;">
                     <a target="_blank" href="#">
@@ -92,7 +93,7 @@ function gdk_create_html_daohang() {
             </div>
             <footer class="footer">
                 <div class="footer-top-border"></div>
-                Copyright &#169; 2016-2022 网址导航 - <?php echo get_bloginfo('name');?>
+                Copyright &#169; 2016-2022 网址导航 - <?php echo get_bloginfo('name'); ?>
                 <span class="footer-link">
                     <a href="about">关于小狮子</a>
                 </span>

@@ -13,13 +13,13 @@ error_reporting(0);
 class WeChat
 {
 
-    private $token = "";  //TOKEN值
-    private $callback_function = NULL; //回调函数名称
-    private $articles = array(); //图文信息array
+    private $__token             = ""; //TOKEN值
+    private $__callback_function = null; //回调函数名称
+    private $__articles          = array(); //图文信息array
 
-    public $debug = false;  //是否调试状态
-    public $fromUser = "";  //当前消息的发送者
-    public $toUser = "";    //当前消息的接收者
+    public $debug    = false; //是否调试状态
+    public $fromUser = ""; //当前消息的发送者
+    public $toUser   = ""; //当前消息的接收者
 
     /**
      * 构造函数
@@ -27,9 +27,9 @@ class WeChat
      * @param string $token 设置在公共平台的TOKEN值
      * @param callable $callback_function_name 回调函数名称
      */
-    function __construct($token, $callback_function_name)
+    public function __construct($token, $callback_function_name)
     {
-        $this->token = $token;
+        $this->token             = $token;
         $this->callback_function = $callback_function_name;
     }
 
@@ -38,11 +38,11 @@ class WeChat
      *
      * @return boolean 正确返回true,否则返回false
      */
-    private function checkSignature()
+    private function __checkSignature()
     {
         $signature = $_GET["signature"];
         $timestamp = $_GET["timestamp"];
-        $nonce = $_GET["nonce"];
+        $nonce     = $_GET["nonce"];
 
         $token = $this->token;
 
@@ -51,17 +51,18 @@ class WeChat
         $tmpStr = implode($tmpArr);
         $tmpStr = sha1($tmpStr);
 
-
-        if ($tmpStr == $signature)
+        if ($tmpStr == $signature) {
             return true;
-        else
+        } else {
             return false;
+        }
+
     }
 
     /**
      * 验证签名是否有效
      */
-    protected function valid()
+    protected function _valid()
     {
         $echoStr = $_GET["echostr"];
         //valid signature , option
@@ -81,7 +82,7 @@ class WeChat
         //如果是验证请求,则执行签名验证并退出
         if (!empty($_GET["echostr"])) {
             $this->valid(); //验证签名是否有效
-            return;            //返回退出
+            return; //返回退出
         }
 
         if ($_SERVER['REQUEST_METHOD'] != 'POST') {
@@ -96,14 +97,13 @@ class WeChat
         if (empty($postData)) {
             echo '';
             return;
-        }  //如果没有POST数据，则退出
-
+        } //如果没有POST数据，则退出
 
         //解析POST数据(XML格式)
-        $object = simplexml_load_string($postData, 'SimpleXMLElement', LIBXML_NOCDATA);
-        $messgeType = trim($object->MsgType);    //取得消息类型
+        $object         = simplexml_load_string($postData, 'SimpleXMLElement', LIBXML_NOCDATA);
+        $messgeType     = trim($object->MsgType); //取得消息类型
         $this->fromUser = "" . $object->FromUserName; //记录消息发送方(不是发送者的微信号，而是一个加密后的OpenID)
-        $this->toUser = "" . $object->ToUserName;     //记录消息接收方(就是公共平台的OpenID)
+        $this->toUser   = "" . $object->ToUserName; //记录消息接收方(就是公共平台的OpenID)
 
         //如果回调函数没有设置，则退出
         if (!is_callable($this->callback_function)) {
@@ -112,16 +112,16 @@ class WeChat
 
         //根据不同的消息类型，分别处理
         switch ($messgeType) {
-            case "text":   //文本消息
+            case "text": //文本消息
                 //调用回调函数
                 call_user_func($this->callback_function, $this, "text", $object->Content, "", "");
                 break;
-            case "event":  //事件
+            case "event": //事件
                 switch ($object->Event) {
-                    case "subscribe":   //订阅事件
+                    case "subscribe": //订阅事件
                         call_user_func($this->callback_function, $this, "subscribe", $object->FromUserName, "", "");
                         break;
-                    default :
+                    default:
                         //Unknow Event
                         break;
                 }
@@ -142,7 +142,7 @@ class WeChat
      *
      * @return string
      */
-    protected function textResponse($toUser, $fromUser, $content, $flag = 0)
+    protected function _textResponse($toUser, $fromUser, $content, $flag = 0)
     {
         $xmlTemplate = "<xml>
                     <ToUserName><![CDATA[%s]]></ToUserName>
@@ -158,7 +158,6 @@ class WeChat
         return $xmlText;
     }
 
-
     /**
      * 形成 图文消息响应值
      *
@@ -168,7 +167,7 @@ class WeChat
      *
      * @return string
      */
-    protected function newsResponse($toUser, $fromUser, $articles)
+    protected function _newsResponse($toUser, $fromUser, $articles)
     {
         $xmlTemplate = "<xml>
     			    <ToUserName><![CDATA[%s]]></ToUserName>
@@ -194,7 +193,6 @@ class WeChat
         return $xmlText;
     }
 
-
     /**
      * 发送文本内容
      *
@@ -204,7 +202,6 @@ class WeChat
     {
         echo $this->textResponse($this->fromUser, $this->toUser, $content);
     }
-
 
     /**
      * 添加一条图文信息
@@ -217,9 +214,9 @@ class WeChat
     public function addNews($title, $description, $url, $pictureUrl)
     {
         $article = array('Title' => $title,
-            'Description' => $description,
-            'PicUrl' => $pictureUrl,
-            'Url' => $url);
+            'Description'            => $description,
+            'PicUrl'                 => $pictureUrl,
+            'Url'                    => $url);
         $this->articles[] = $article;
     }
 
@@ -232,17 +229,11 @@ class WeChat
         echo $this->newsResponse($this->fromUser, $this->toUser, $this->articles);
     }
 
-
 }
 
-
-
-
-define("WX_WELCOME", '欢迎关注极客公园');  //欢迎词
-define("POSTNUM", '5');  //文章数量
-define("DEFAULT_THUMB", '');//封面
-
-
+define("WX_WELCOME", '欢迎关注极客公园'); //欢迎词
+define("POSTNUM", '5'); //文章数量
+define("DEFAULT_THUMB", ''); //封面
 
 add_action('pre_get_posts', 'wm_preprocess', 4);
 /**
@@ -253,11 +244,11 @@ add_action('pre_get_posts', 'wm_preprocess', 4);
 function wm_preprocess($wp_query)
 {
     global $object;
-	$wx_token = trim(gdk_option('gdk_wxmp_token'));
+    $wx_token = trim(gdk_option('gdk_wxmp_token'));
     if (!isset($object)) {
         //创建一个WeChat类的实例, 回调函数名称为"onMessage",即消息处理函数
         $object = new WeChat($wx_token, "onMessage");
-        $object->process();  //处理消息
+        $object->process(); //处理消息
         return;
     }
 }
@@ -276,7 +267,7 @@ function onMessage(WeChat $object, $messageType, $content, $arg1, $arg2)
 
     //处理subscribe消息
     switch ($messageType) {
-        case "subscribe":   //当用户关注
+        case "subscribe": //当用户关注
             $object->addNews(WX_WELCOME, "", "", "");
             $object->sendNews();
             break;
@@ -284,12 +275,12 @@ function onMessage(WeChat $object, $messageType, $content, $arg1, $arg2)
             $keyword = trim($content);
             switch ($keyword) {
                 case 'yzm':
-				case 'Yzm':
-				case 'yZm':
-				case 'yzM':
-				case 'YZM':
-				case '验证码':
-                    $object->sendText('您的验证码为：【'.wx_captcha().'】，验证码有效期为2分钟，请抓紧使用，过期需重新申请');
+                case 'Yzm':
+                case 'yZm':
+                case 'yzM':
+                case 'YZM':
+                case '验证码':
+                    $object->sendText('您的验证码为：【' . wx_captcha() . '】，验证码有效期为2分钟，请抓紧使用，过期需重新申请');
                     break;
                 case 'r':
                     send_post($object, 'r');
@@ -298,7 +289,7 @@ function onMessage(WeChat $object, $messageType, $content, $arg1, $arg2)
                 case "h":
                 case "?":
                 case "？":
-				case "？？？":
+                case "？？？":
                     $object->sendText(WX_WELCOME);
                     break;
                 default:
@@ -311,24 +302,21 @@ function onMessage(WeChat $object, $messageType, $content, $arg1, $arg2)
     }
 }
 
-
-
-
 //获取博客文章
 function wm_query_posts($q, $s = "")
 {
     global $wp_query;
-    $articles = [];
+    $articles   = [];
     $query_base = array(
         'ignore_sticky_posts' => true,
-        'posts_per_page' => POSTNUM,
-        'post_status' => 'publish',
+        'posts_per_page'      => POSTNUM,
+        'post_status'         => 'publish',
     );
     if (empty($s)) {
         switch ($q) {
             case "n":
                 $query_more = array(
-                    "order" => "DESC",
+                    "order"   => "DESC",
                     "orderby" => "date",
                 );
                 break;
@@ -352,8 +340,8 @@ function wm_query_posts($q, $s = "")
         while (have_posts()) {
             the_post();
             global $post;
-            $title = get_the_title();
-            $excerpt = gdk_print_excerpt(120,$post,false);
+            $title        = get_the_title();
+            $excerpt      = gdk_print_excerpt(120, $post, false);
             $thumbnail_id = get_post_thumbnail_id($post->ID);
             if ($thumbnail_id) {
                 $thumb = wp_get_attachment_image_src($thumbnail_id, 'full');
@@ -364,7 +352,7 @@ function wm_query_posts($q, $s = "")
             if (empty(DEFAULT_THUMB) && !empty(DEFAULT_THUMB)) {
                 $thumb = DEFAULT_THUMB;
             }
-            $link = get_permalink();
+            $link       = get_permalink();
             $articles[] = array($title, $excerpt, $link, $thumb);
         }
     }

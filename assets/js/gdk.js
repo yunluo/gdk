@@ -86,7 +86,7 @@ jQuery(function ($) { /**声明加载jQuery */
 	 * 已经密码可见的自动从浏览器读取内容
 	 * 并显示,这里加个延时处理
 	 */
-	 
+
 	(function () {
 		if ($("#submit_pass_view").length > 0) { /**如果网站有密码可见,就执行 */
 			setTimeout(function () {
@@ -414,7 +414,7 @@ jQuery(function ($) { /**声明加载jQuery */
 	 * @param {string} a 微信账号信息字符串,格式是:风起云落|1|zh_CN||海牙|荷兰|https://wx.qlogo.cn/m***A/132|o02B***jw|oq***HPA
 	 * @param {string} c email 
 	 */
-	function gdk_auto_login(a ,c) {
+	function gdk_auto_login(a, c) {
 		var ajax_data = {
 			action: 'gdk_auto_login',
 			data: a,
@@ -485,7 +485,7 @@ jQuery(function ($) { /**声明加载jQuery */
 			if (b.length > 100) {
 				swal("微信登录成功！", "跳转刷新中！", "success", {
 					button: false
-				  });
+				});
 				clearTimeout(timeres);
 				bind_mail(b);
 				//gdk_auto_login(b);
@@ -541,15 +541,15 @@ jQuery(function ($) { /**声明加载jQuery */
 	});
 
 
-/**
- * 积分可见
- */
+	/**
+	 * 积分可见
+	 */
 	$("#pay_points").click(function () {
 		var ajax_data = {
 			action: $("#pay_points").data("action"),
-			userid : $("#pay_points").data("userid"),
-			id : $("#pay_points").data("id"),
-			point : $("#pay_points").data("point")
+			userid: $("#pay_points").data("userid"),
+			id: $("#pay_points").data("id"),
+			point: $("#pay_points").data("point")
 
 		};
 		$.post(ajax.url, ajax_data, function (b) {
