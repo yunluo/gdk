@@ -487,7 +487,7 @@ function gdk_shortcode_list()
 
 function gdk_shortcode_button($context)
 {
-    $context = '<a id="insert-shortcode-button" style="position:relative" class="button insert-shortcodes add_shortcodes" title="添加简码" data-editor="content" href="javascript:void(0)">短代码</a><div class="shortcodes-wrap">' . gdk_shortcode_list() . '</div>';
+    $context = '<a class="button insert-shortcodes" title="添加简码" data-editor="content" href="javascript:;"><span class="dashicons dashicons-twitter shortcodes-icon"></span>短代码</a><div class="shortcodes-wrap">' . gdk_shortcode_list() . '</div>';
     return $context;
 }
 add_action('media_buttons_context', 'gdk_shortcode_button');
