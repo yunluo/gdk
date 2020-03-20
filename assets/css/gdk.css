@@ -20,7 +20,7 @@ body.compensate-for-scrollbar{overflow:hidden}.fancybox-active{height:auto}.fanc
 .alert-error,.error{background-color:#f17783;border-color:#e66465;color:#fff;}
 
 .red{color:#f6003c}.purple{color:#6b48ff}.black{color:#060608}.pink{color:#FF5F5F}
-.pull-center,.fieldset p{text-align:center;}
+.pull-center{text-align:center;}
 /**millgram mod end*/
 
 /*文字tooltips*/

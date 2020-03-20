@@ -21,6 +21,26 @@ function gdk_test_email()
 add_action('wp_ajax_nopriv_gdk_test_email', 'gdk_test_email');
 add_action('wp_ajax_gdk_test_email', 'gdk_test_email');
 
+//检测插件更新
+function gdk_ajax_get_update()
+{
+    $response = wp_remote_get('https://u.gitcafe.net/api/gdk.json');
+
+    if (!is_array($response) || is_wp_error($response)) {
+        exit('400');
+    }
+    $plugin_info = json_decode($response['body'], true);
+    $version     = $plugin_info['version'];
+
+    if (version_compare($version, GDK_PLUGIN_VER, '>')) {
+        exit('<span class="get_update_res">插件有更新，<a href="' . $plugin_info['details_url'] . '" target="_blank">请及时查看！</a></span>');
+    } else {
+        exit('<span class="get_update_res">你的插件目前已经是最新版了！</span>');
+    }
+}
+add_action('wp_ajax_nopriv_get_new_version', 'gdk_ajax_get_update');
+add_action('wp_ajax_get_new_version', 'gdk_ajax_get_update');
+
 //粘贴上传图片
 function gdk_pasteup_imag()
 {

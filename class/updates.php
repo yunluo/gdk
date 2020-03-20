@@ -11,6 +11,7 @@ json数据格式:
 "download_url" : "http://a.xxoo.net/Git-alpha.zip"
 }
  */
+
 if (!class_exists('ThemeUpdateChecker')):
 
     class ThemeUpdateChecker

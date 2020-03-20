@@ -24,16 +24,16 @@ add_shortcode('gdk_login_btn', 'gdk_login_fancybox');
 function gdk_DownloadUrl($atts, $content = null)
 {
     extract(shortcode_atts(array(
-        "href" => 'http://',
+        'href' => 'http://',
     ), $atts));
     return '<a class="dl" href="' . $href . '" target="_blank" rel="nofollow"><i class="fa fa-cloud-download"></i>' . $content . '</a>';
 }
-add_shortcode("dl", "gdk_DownloadUrl");
+add_shortcode('dl', 'gdk_DownloadUrl');
 //添加钮git
 function gdk_GithubUrl($atts, $content = null)
 {
     extract(shortcode_atts(array(
-        "href" => 'http://',
+        'href' => 'http://',
     ), $atts));
     return '<a class="dl" href="' . $href . '" target="_blank" rel="nofollow"><i class="fa fa-github-alt"></i>' . $content . '</a>';
 }
@@ -42,7 +42,7 @@ add_shortcode('gt', 'gdk_GithubUrl');
 function gdk_DemoUrl($atts, $content = null)
 {
     extract(shortcode_atts(array(
-        "href" => 'http://',
+        'href' => 'http://',
     ), $atts));
     return '<a class="dl" href="' . $href . '" target="_blank" rel="nofollow"><i class="fa fa-external-link"></i>' . $content . '</a>';
 }
@@ -51,7 +51,7 @@ add_shortcode('dm', 'gdk_DemoUrl');
 function gdk_reply_to_read($atts, $content = null)
 {
     extract(shortcode_atts(array(
-        "notice" => '<div class="alert info pull-center"><p class="reply-to-read">注意：本段内容须成功“<a href="' . get_permalink() . '#respond" title="回复本文">回复本文</a>”后“<a href="javascript:window.location.reload();" title="刷新本页">刷新本页</a>”方可查看！</p></div>',
+        'notice' => '<div class="alert info pull-center"><p class="reply-to-read">注意：本段内容须成功“<a href="' . get_permalink() . '#respond" title="回复本文">回复本文</a>”后“<a href="javascript:window.location.reload();" title="刷新本页">刷新本页</a>”方可查看！</p></div>',
     ), $atts));
     $email   = null;
     $user_ID = get_current_user_id();
@@ -117,7 +117,7 @@ add_shortcode('v_tips', 'gdk_toe');
 function gdk_tom($atts, $content = null)
 {
     extract(shortcode_atts(array(
-        "href" => 'http://',
+        'href' => 'http://',
     ), $atts));
     return '<a class="cm-btn success" href="' . $href . '" target="_blank" rel="nofollow">' . $content . '</a>';
 }
@@ -126,7 +126,7 @@ add_shortcode('lhb', 'gdk_tom');
 function gdk_too($atts, $content = null)
 {
     extract(shortcode_atts(array(
-        "play" => '0',
+        'play' => '0',
     ), $atts));
     if ($play == 0) {
         return '<video style="width:100%;" src="' . $content . '" controls preload >您的浏览器不支持HTML5的 video 标签，无法为您播放！</video>';
@@ -140,7 +140,7 @@ add_shortcode('video', 'gdk_too');
 function gdk_tkk($atts, $content = null)
 {
     extract(shortcode_atts(array(
-        "play" => '0',
+        'play' => '0',
     ), $atts));
     if ($play == 0) {
         return '<audio style="width:100%;" src="' . $content . '" controls loop>您的浏览器不支持 audio 标签。</audio>';
@@ -154,10 +154,10 @@ add_shortcode('audio', 'gdk_tkk');
 function gdk_ton($atts, $content = null)
 {
     extract(shortcode_atts(array(
-        "href"     => 'http://',
-        "filename" => '',
-        "filesize" => '',
-        "filedown" => '',
+        'href'     => 'http://',
+        'filename' => '',
+        'filesize' => '',
+        'filedown' => '',
     ), $atts));
     return '<a class="lhb" id="showdiv" href="#fancydlbox" >文件下载</a><div id="fancydlbox" style="cursor:default;display:none;width:800px;"><div class="part" style="padding:20px 0;"><h2>下载声明:</h2> <div class="fancydlads" align="left"><p>' . gdk_option('gdk_fancydlcp') . '</p></div></div><div class="part" style="padding:20px 0;"><h2>文件信息：</h2> <div class="dlnotice" align="left"><p>文件名称：' . $filename . '<br />文件大小：' . $filesize . '<br />发布日期：' . get_the_modified_time('Y年n月j日') . '</p></div></div><div class="part" id="download_button_part"><a id="download_button" target="_blank" href="' . $href . '"><span></span>' . $filedown . '</a> </div><div class="part" style="padding:20px 0;"><div class="moredl" style="text-align:center;">[更多地址] : ' . $content . '</div></div><div class="dlfooter">' . gdk_option('gdk_fancydlad') . '</div></div>';
 }
@@ -179,7 +179,7 @@ add_shortcode('download', 'gdk_download');
 function gdk_xcollapse($atts, $content = null)
 {
     extract(shortcode_atts(array(
-        "title" => "",
+        'title' => '',
     ), $atts));
     return '<div style="margin: 0.5em 0;"><div class="xControl"><a href="javascript:void(0)" class="collapseButton xButton"><i class="fa fa-plus-square" ></i> ' . $title . '</a><div style="clear: both;"></div></div><div class="xContent" style="display: none;">' . $content . '</div></div>';
 }
@@ -188,8 +188,8 @@ add_shortcode('collapse', 'gdk_xcollapse');
 function gdk_xdltable($atts, $content = null)
 {
     extract(shortcode_atts(array(
-        "file" => "",
-        "size" => "",
+        'file' => '',
+        'size' => '',
     ), $atts));
     return '<table class="dltable"><tbody><tr><td style="background-color:#F9F9F9;" rowspan="3"><p>文件下载</p></td><td><i class="fa fa-list-alt"></i>&nbsp;&nbsp;文件名称：' . $file . '</td><td><i class="fa fa-th-large"></i>&nbsp;&nbsp;文件大小：' . $size . '</td></tr><tr><td colspan="2"><i class="fa fa-volume-up"></i>&nbsp;&nbsp;下载声明：' . gdk_option('gdk_dltable_b') . '</td></tr><tr><td colspan="2"><i class="fa fa-download"></i>&nbsp;&nbsp;下载地址：' . $content . '</td></tr></tbody></table>';
 }
@@ -198,7 +198,7 @@ add_shortcode('dltable', 'gdk_xdltable');
 function gdk_music163($atts, $content = null)
 {
     extract(shortcode_atts(array(
-        "play" => "1",
+        'play' => '1',
     ), $atts));
     return '<iframe style="width:100%;max-height:86px;" frameborder="no" border="0" marginwidth="0" marginheight="0" src="http://music.163.com/outchain/player?type=2&id=' . $content . '&auto=' . $play . '&height=66"></iframe>';
 }
@@ -208,7 +208,7 @@ function gdk_login_to_read($atts, $content = null)
 {
     $logina = '<a target="_blank" href="' . esc_url(wp_login_url(get_permalink())) . '">登录</a>';
     extract(shortcode_atts(array(
-        "notice" => '<div class="alert info pull-center"><p class="reply-to-read" style="color: blue;">注意：本段内容须“' . $logina . '”后方可查看！</p></div>',
+        'notice' => '<div class="alert info pull-center"><p class="reply-to-read" style="color: blue;">注意：本段内容须“' . $logina . '”后方可查看！</p></div>',
     ), $atts));
     if (is_user_logged_in() && !is_null($content) && !is_feed()) {
         return '<fieldset class="fieldset"><legend class="legend">隐藏内容</legend><p>' . $content . '</p></fieldset>';
@@ -413,13 +413,16 @@ function gdk_pay_nologin($atts, $content = '')
     extract(shortcode_atts(array('money' => '1'), $atts));
     $pid = get_the_ID(); //文章ID
     add_post_meta($pid, '_pay_content', $content, true) or update_post_meta($pid, '_pay_content', $content); //没有新建,有就更新
+    if (current_user_can('administrator')) {
+        return '<fieldset class="fieldset"><legend class="legend">隐藏内容</legend><p>' . $content . '</p></fieldset>';
+    } //admin show
     $pay_log   = get_post_meta($pid, 'pay_log', true); //购买记录数据
     $pay_arr   = explode(",", $pay_log);
     $pay_count = count($pay_arr); //已购买人数
-    $notice    = '<fieldset id="hide_notice" class="fieldset"><legend class="legend">付费内容</legend>';
+    $notice    = '<fieldset id="hide_notice" class="fieldset pull-center"><legend class="legend">付费内容</legend>';
     $notice .= '<p>当前隐藏内容需要支付</p><span class="cm-coin">' . $money . '元</span>';
     $notice .= '<p>已有<span class="red">' . $pay_count . '</span>人支付</p>';
-    $notice .= '<p><button id="pay_view" type="button" data-action="pay_view" data-money="' . $money . '" data-id="' . $pid . '" class="button">立即查看</button></p>';
+    $notice .= '<p><button id="pay_view" type="button" data-action="pay_view" data-money="' . $money . '" data-id="' . $pid . '">立即查看</button></p>';
     $notice .= '</fieldset>';
     return $notice;
 }
@@ -466,7 +469,9 @@ function gdk_shortcode_list()
 
 [/wxcaptcha]',
         '积分购买可见'  => '[pay point=\'10\']这里是需要付费的内容[/pay]',
-        '游客付费可见'  => '[pax money=1]',
+        '游客付费可见'  => '[pax money=1]
+
+[/pax]',
         '弹窗下载'    => '[fanctdl filename=\'这里填写文件名\' filepass=\'这里填写文件密码什么的\' href=\'这里填写的主下载链接\' filedown=\'这里填写的是文件的主下载名称\']这里填写的文件的辅助下载链接，可写多个,空格间隔[/fanctdl]',
         '面板下载'    => '[dltable file=\'在此处写下文件名称\' pass=\'在这里写下文件密码\']这里填写的文件的辅助下载链接，可写多个,空格间隔[/dltable]',
         '单页下载'    => '[pdownload title=]',

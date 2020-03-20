@@ -308,42 +308,22 @@ function getBrowser()
 //获取IP地址
 function gdk_get_ip()
 {
-    // check for shared internet/ISP IP
-    if (!empty($_SERVER['HTTP_CLIENT_IP']) && gdk_validate_ip($_SERVER['HTTP_CLIENT_IP'])) {
-        return $_SERVER['HTTP_CLIENT_IP'];
-    }
-    // check for IPs passing through proxies
-    if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-        // check if multiple ips exist in var
-        if (in_string($_SERVER['HTTP_X_FORWARDED_FOR'], ',')) {
-            $iplist = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
-            foreach ($iplist as $ip) {
-                if (gdk_validate_ip($ip)) {
-                    return $ip;
-                }
-
+    $proxy_headers = ["CLIENT_IP", "FORWARDED", "FORWARDED_FOR", "FORWARDED_FOR_IP", "HTTP_CLIENT_IP", "HTTP_FORWARDED", "HTTP_FORWARDED_FOR", "HTTP_FORWARDED_FOR_IP", "HTTP_PC_REMOTE_ADDR", "HTTP_PROXY_CONNECTION", "HTTP_VIA", "HTTP_X_FORWARDED", "HTTP_X_FORWARDED_FOR", "HTTP_X_FORWARDED_FOR_IP", "HTTP_X_IMFORWARDS", "HTTP_XROXY_CONNECTION", "VIA", "X_FORWARDED", "X_FORWARDED_FOR"];
+    foreach ($proxy_headers as $proxy_header) {
+        if (isset($_SERVER[$proxy_header])) {
+            if (gdk_validate_ip($_SERVER[$proxy_header])) {
+                return $_SERVER[$proxy_header];
+            } elseif (stristr(",", $_SERVER[$proxy_header]) !== false) {
+                $proxy_header_temp = trim(array_shift(explode(",", $_SERVER[$proxy_header])));
+                if (($pos_temp = in_string($proxy_header_temp, ":"))) {$proxy_header_temp = substr($proxy_header_temp, 0, $pos_temp);}
+                if (gdk_validate_ip($proxy_header_temp)) {return $proxy_header_temp;}
             }
-        } else {
-            if (gdk_validate_ip($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-                return $_SERVER['HTTP_X_FORWARDED_FOR'];
-            }
-
         }
     }
-    if (!empty($_SERVER['HTTP_X_FORWARDED']) && gdk_validate_ip($_SERVER['HTTP_X_FORWARDED'])) {
-        return $_SERVER['HTTP_X_FORWARDED'];
+    if (gdk_validate_ip($_SERVER["REMOTE_ADDR"])) {
+        return $_SERVER["REMOTE_ADDR"];
     }
-    if (!empty($_SERVER['HTTP_X_CLUSTER_CLIENT_IP']) && gdk_validate_ip($_SERVER['HTTP_X_CLUSTER_CLIENT_IP'])) {
-        return $_SERVER['HTTP_X_CLUSTER_CLIENT_IP'];
-    }
-    if (!empty($_SERVER['HTTP_FORWARDED_FOR']) && gdk_validate_ip($_SERVER['HTTP_FORWARDED_FOR'])) {
-        return $_SERVER['HTTP_FORWARDED_FOR'];
-    }
-    if (!empty($_SERVER['HTTP_FORWARDED']) && gdk_validate_ip($_SERVER['HTTP_FORWARDED'])) {
-        return $_SERVER['HTTP_FORWARDED'];
-    }
-    // return unreliable ip since all else failed
-    return $_SERVER['REMOTE_ADDR'];
+
 }
 
 /**
@@ -904,6 +884,12 @@ function gdk_order_id()
     return $order_id;
 }
 
+//生成随机数
+function randomString($length = 11)
+{
+    return substr(str_shuffle(str_repeat($x = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil($length / strlen($x)))), 1, $length);
+}
+
 //获取云落的远程通知，加入缓存，1天一次
 function gdk_get_Yunluo_Notice()
 {
@@ -970,6 +956,10 @@ function gdk_get_link_items()
     return $result;
 }
 
+function gdk_get_Version()
+{
+    echo '<input type="button" class="button button-secondary get_new_version" value="点击检测更新">';
+}
 /*
  * Payjs支付操作函数
  * 订单标题

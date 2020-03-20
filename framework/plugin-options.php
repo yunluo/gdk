@@ -50,7 +50,7 @@ function gdk_options_page()
     ?>
 
 <div class="wrap">
-	<h2>GDK选项</h2>
+	<h2>GDK选项  <input type="button" class="feedback add-new-h2 get_new_version" value="检测更新"></h2>
 	<hr/>
 <?php
 if (isset($_GET['update'])) {
@@ -189,12 +189,6 @@ break;
 	<div class="panel" id="panel_about">
 		<table class="form-table">
 			<tr>
-				<th><h4>云落小贴士</h4></th>
-				<td>
-					<p>哈哈</p>
-				</td>
-			</tr>
-			<tr>
 				<th><h4>联系方式</h4></th>
 				<td>
 					<ul>
@@ -316,7 +310,11 @@ body.show-filters .wrap form {
 .filter-drawer ul {
 	list-style: disc inside;
 }
-
+.get_update_res,.get_new_version{
+    margin-left: 20px;
+    padding: 5px;
+    font-size: medium;
+}
 </style>
 <style id="theme-options-filter"></style>
 <script>
@@ -372,7 +370,18 @@ jQuery(function ($) {
         });
 	});
 
-
+	$(".get_new_version").click(function () {
+		var ajax_data = { action: 'get_new_version' };
+    $.post(ajaxurl, ajax_data,
+        function(a) {
+			a = $.trim(a);
+            if (a !== '400') {
+				$(".get_new_version").after("" + a + "");
+            }else{
+				$(".get_new_version").after("检测失败,网络错误");
+			}
+        });
+	});
 
 
 
