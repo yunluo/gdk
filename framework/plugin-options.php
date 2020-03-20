@@ -376,7 +376,7 @@ jQuery(function ($) {
         function(a) {
 			a = $.trim(a);
             if (a !== '400') {
-				$(".get_new_version").after("" + a + "");
+				$(".get_new_version").after(a);
             }else{
 				$(".get_new_version").after("检测失败,网络错误");
 			}
