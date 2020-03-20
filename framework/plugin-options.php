@@ -50,7 +50,7 @@ function gdk_options_page()
     ?>
 
 <div class="wrap">
-	<h2>GDK选项  <input type="button" class="feedback add-new-h2 get_new_version" value="检测更新"></h2>
+	<h2>GDK选项  <input type="button" class="add-new-h2 get_new_version" value="检测更新"></h2>
 	<hr/>
 <?php
 if (isset($_GET['update'])) {
@@ -71,8 +71,8 @@ $activePanelIdx = empty($_GET['panel']) ? 0 : $_GET['panel'];
         echo '<li><a href="#panel_' . $i . '" data-panel="' . $i . '" ' . ($i == $activePanelIdx ? 'class="current"' : '') . '>' . $name . '</a></li>';
     }
     ?>
-			<li><a href="#panel_data" data-panel="data">数据清理</a></li>
-			<li><a href="#panel_about" data-panel="about">关于插件</a></li>
+			<li><a href="#panel_data" data-panel="data" class="data">数据清理</a></li>
+			<li><a href="#panel_about" data-panel="about" class="about">关于插件</a></li>
 		</ul>
 <div class="search-form"><label class="screen-reader-text" for="wp-filter-search-input">筛选插件选项…</label><input placeholder="筛选插件选项…" type="search" id="wp-filter-search-input" class="wp-filter-search"></div>
 </div>
@@ -220,6 +220,12 @@ break;
 					</ul>
 				</td>
 			</tr>
+			<tr>
+			<th><h4>意见反馈</h4></th>
+			<td>
+			<input type="button" class="add-new-h2 feedback-btn" value="意见反馈">
+			</td></tr>
+
 		</table>
 	</div>
 	<hr />
@@ -372,7 +378,7 @@ jQuery(function ($) {
 
 	$(".get_new_version").click(function () {
 		var ajax_data = { action: 'get_new_version' };
-    $.post(ajaxurl, ajax_data,
+    $.get(ajaxurl, ajax_data,
         function(a) {
 			a = $.trim(a);
             if (a !== '400') {
@@ -383,6 +389,28 @@ jQuery(function ($) {
         });
 	});
 
+$(".feedback-btn").click(function() {
+    $(".feedback-btn").after("  <span class='feedback-load'>正在努力加载中.....</span>");
+    $("<link>").attr({
+        rel: "stylesheet",
+        type: "text/css",
+        href: "https://cdn.bootcss.com/fancybox/3.0.39/jquery.fancybox.min.css"
+    }).appendTo("head");
+
+    $.getScript("https://cdn.bootcss.com/fancybox/3.0.39/jquery.fancybox.min.js",
+    function() {
+        $(".feedback-load").hide();
+        $.fancybox.open({
+            src: 'https://wj.qq.com/s2/5705098/515f/',
+            type: 'iframe',
+            opts: {
+                afterShow: function(instance, current) {
+                    console.info('done!');
+                }
+            }
+        })
+    });
+});
 
 
 });
