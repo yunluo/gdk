@@ -890,16 +890,16 @@ function randomString($length = 11)
     return substr(str_shuffle(str_repeat($x = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil($length / strlen($x)))), 1, $length);
 }
 
-//获取云落的远程通知，加入缓存，1天一次
-function gdk_get_Yunluo_Notice()
+//获取云落的远程通知，加入缓存，12小时一次
+function gdk_Remote_Notice($url = 'https: //u.gitcafe.net/api/notice.txt', $hours = 12)
 {
     $Yunluo_Notice = get_transient('Yunluo_Notice');
     if (false === $Yunluo_Notice) {
-        $Yunluo_Notice = wp_remote_get('https://u.gitcafe.net/api/notice.txt')['body'];
-        if (is_array($Yunluo_Notice) && !is_wp_error($Yunluo_Notice) && $Yunluo_Notice['response']['code'] == '200') {
-            set_transient('Yunluo_Notice', $Yunluo_Notice, 60 * 60 * 12); //缓存12小时
+        $response = wp_remote_get($url);
+        if (is_array($response) && !is_wp_error($response)) {
+            set_transient('Yunluo_Notice', $response['body'], 60 * 60 * $hours); //缓存12小时
         } else {
-            set_transient('Yunluo_Notice', '有点小尴尬哈啊，服务器菌暂时有点累了呢，先休息一会儿~，', 60 * 60 * 2); //缓存2小时
+            set_transient('Yunluo_Notice', '有点小尴尬哈啊，服务器菌暂时有点累了呢，先休息一会儿~，', 60 * 60 * $hours); //缓存12小时
         }
     }
     return $Yunluo_Notice;
