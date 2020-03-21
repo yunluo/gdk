@@ -398,6 +398,12 @@ $gdk_options = [
             'type' => 'checkbox',
         ],
         [
+            'name' => '新窗口打开',
+            'desc' => '禁用 【禁用后，所有文章链接将当前窗口打开】',
+            'id'   => 'gdk_target_blank',
+            'type' => 'checkbox',
+        ],
+        [
             'title' => '统一支付设置',
             'type'  => 'title',
         ],

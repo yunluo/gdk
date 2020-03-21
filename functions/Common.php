@@ -1314,3 +1314,12 @@ function unzip_url($url, $where)
     usleep(300000);
     @unlink($zippath);
 }
+
+//新窗口打开
+function blank_open()
+{
+    if (!gdk_option('gdk_target_blank')) {
+        echo 'target="_blank"';
+    }
+
+}

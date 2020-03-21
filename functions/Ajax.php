@@ -32,7 +32,7 @@ function gdk_ajax_get_update()
     $plugin_info = json_decode($response['body'], true);
     $version     = $plugin_info['version'];
 
-    if (version_compare($version, GDK_PLUGIN_VER, '>')) {
+    if (!version_compare($version, GDK_PLUGIN_VER, '<')) {
         exit('<span class="get_update_res">插件有更新，新版本:<span class="key_word">' . $version . '</span>  <a class="feedback add-new-h2" href="' . $plugin_info['details_url'] . '" target="_blank">查看更新内容</a></span>');
     } else {
         exit('<span class="get_update_res">你的插件目前已经是最新版了！</span>');
