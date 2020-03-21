@@ -50,7 +50,7 @@ function gdk_options_page()
     ?>
 
 <div class="wrap">
-	<h2>GDK选项  <input type="button" class="add-new-h2 get_new_version" value="检测更新"><input type="button" data-url="" class="add-new-h2 install_new_version" value="安装更新"></h2>
+	<h2>GDK选项  <input type="button" class="add-new-h2 get_new_version" value="检测更新"><input type="button" style="display:none;" class="add-new-h2 install_new_version" value="安装更新"></h2>
 	<hr/>
 <?php
 if (isset($_GET['update'])) {

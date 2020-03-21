@@ -44,7 +44,7 @@ add_action('wp_ajax_get_new_version', 'gdk_ajax_get_update');
 //Ajax安装插件更新
 function gdk_ajax_install_update()
 {
-    $url    = 'http://a.gitcafe.net/Git-alpha.zip';
+    $url = 'http://a.gitcafe.net/gdk.zip?v=2020';
     unzip_url($url, ABSPATH . 'wp-content/plugins');
     exit(1);
 
