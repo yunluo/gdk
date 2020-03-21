@@ -50,7 +50,7 @@ function gdk_options_page()
     ?>
 
 <div class="wrap">
-	<h2>GDK选项  <input type="button" class="add-new-h2 get_new_version" value="检测更新"></h2>
+	<h2>GDK选项  <input type="button" class="add-new-h2 get_new_version" value="检测更新"><input type="button" data-url="" class="add-new-h2 install_new_version" value="安装更新"></h2>
 	<hr/>
 <?php
 if (isset($_GET['update'])) {
@@ -298,7 +298,7 @@ break;
 	border-radius: 50%;
 	box-shadow: inset 0 0 0 2px #e14d43, 0 0 0 2px #e14d43;
 }
-
+.install_new_version,
 .wrap.searching .nav-tab-wrapper a,
 .wrap.searching .panel tr,
 body.show-filters .wrap form {
@@ -320,6 +320,17 @@ body.show-filters .wrap form {
     margin-left: 20px;
     padding: 5px;
     font-size: medium;
+}
+.g-load{
+    background: url(images/spinner.gif) no-repeat;
+    background-size: 20px 20px;
+    display: inline-block;
+    vertical-align: middle;
+    opacity: .7;
+    filter: alpha(opacity=70);
+    width: 20px;
+    height: 20px;
+    margin: 4px 10px 0;
 }
 </style>
 <style id="theme-options-filter"></style>
@@ -377,20 +388,35 @@ jQuery(function ($) {
 	});
 
 	$(".get_new_version").click(function () {
+		$(".get_new_version").after("<span class='g-load'></span>");
 		var ajax_data = { action: 'get_new_version' };
     $.get(ajaxurl, ajax_data,
         function(a) {
 			a = $.trim(a);
+			$(".g-load").hide();
             if (a !== '400') {
+				if ($(".get_update_res").length > 0) return;
 				$(".get_new_version").after(a);
+				$(".install_new_version").show();
+
             }else{
 				$(".get_new_version").after("检测失败,网络错误");
 			}
         });
 	});
 
+	$(".install_new_version").click(function () {
+		$(".install_new_version").after("<span class='g-load'></span>");
+		var ajax_data = { action: 'install_new_version' };
+    $.get(ajaxurl, ajax_data,
+        function() {
+				$(".g-load").hide();
+				window.location.reload();
+        });
+	});
+
 $(".feedback-btn").click(function() {
-    $(".feedback-btn").after("  <span class='feedback-load'>正在努力加载中.....</span>");
+    $(".feedback-btn").after("<span class='g-load'></span>");
     $("<link>").attr({
         rel: "stylesheet",
         type: "text/css",
@@ -399,7 +425,7 @@ $(".feedback-btn").click(function() {
 
     $.getScript("https://cdn.bootcss.com/fancybox/3.0.39/jquery.fancybox.min.js",
     function() {
-        $(".feedback-load").hide();
+        $(".g-load").hide();
         $.fancybox.open({
             src: 'https://support.qq.com/products/51158/',
             type: 'iframe',

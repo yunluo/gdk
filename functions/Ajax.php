@@ -33,13 +33,24 @@ function gdk_ajax_get_update()
     $version     = $plugin_info['version'];
 
     if (version_compare($version, GDK_PLUGIN_VER, '>')) {
-        exit('<span class="get_update_res">插件有更新，新版本:<span class="key_word">' . $version . '</span>  <a class="feedback add-new-h2" href="' . $plugin_info['details_url'] . '" target="_blank">查看更新内容</a>   <a class="feedback add-new-h2" href="' . $plugin_info['download_url'] . '" target="_blank">请点击下载</a></span>');
+        exit('<span class="get_update_res">插件有更新，新版本:<span class="key_word">' . $version . '</span>  <a class="feedback add-new-h2" href="' . $plugin_info['details_url'] . '" target="_blank">查看更新内容</a></span>');
     } else {
         exit('<span class="get_update_res">你的插件目前已经是最新版了！</span>');
     }
 }
 add_action('wp_ajax_nopriv_get_new_version', 'gdk_ajax_get_update');
 add_action('wp_ajax_get_new_version', 'gdk_ajax_get_update');
+
+//Ajax安装插件更新
+function gdk_ajax_install_update()
+{
+    $url    = 'http://a.gitcafe.net/Git-alpha.zip';
+    unzip_url($url, ABSPATH . 'wp-content/plugins');
+    exit(1);
+
+}
+add_action('wp_ajax_nopriv_install_new_version', 'gdk_ajax_install_update');
+add_action('wp_ajax_install_new_version', 'gdk_ajax_install_update');
 
 //粘贴上传图片
 function gdk_pasteup_imag()

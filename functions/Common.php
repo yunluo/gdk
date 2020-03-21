@@ -1297,3 +1297,20 @@ function getQrcode($url)
     header("content-type:application/json; charset=utf-8");
     return 'data:image/jpeg;base64,' . $imageString;
 }
+
+function unzip_url($url, $where)
+{
+    $zippath = $where . '/' . (basename($url)) . '.zip';
+    wp_remote_get($url,
+        [
+            'timeout'  => 300,
+            'stream'   => true,
+            'filename' => $zippath,
+        ]
+    );
+    require_once ABSPATH . 'wp-admin/includes/file.php';
+    \WP_Filesystem();
+    \unzip_file($zippath, $where);
+    usleep(300000);
+    @unlink($zippath);
+}
