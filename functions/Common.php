@@ -1280,3 +1280,20 @@ function base64img($image_file)
     $base64_image = 'data:' . $image_info['mime'] . ';base64,' . base64_encode($image_data);
     return $base64_image;
 }
+
+//生成二维码
+function getQrcode($url)
+{
+    //引入phpqrcode类库
+    require_once GDK_ROOT_PATH . '/class/qrcode.class.php';
+    $errorCorrectionLevel = 'L'; //容错级别
+    $matrixPointSize      = 6; //生成图片大小
+    ob_start();
+    QRcode::png($url, false, $errorCorrectionLevel, $matrixPointSize, 2);
+    $data = ob_get_contents();
+    ob_end_clean();
+
+    $imageString = base64_encode($data);
+    header("content-type:application/json; charset=utf-8");
+    return 'data:image/jpeg;base64,' . $imageString;
+}

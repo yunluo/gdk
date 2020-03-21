@@ -1,5 +1,8 @@
 jQuery(function ($) { /**声明加载jQuery */
 
+	function glog(a){
+		console.log(a);
+	}
 	/**
 	 * 展示被隐藏的内容,适用于密码可见,付费可见,积分可见
 	 * @param {string} a 内容div的 id或者class
@@ -74,6 +77,7 @@ jQuery(function ($) { /**声明加载jQuery */
 			c = $.trim(c); /**Ajax返回有空行,这里处理一下.妈的花了老子3个小时 */
 			if (c !== '400') {
 				show_hide_content('.pass_viewbox', c);
+				glog('加密内容已展示');
 				localStorage.setItem('gdk_pass_' + ajax_data['id'], c); /**隐藏内容直接存入浏览器缓存,下次直接读取,ps.有个问题,内容更新会略坑,不管了 */
 			} else {
 				swal("查看失败", "您的密码错误，请重试", "error");
@@ -199,6 +203,7 @@ jQuery(function ($) { /**声明加载jQuery */
 						check_pay_points(c, f[1]); /**用户id,订单号,积分充值检测 */
 					}
 				});
+				glog('二维码内容为:' + f[3]);
 				new QRious({
 					element: document.getElementById("pqrious"),
 					size: 300,
@@ -291,6 +296,7 @@ jQuery(function ($) { /**声明加载jQuery */
 					closeOnClickOutside: false,
 					content: "input",
 				}).then((d) => { /**提取码 */
+					glog('提取码为:' + d );
 					get_content(a);
 					add_code(a, `${d}`);
 				}); //ok

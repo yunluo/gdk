@@ -401,7 +401,7 @@ $(".feedback-btn").click(function() {
     function() {
         $(".feedback-load").hide();
         $.fancybox.open({
-            src: 'https://wj.qq.com/s2/5705098/515f/',
+            src: 'https://support.qq.com/products/51158/',
             type: 'iframe',
             opts: {
                 afterShow: function(instance, current) {
