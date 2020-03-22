@@ -32,7 +32,7 @@ function gdk_ajax_get_update()
     $plugin_info = json_decode($response['body'], true);
     $version     = $plugin_info['version'];
 
-    if (!version_compare($version, GDK_PLUGIN_VER, '<')) {
+    if (version_compare($version, GDK_PLUGIN_VER, '>')) {
         exit('<span class="get_update_res">插件有更新，新版本:<span class="key_word">' . $version . '</span>  <a class="feedback add-new-h2" href="' . $plugin_info['details_url'] . '" target="_blank">查看更新内容</a></span>');
     } else {
         exit('<span class="get_update_res">你的插件目前已经是最新版了！</span>');
@@ -136,10 +136,9 @@ function pay_points()
 
     if (!isset($_POST['money']) || !isset($_POST['way'])) {
         exit('400');
-    }
-//无脑输出400错误
+    } //无脑输出400错误
     if (isset($_POST['id'])) {
-        payjs_action('积分充值', $_POST['id']);
+        payjs_action('积分充值', $_POST['id'], $_POST['money']);
     }
 }
 add_action('wp_ajax_pay_points', 'pay_points');
@@ -154,8 +153,7 @@ function check_pay_points()
 
     if (!isset($_POST['id']) || !isset($_POST['orderid'])) {
         exit('400');
-    }
-//无脑输出400错误
+    } //无脑输出400错误
     if ($_POST['action'] == 'check_pay_points') {
         if (gdk_check($_POST['orderid'], $_POST['id'])) {
             exit('200');
@@ -181,7 +179,7 @@ function pay_view()
     }
 //无脑输出400错误
     if (isset($_POST['id'])) {
-        payjs_action('在线付费查看', 'PP' . $_POST['id']); //标题,文章id
+        payjs_action('在线付费查看', 'PP' . $_POST['id'], $_POST['money']); //标题,文章id
     }
 }
 add_action('wp_ajax_pay_view', 'pay_view');
@@ -223,10 +221,9 @@ function check_code()
         exit('400');
     }
 
-    if (!isset($code) || !isset($action) || !isset($id)) {
+    if (empty($code) || !isset($action) || !isset($id)) {
         exit('400');
-    }
-//无脑输出400错误
+    } //无脑输出400错误
     if ($action == 'check_code') {
         $code    = trim($code); //清理一下
         $pay_log = get_post_meta($id, 'pay_log', true); //购买记录数据
@@ -246,8 +243,7 @@ function get_content()
 {
     if (!isset($_POST['action']) || $_POST['action'] !== 'get_content') {
         exit('400');
-    }
-//无脑输出400错误
+    } //无脑输出400错误
     if (isset($_POST['id'])) {
         $pay_content = get_post_meta($_POST['id'], '_pay_content', true);
         exit($pay_content);
@@ -265,8 +261,7 @@ function check_pay_view()
 
     if (!isset($_POST['id']) || !isset($_POST['orderid'])) {
         exit('400');
-    }
-//无脑输出400错误
+    } //无脑输出400错误
     if ($_POST['action'] == 'check_pay_view') {
         $sid = get_transient('PP' . $_POST['id']);
         if (in_string($sid, 'E20') && $_POST['orderid'] == $sid) {

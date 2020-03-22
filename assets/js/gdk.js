@@ -1,6 +1,6 @@
 jQuery(function ($) { /**声明加载jQuery */
 
-	function glog(a){
+	function glog(a) {
 		console.log(a);
 	}
 	/**
@@ -296,7 +296,7 @@ jQuery(function ($) { /**声明加载jQuery */
 					closeOnClickOutside: false,
 					content: "input",
 				}).then((d) => { /**提取码 */
-					glog('提取码为:' + d );
+					glog('提取码为:' + d);
 					get_content(a);
 					add_code(a, `${d}`);
 				}); //ok
