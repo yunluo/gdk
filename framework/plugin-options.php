@@ -397,8 +397,9 @@ jQuery(function ($) {
             if (a !== '400') {
 				if ($(".get_update_res").length > 0) return;
 				$(".get_new_version").after(a);
-				$(".install_new_version").show();
-
+				if ($(".has_new_version").length > 0) {
+					$(".install_new_version").show();
+				}
             }else{
 				$(".get_new_version").after("检测失败,网络错误");
 			}

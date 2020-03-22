@@ -33,9 +33,9 @@ function gdk_ajax_get_update()
     $version     = $plugin_info['version'];
 
     if (version_compare($version, GDK_PLUGIN_VER, '>')) {
-        exit('<span class="get_update_res">插件有更新，新版本:<span class="key_word">' . $version . '</span>  <a class="feedback add-new-h2" href="' . $plugin_info['details_url'] . '" target="_blank">查看更新内容</a></span>');
+        exit('<span class="get_update_res has_new_version">插件有更新，已安装版本:<span class="key_word">' . GDK_PLUGIN_VER . '</span>  新版本:<span class="key_word">' . $version . '</span>  <a class="feedback add-new-h2" href="' . $plugin_info['details_url'] . '" target="_blank">查看更新内容</a></span>');
     } else {
-        exit('<span class="get_update_res">你的插件目前已经是最新版了！</span>');
+        exit('<span class="get_update_res no_new_version">你的插件目前已经是最新版了！</span>');
     }
 }
 add_action('wp_ajax_nopriv_get_new_version', 'gdk_ajax_get_update');
@@ -45,7 +45,7 @@ add_action('wp_ajax_get_new_version', 'gdk_ajax_get_update');
 function gdk_ajax_install_update()
 {
     $url = 'http://a.gitcafe.net/gdk.zip?v=' . date("His");
-    unzip_url($url, ABSPATH . 'wp-content/plugins');
+    unzip_url($url, WP_PLUGIN_DIR);
     exit(1);
 
 }

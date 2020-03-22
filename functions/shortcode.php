@@ -419,7 +419,7 @@ function gdk_pay_nologin($atts, $content = '')
     $pay_log   = get_post_meta($pid, 'pay_log', true); //购买记录数据
     $pay_arr   = explode(",", $pay_log);
     $pay_count = count($pay_arr); //已购买人数
-    $notice    = '<fieldset id="hide_notice" class="fieldset pull-center"><legend class="legend">付费内容</legend>';
+    $notice    = '<fieldset id="hide_notice" class="fieldset ta-center"><legend class="legend ta-left">付费内容</legend>';
     $notice .= '<p>当前隐藏内容需要支付</p><span class="cm-coin">' . $money . '元</span>';
     $notice .= '<p>已有<span class="red">' . $pay_count . '</span>人支付</p>';
     $notice .= '<p><button id="pay_view" type="button" data-action="pay_view" data-money="' . $money . '" data-id="' . $pid . '">立即查看</button></p>';
