@@ -28,7 +28,7 @@ if (!version_compare(PHP_VERSION, '7.2', '>=')) {
 }
 
 //定义各种常量
-define('GDK_PLUGIN_VER', '0.0.1');
+define('GDK_PLUGIN_VER', '0.0.3');
 define('GDK_PLUGIN_FILE', __FILE__); //插件入口文件
 define('GDK_BASE_URL', plugin_dir_url(__FILE__)); //插件目录url
 define('GDK_ROOT_PATH', plugin_dir_path(__FILE__)); //插件目录路径
