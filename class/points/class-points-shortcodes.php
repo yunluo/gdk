@@ -80,13 +80,13 @@ class GDK_Points_Shortcodes
                 $notice .= '</div>';
             } else {
                 if (GDK_Points::get_user_total_points($user_id, 'accepted') < $point) {
-                    $notice .= '<fieldset id="hide_notice" class="fieldset"><legend class="legend">付费内容</legend>';
+                    $notice .= '<fieldset id="hide_notice" class="fieldset ta-center"><legend class="legend ta-left">付费内容</legend>';
                     $notice .= '<p>当前隐藏内容需要支付</p><span class="cm-coin">' . $point . '金币</span>';
                     $notice .= '<p>您当前拥有<span class="red">' . GDK_Points::get_user_total_points($user_id, 'accepted') . '</span>金币，金币不足，请充值</p>';
                     $notice .= buy_points();
                     $notice .= '</fieldset>';
                 } else {
-                    $notice .= '<fieldset id="hide_notice" class="fieldset"><legend class="legend">付费内容</legend>';
+                    $notice .= '<fieldset id="hide_notice" class="fieldset ta-center"><legend class="legend ta-left">付费内容</legend>';
                     $notice .= '<p>当前隐藏内容需要支付</p><span class="cm-coin">' . $point . '金币</span>';
                     $notice .= '<p>您当前拥有<span class="red">' . GDK_Points::get_user_total_points($user_id, 'accepted') . '</span>金币</p>';
                     $notice .= '<p><button class="cm-btn primary" id="pay_points" data-point="' . $point . '" data-userid="' . $user_id . '" data-action="gdk_pay_buy" data-id="' . $pid . '">点击购买</button></p>';
@@ -94,7 +94,7 @@ class GDK_Points_Shortcodes
                 }
             }
         } else {
-            $notice .= '<fieldset id="hide_notice" class="fieldset"><legend class="legend">付费内容</legend>';
+            $notice .= '<fieldset id="hide_notice" class="fieldset ta-center"><legend class="legend ta-left">付费内容</legend>';
             $notice .= '<p>当前隐藏内容需要支付</p><span class="cm-coin">' . $point . '金币</span>';
             $notice .= '<p>您当前尚未登陆,请登陆后查看</p>';
             $notice .= weixin_login_btn();

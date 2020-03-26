@@ -380,9 +380,9 @@ jQuery(function ($) {
         function(a) {
 			a = $.trim(a);
             if (a == '200') {
-				alert("测试成功,您的SMTP邮箱邮件发送已成功,Enjoy it");
+				alert("测试成功，您的SMTP邮箱邮件发送已成功，Enjoy it");
             }else{
-				alert("测试失败,您的SMTP邮箱邮件响应失败,请重试");
+				alert("测试失败，您的SMTP邮箱邮件响应失败，请重试");
 			}
         });
 	});
@@ -401,7 +401,7 @@ jQuery(function ($) {
 					$(".install_new_version").show();
 				}
             }else{
-				$(".get_new_version").after("检测失败,网络错误");
+				$(".get_new_version").after("检测失败，网络错误");
 			}
         });
 	});

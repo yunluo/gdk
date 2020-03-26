@@ -759,17 +759,17 @@ function gdk_panlinks($links)
 //一个简单可重复使用的邮件模板
 function mail_temp($mail_title, $mail_cotent, $link, $link_title)
 {
-    ?>
-	<div style="width:500px;margin:auto">
-    <div style="background:#2695f3;color:#FFF;padding:20px 10px;"><?php echo $mail_title; ?></div>
-    <div style="padding:10px;margin:5px;border-bottom:dashed 1px #ddd;"><?php echo $mail_cotent; ?></div>
-    <a href="<?php echo $link; ?>" style="display:block;margin:auto;margin-top:40px;padding:10px;width:107px;outline:0;border:1px solid #2695f3;border-radius:25px;color:#2695f3;text-align:center;font-weight:700;font-size:14pxtext-decoration:none;" rel="noopener" target="_blank"><?php echo $link_title; ?></a>
+
+    $content = '<div style="width:500px;margin:auto">
+    <div style="background:#2695f3;color:#FFF;padding:20px 10px;">' . $mail_title . '</div>
+    <div style="padding:10px;margin:5px;border-bottom:dashed 1px #ddd;">' . $mail_cotent . '</div>
+    <a href="' . $link . '" style="display:block;margin:auto;margin-top:40px;padding:10px;width:120px;outline:0;border:1px solid #2695f3;border-radius:25px;color:#2695f3;text-align:center;font-weight:700;font-size:14px;text-decoration:none;" rel="noopener" target="_blank">' . $link_title . '</a>
     <br><br>
     <div style="color:#cecece;font-size: 12px;">本邮件为系统自动发送，请勿回复。<br>
-    如果不想被此类邮件打扰,请前往 <a style="color: #cecece;" href="<?php echo home_url(); ?>" rel="noopener" target="_blank"><?php echo get_option('blogname'); ?></a> 留言说明,由我们来操作处理。
-    </div>
-</div>
-	<?php
+    如果不想被此类邮件打扰,请前往 <a style="color: #cecece;" href="' . home_url() . '" rel="noopener" target="_blank">' . get_option('blogname') . '</a> 留言说明,由我们来操作处理。
+    </div></div>';
+    
+    return $content;
 }
 
 //获取所有站点分类id,带缓存
@@ -829,10 +829,12 @@ function gdk_thumbnail_src()
 {
     global $post;
     $gdk_thumbnail_src = '';
-    if ($values = get_post_custom_values('gdk_thumb')) { //输出自定义域图片地址
+    if ($values = get_post_custom_values('gdk_thumb')) {
+        //输出自定义域图片地址
         $values            = get_post_custom_values('gdk_thumb');
         $gdk_thumbnail_src = $values[0];
-    } elseif (has_post_thumbnail()) { //如果有特色缩略图，则输出缩略图地址
+    } elseif (has_post_thumbnail()) {
+        //如果有特色缩略图，则输出缩略图地址
         $thumbnail_src     = wp_get_attachment_image_src(get_post_thumbnail_id($post->ID), 'full');
         $gdk_thumbnail_src = $thumbnail_src[0];
     } else {
@@ -840,7 +842,8 @@ function gdk_thumbnail_src()
         ob_end_clean();
         $output            = preg_match_all('/<img.+src=[\'"]([^\'"]+)[\'"].*>/i', $post->post_content, $matches);
         $gdk_thumbnail_src = $matches[1][0]; //获取该图片 src
-        if (empty($gdk_thumbnail_src)) { //如果日志中没有图片，则显示随机图片
+        if (empty($gdk_thumbnail_src)) {
+            //如果日志中没有图片，则显示随机图片
             $random            = mt_rand(1, 12);
             $gdk_thumbnail_src = GDK_BASE_URL . 'assets/img/thumb/' . $random . '.jpg';
         }
@@ -861,7 +864,8 @@ function gdk_thumbnail_src()
 function gdk_thumb_img($way, $width, $height, $style = '', $atrr = 'class="thumb_img"')
 {
     $url = gdk_thumbnail_src();
-    if ($way === 1) { //cdn
+    if ($way === 1) {
+        //cdn
         $src = $url . '!' . $style;
     } elseif ($way === 2) {
         $src = GDK_BASE_URL . 'public/timthumb.php?src=' . $url . '&h=' . $height . '&w=' . $width . '&q=90&zc=1&ct=1';
@@ -1028,7 +1032,8 @@ function payjs_notify()
 //充值按钮
 function buy_points()
 {
-    if (is_user_logged_in()) { //logined
+    if (is_user_logged_in()) {
+        //logined
         $result = '
         <a data-fancybox="pay_fancybox" data-src="#pay_fancybox" href="javascript:;" class="cm-btn primary">点击充值</a>
         <form id="pay_fancybox" name="pay_form" style="display: none; width: 100%; max-width: 500px;" class="pure-form">
@@ -1049,7 +1054,8 @@ function buy_points()
                     <input data-fancybox-close type="button" id="submit_pay" data-action="pay_points" data-id="' . get_current_user_id() . '" class="cm-btn primary" value="提交">
                 </p>
             </form>';
-    } else { // no login
+    } else {
+        // no login
         $result = '<div class=\'cm-alert error\'>本页面需要您登录才可以操作，请先 ' . weixin_login_btn() . '  或者<a href="' . esc_url(wp_registration_url()) . '">立即注册</a></div>';
     }
     return $result;

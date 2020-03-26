@@ -321,7 +321,7 @@ function log_login($username, $password)
         if (is_wp_error($check)) {
 
             $ua    = getBrowser();
-            $agent = $ua['name'] . " " . $ua['version'];
+            $agent = $ua['name'];
 
             $referrer = (isset($_SERVER['HTTP_REFERER'])) ? $_SERVER['HTTP_REFERER'] : $_SERVER['PHP_SELF'];
             if (strstr($referrer, 'wp-login')) {
@@ -334,7 +334,7 @@ function log_login($username, $password)
 
             $contact_errors = false;
             // get the posted data
-            $name          = "WordPress " . get_bloginfo('name');
+            $name      =  get_bloginfo('name');
             $email_address = get_bloginfo('admin_email');
 
             // write the email content
@@ -342,23 +342,23 @@ function log_login($username, $password)
             $header .= "Content-Type: text/html; charset=utf-8\n";
             $header .= "From: $name <$email_address>\n";
 
-            $message = "Failed login attempt on <a href='" . get_site_url() . "/" . $ref . "' target='_blank'>" . $name . "</a><br>" . PHP_EOL;
-            $message .= 'IP: <a href="http://whatismyipaddress.com/ip/' . gdk_get_ip() . '" target="_blank">' . gdk_get_ip() . "</a><br>" . PHP_EOL;
-            $message .= 'WhoIs: <a href="https://who.is/whois-ip/ip-address/' . gdk_get_ip() . '" target="_blank">' . gdk_get_ip() . "</a><br>" . PHP_EOL;
+            $message = "<a href='" . home_url() . "' target='_blank'>" . $name . "</a> 登陆失败提醒<br>" . PHP_EOL;
+
             $message .= "Browser: " . $agent . "<br>" . PHP_EOL;
             $message .= "OS: " . $ua['platform'] . "<br>" . PHP_EOL;
+            $message .= 'IP:  <a href="https://www.ipip.net/ip/'. gdk_get_ip() . '.html" target="_blank">'. gdk_get_ip() . '</a><br>' . PHP_EOL;
             $message .= "Date: " . date('Y-m-d H:i:s') . "<br>" . PHP_EOL;
             $message .= "Referrer: " . $referrer . "<br>" . PHP_EOL;
             $message .= "User Agent: " . $ua['userAgent'] . "<br>" . PHP_EOL;
             $message .= "Username: " . $username . "<br>" . PHP_EOL;
             $message .= "Password: " . $password . "<br>" . PHP_EOL;
 
-            $subject = "Failed login attempt - " . $name;
-            $subject = "=?utf-8?B?" . base64_encode($subject) . "?=";
+            $subject = "登陆失败提醒 - " . $name;
             $to      = $email_address;
+            $mail_content = mail_temp($subject, $message , home_url(), $name );
             if (!empty($to)) {
                 // send the email using wp_mail()
-                if (!wp_mail($to, $subject, $message, $header)) {
+                if (!wp_mail($to, $subject, $mail_content , $header)) {
                     $contact_errors = true;
                 }
             }
