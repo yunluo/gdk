@@ -45,7 +45,7 @@ add_action('wp_ajax_get_new_version', 'gdk_ajax_get_update');
 function gdk_ajax_install_update()
 {
     $url = 'http://a.gitcafe.net/gdk.zip?v=' . date("His");
-    unzip_url($url, WP_PLUGIN_DIR);
+    unzip_url($url, GDK_ROOT_PATH);
     exit(1);
 
 }
