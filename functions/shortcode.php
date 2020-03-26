@@ -228,9 +228,9 @@ function gdk_secret_view($atts, $content = null)
     return '<div class="cm-grid cm-card pass_viewbox">
    <div class="cm-row">
       <div class="cm-col-md-4">
-         <img src="https://p.ssl.qhimg.com/t0162cc8398cbf7dea3.jpg" class="cm-resp-img">
+         <img src="'.gdk_option('gdk_mp_qr').'" class="cm-resp-img">
       </div>
-      <div class="cm-col-md-8">
+      <div class="cm-col-md-8" style="margin-top:4%;">
          <div class="hide_content_info" style="margin:10px 0">
 			<div class="cm-alert primary">本段内容已被隐藏，您需要扫码关注微信公众号申请验证码查看，发送【验证码】获取验证码，验证码2分钟有效</div>
 		<input type="text" id="pass_view" placeholder="输入验证码并提交" style="width:70%"> &nbsp;&nbsp;<input id="submit_pass_view" class="cm-btn success" data-action="gdk_pass_view" data-id="' . $pid . '" type="button" value="提交">

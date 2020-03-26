@@ -21,13 +21,13 @@ function gdk_enqueue_script_frontend()
         wp_enqueue_style('gdk_css', GDK_BASE_URL . 'assets/css/gdk.css', false, GDK_PLUGIN_VER, 'all');
         wp_deregister_script('jquery');
         wp_enqueue_script('jquery', 'https://cdn.jsdelivr.net/npm/jquery@2.1.0/dist/jquery.min.js', false, GDK_PLUGIN_VER, true); //加载自定义jQuery2.0.3
-        wp_enqueue_script('code_prettify_js', GDK_BASE_URL . 'assets/js/prettify.min.js', array('jquery'), GDK_PLUGIN_VER, true);
-        wp_enqueue_script('fancybox_js', GDK_BASE_URL . 'assets/js/fancybox.min.js', array('jquery'), GDK_PLUGIN_VER, true);
-        wp_enqueue_script('lazyload_js', GDK_BASE_URL . 'assets/js/lazyload.min.js', array('jquery'), GDK_PLUGIN_VER, true);
-        wp_enqueue_script('sweetalert_js', 'https://cdn.jsdelivr.net/combine/npm/sweetalert@2.0.0,npm/qrious@4.0.2', [], GDK_PLUGIN_VER, true);
+        //wp_enqueue_script('code_prettify_js', GDK_BASE_URL . 'assets/js/prettify.min.js', array('jquery'), GDK_PLUGIN_VER, true);
+        //wp_enqueue_script('fancybox_js', GDK_BASE_URL . 'assets/js/fancybox.min.js', array('jquery'), GDK_PLUGIN_VER, true);
+        wp_enqueue_script('libs_js', GDK_BASE_URL . 'assets/js/libs.min.js', array('jquery'), GDK_PLUGIN_VER, true);
+        //wp_enqueue_script('sweetalert_js', 'https://cdn.jsdelivr.net/combine/npm/sweetalert@2.0.0,npm/qrious@4.0.2', [], GDK_PLUGIN_VER, true);
         wp_enqueue_script('gdk_js', GDK_BASE_URL . 'assets/js/gdk.js', array('jquery'), GDK_PLUGIN_VER, true);
-        wp_localize_script('gdk_js', 'ajax', [
-            'url'               => admin_url('admin-ajax.php'),
+        wp_localize_script('gdk_js', 'gdk', [
+            'ajaxurl'           => admin_url('admin-ajax.php'),
             'pass_nonce'        => wp_create_nonce('pass_nonce'),
             'pay_points'        => wp_create_nonce('pay_points'),
             'check_pay_points'  => wp_create_nonce('check_pay_points'),
@@ -35,6 +35,7 @@ function gdk_enqueue_script_frontend()
             'check_code'        => wp_create_nonce('check_code'),
             'gdk_weauth_qr_gen' => wp_create_nonce('gdk_weauth_qr_gen'),
             'gdk_weauth_check'  => wp_create_nonce('gdk_weauth_check'),
+            'gdk_payjs_alipay'  => gdk_option('gdk_payjs_alipay'),
             'user_id'           => get_current_user_id(),
         ]);
     }

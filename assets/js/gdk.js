@@ -1,5 +1,13 @@
 jQuery(function ($) { /**声明加载jQuery */
 
+	$(".fancybox").fancybox();/**启动fancybox */
+	$("img").lazyload({ effect: "fadeIn", threshold: 180 });/**图片懒加载 */
+	window.prettyPrint && prettyPrint();/**加载代码高亮 */
+
+	/**
+	 * 
+	 * @param {string} a 日志内容
+	 */
 	function glog(a) {
 		console.log(a);
 	}
@@ -69,11 +77,11 @@ jQuery(function ($) { /**声明加载jQuery */
 	$("#submit_pass_view").click(function () {
 		var ajax_data = {
 			action: $('#submit_pass_view').data('action'),
-			pass_nonce: ajax.pass_nonce,
+			pass_nonce: gdk.pass_nonce,
 			id: $('#submit_pass_view').data('id'),
 			pass: $('#pass_view').val()
 		};
-		$.post(ajax.url, ajax_data, function (c) {
+		$.post(gdk.ajaxurl, ajax_data, function (c) {
 			c = $.trim(c); /**Ajax返回有空行,这里处理一下.妈的花了老子3个小时 */
 			if (c !== '400') {
 				show_hide_content('.pass_viewbox', c);
@@ -153,12 +161,12 @@ jQuery(function ($) { /**声明加载jQuery */
 
 	function check_pay_points(a, b) {
 		var ajax_data = {
-			check_pay_points: ajax.check_pay_points,
+			check_pay_points: gdk.check_pay_points,
 			action: 'check_pay_points',
 			id: a,
 			orderid: b
 		};
-		$.post(ajax.url, ajax_data, function (c) {
+		$.post(gdk.ajaxurl, ajax_data, function (c) {
 			c = $.trim(c);
 			if (c == '200') {
 				swal("支付成功!", "为支付详情已发送到您的邮箱", "success"); //ok
@@ -186,7 +194,7 @@ jQuery(function ($) { /**声明加载jQuery */
 			way: b,
 			id: c
 		};
-		$.post(ajax.url, ajax_data, function (e) {
+		$.post(gdk.ajaxurl, ajax_data, function (e) {
 			e = $.trim(e);
 			if (e !== '400') {
 				var g = document.createElement("img"),
@@ -244,7 +252,7 @@ jQuery(function ($) { /**声明加载jQuery */
 			action: 'get_content',
 			id: a
 		};
-		$.post(ajax.url, ajax_data, function (c) {
+		$.post(gdk.ajaxurl, ajax_data, function (c) {
 			c = $.trim(c);
 			if (c !== '400') {
 				show_hide_content('#hide_notice', c);
@@ -266,7 +274,7 @@ jQuery(function ($) { /**声明加载jQuery */
 			id: a,
 			code: b
 		};
-		$.post(ajax.url, ajax_data, function (c) {
+		$.post(gdk.ajaxurl, ajax_data, function (c) {
 			c = $.trim(c);
 			if (c == '200') {
 				swal("输入成功", "您的支付提取码是" + b, "success");
@@ -283,12 +291,12 @@ jQuery(function ($) { /**声明加载jQuery */
 
 	function check_pay_view(a, b) {
 		var ajax_data = {
-			check_pay_view: ajax.check_pay_view,
+			check_pay_view: gdk.check_pay_view,
 			action: 'check_pay_view',
 			id: a,
 			orderid: b
 		};
-		$.post(ajax.url, ajax_data, function (c) {
+		$.post(gdk.ajaxurl, ajax_data, function (c) {
 			c = $.trim(c);
 			if (c == '200') {
 				swal("支付成功!", "为了方便您后续再次查看，建议您输入您的常用邮箱作为提取码", "info", {
@@ -314,12 +322,12 @@ jQuery(function ($) { /**声明加载jQuery */
 
 	function check_code(a, b) {
 		var ajax_data = {
-			check_code: ajax.check_code,
+			check_code: gdk.check_code,
 			action: 'check_code',
 			id: a,
 			code: b
 		};
-		$.post(ajax.url, ajax_data, function (c) {
+		$.post(gdk.ajaxurl, ajax_data, function (c) {
 			c = $.trim(c);
 			if (c == '200') {
 				get_content(a);
@@ -426,7 +434,7 @@ jQuery(function ($) { /**声明加载jQuery */
 			data: a,
 			email: c
 		};
-		$.post(ajax.url, ajax_data, function (b) {
+		$.post(gdk.ajaxurl, ajax_data, function (b) {
 			b = $.trim(b); //登陆信息
 			if (b !== '400' && b == '200') {
 				window.location.reload();
@@ -455,7 +463,7 @@ jQuery(function ($) { /**声明加载jQuery */
 							action: 'bind_email_check',
 							email: `${value}`
 						};
-						$.post(ajax.url, ajax_data, function (b) {
+						$.post(gdk.ajaxurl, ajax_data, function (b) {
 							b = $.trim(b);
 							if (b == '200') {//邮箱已存在
 								swal("邮箱绑定错误", "您输入的邮箱已被绑定，请更换邮箱或者联系管理员，谢谢", { icon: "error", dangerMode: true });
@@ -482,11 +490,11 @@ jQuery(function ($) { /**声明加载jQuery */
 	 */
 	function check_weauth_login() {
 		var ajax_data = {
-			gdk_weauth_check: ajax.gdk_weauth_check,
+			gdk_weauth_check: gdk.gdk_weauth_check,
 			action: 'gdk_weauth_check',
 			key: $('#weauth_key').text()
 		};
-		$.post(ajax.url, ajax_data, function (b) {
+		$.post(gdk.ajaxurl, ajax_data, function (b) {
 			b = $.trim(b); //登陆||信息
 			if (b.length > 100) {
 				swal("微信登录成功！", "跳转刷新中！", "success", {
@@ -509,7 +517,7 @@ jQuery(function ($) { /**声明加载jQuery */
 		var ajax_data = {
 			action: a
 		};
-		$.post(ajax.url, ajax_data, function (b) {
+		$.post(gdk.ajaxurl, ajax_data, function (b) {
 			b = $.trim(b); //登陆信息
 			if (b !== '400') {
 				var c = document.createElement("img"),
@@ -558,7 +566,7 @@ jQuery(function ($) { /**声明加载jQuery */
 			point: $("#pay_points").data("point")
 
 		};
-		$.post(ajax.url, ajax_data, function (b) {
+		$.post(gdk.ajaxurl, ajax_data, function (b) {
 			b = $.trim(b);
 			if ('' !== b) {
 				show_hide_content('#hide_notice', b);

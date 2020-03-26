@@ -23,8 +23,13 @@ function gdk_add_content($content)
 {
     $before  = gdk_option('gdk_artical_top');
     $after   = gdk_option('gdk_artical_bottom');
-    $content = $before . '<br>' . $content . '<br>' . $after;
-    return $content;
+    if(empty($before) && empty($after)){
+        return $content;
+    }else{
+        return $before . '<br>' . $content . '<br>' . $after;
+    }
+
+
 }
 add_filter('the_content', 'gdk_add_content');
 
@@ -163,10 +168,10 @@ function gdk_link_go($content)
 //邮箱SMTP设置
 function gdk_smtp($phpmailer)
 {
-    $phpmailer->FromName   = gdk_option('gdk_smtp_username'); //邮箱地址
+    $phpmailer->FromName   = gdk_option('gdk_smtp_username'); //昵称
     $phpmailer->Host       = gdk_option('gdk_smtp_host'); //服务器地址
     $phpmailer->Port       = gdk_option('gdk_smtp_port'); //端口
-    $phpmailer->Username   = gdk_option('gdk_smtp_mail'); //昵称
+    $phpmailer->Username   = gdk_option('gdk_smtp_mail'); //邮箱地址
     $phpmailer->Password   = gdk_option('gdk_smtp_password'); //密码
     $phpmailer->From       = gdk_option('gdk_smtp_mail'); //邮箱地址
     $phpmailer->SMTPAuth   = true;
