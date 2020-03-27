@@ -21,6 +21,7 @@ function gdk_enqueue_script_frontend()
         wp_enqueue_style('gdk_css', GDK_BASE_URL . 'assets/css/gdk.css', false, GDK_PLUGIN_VER, 'all');
         wp_deregister_script('jquery');
         wp_enqueue_script('jquery', 'https://cdn.jsdelivr.net/npm/jquery@2.1.0/dist/jquery.min.js', false, GDK_PLUGIN_VER, true); //加载自定义jQuery2.0.3
+        
         //wp_enqueue_script('code_prettify_js', GDK_BASE_URL . 'assets/js/prettify.min.js', array('jquery'), GDK_PLUGIN_VER, true);
         //wp_enqueue_script('fancybox_js', GDK_BASE_URL . 'assets/js/fancybox.min.js', array('jquery'), GDK_PLUGIN_VER, true);
         wp_enqueue_script('libs_js', GDK_BASE_URL . 'assets/js/libs.min.js', array('jquery'), GDK_PLUGIN_VER, true);
