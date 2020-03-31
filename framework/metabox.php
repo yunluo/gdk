@@ -17,14 +17,6 @@ if (!class_exists('myCustomFields')) {
          */
         public $customFields = array(
             array(
-                "name"        => "pay_content",
-                "title"       => "免登陆付费查看内容",
-                "description" => "这里可以输入免费可支付可查看的内容",
-                "type"        => "textarea",
-                "scope"       => array("post"),
-                "capability"  => "edit_posts",
-            ),
-            array(
                 "name"        => "thumb",
                 "title"       => "自定义缩略图",
                 "description" => "这里可以输入您的自定义缩略图链接",
@@ -50,16 +42,8 @@ if (!class_exists('myCustomFields')) {
             ),
             array(
                 "name"        => "download_link",
-                "title"       => "单页下载下载链接【新版】",
+                "title"       => "单页下载下载链接",
                 "description" => "按照链接,名字,备注的格式,注意中间是用英文逗号,换行可添加多个,举个栗子：<code>https://www.baidu.com,百度官网,中国最大的搜索引擎网站</code>",
-                "type"        => "textarea",
-                "scope"       => array("post"),
-                "capability"  => "edit_posts",
-            ),
-            array(
-                "name"        => "demo",
-                "title"       => "代码演示",
-                "description" => "请在这里输入您的演示代码",
                 "type"        => "textarea",
                 "scope"       => array("post"),
                 "capability"  => "edit_posts",
@@ -82,7 +66,7 @@ if (!class_exists('myCustomFields')) {
         {
             if (function_exists('add_meta_box')) {
                 foreach ($this->postTypes as $postType) {
-                    add_meta_box('my-custom-fields', 'Git 主题文章发布选项', array($this, 'displayCustomFields'), $postType, 'normal', 'high');
+                    add_meta_box('my-custom-fields', '文章选项', array($this, 'displayCustomFields'), $postType, 'normal', 'high');
                 }
             }
         }
@@ -122,7 +106,7 @@ if (!class_exists('myCustomFields')) {
                 // 通过则输出
                 if ($output) {
                     ?>
-                        <div class="form-field form-required">
+                        <div class="form-field form-required form-field-<?php echo $customField['name'];?>">
                             <?php switch ($customField['type']) {
                         case "checkbox":{
                                 // Checkbox 组件
@@ -131,7 +115,6 @@ if (!class_exists('myCustomFields')) {
                                 if (get_post_meta($post->ID, $this->prefix . $customField['name'], true) == "1") {
                                     echo ' checked="checked"';
                                 }
-
                                 echo '" style="width: auto;" />';
                                 break;
                             }

@@ -179,7 +179,7 @@ function pay_view()
     }
 //无脑输出400错误
     if (isset($_POST['id'])) {
-        payjs_action('在线付费查看', 'PP' . $_POST['id'], $_POST['money']); //标题,文章id
+        payjs_action('付费查看:'.get_the_title($_POST['id']), 'PP' . $_POST['id'], $_POST['money']); //标题,文章id
     }
 }
 add_action('wp_ajax_pay_view', 'pay_view');

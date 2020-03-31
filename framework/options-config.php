@@ -482,17 +482,6 @@ $gdk_options = [
             'std'  => 'wp-content|wp-includes',
         ],
         [
-            'name'    => 'CDN自定义缩略图样式',
-            'desc'    => '国内CDN服务商均支持的功能，使用自定义图片样式功能进行裁剪缩略图，默认使用的分隔符为【!】,默认开启',
-            'id'      => 'gdk_cdn_style',
-            'type'    => 'radio',
-            'options' => [
-                '0' => '禁用',
-                '1' => '开启',
-            ],
-            'std'     => '1',
-        ],
-        [
             'name'    => 'CDN服务商',
             'desc'    => '选择使用国内CDN服务商,此项主要影响CDN缩略图,请选择对应服务商',
             'id'      => 'gdk_cdn_serves',
@@ -513,12 +502,6 @@ $gdk_options = [
             'type' => 'checkbox',
         ],
         [
-            'name' => 'CDN镜像后台化',
-            'desc' => '启用【一般可不启用，如果您启用CDN镜像之后并在FTP删除了本地文件，则必须开启】',
-            'id'   => 'gdk_adminqn_b',
-            'type' => 'checkbox',
-        ],
-        [
             'title' => '微信登录设置',
             'type'  => 'title',
         ],
@@ -531,7 +514,7 @@ $gdk_options = [
         [
             'name' => '是否启用强制微信登录',
             'desc' => '启用 【开启后，将禁用WordPress自带的登录，所有登录地址都跳转到微信的登录，如需临时使用自带登录，可以使用这个链接：你的域名/wp-login.php?loggedout=true】',
-            'id'   => 'gdk_weauth_oauth_force',
+            'id'   => 'gdk_weauth_force',
             'type' => 'checkbox',
         ],
         [

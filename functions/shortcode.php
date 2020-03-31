@@ -162,18 +162,15 @@ function gdk_ton($atts, $content = null)
     return '<a class="lhb" id="showdiv" href="#fancydlbox" >文件下载</a><div id="fancydlbox" style="cursor:default;display:none;width:800px;"><div class="part" style="padding:20px 0;"><h2>下载声明:</h2> <div class="fancydlads" align="left"><p>' . gdk_option('gdk_fancydlcp') . '</p></div></div><div class="part" style="padding:20px 0;"><h2>文件信息：</h2> <div class="dlnotice" align="left"><p>文件名称：' . $filename . '<br />文件大小：' . $filesize . '<br />发布日期：' . get_the_modified_time('Y年n月j日') . '</p></div></div><div class="part" id="download_button_part"><a id="download_button" target="_blank" href="' . $href . '"><span></span>' . $filedown . '</a> </div><div class="part" style="padding:20px 0;"><div class="moredl" style="text-align:center;">[更多地址] : ' . $content . '</div></div><div class="dlfooter">' . gdk_option('gdk_fancydlad') . '</div></div>';
 }
 add_shortcode('fanctdl', 'gdk_ton');
-//代码演示短代码
-function gdk_demo($atts, $content = null)
-{
-    return '<a class="lhb" href="' . get_permalink(gdk_page_id('demo')) . '?pid=' . get_the_ID() . '" target="_blank" rel="nofollow">' . $content . '</a>';
-}
-add_shortcode('demo', 'gdk_demo');
+
+
 //下载单页短代码
 function gdk_download($atts, $content = null)
 {
-    return '<a class="lhb" href="' . get_permalink(gdk_page_id('download')) . '?pid=' . get_the_ID() . '" target="_blank" rel="nofollow">' . $content . '</a>';
+    extract(shortcode_atts(array('title' => '点击下载',), $atts));
+    return '<a class="cm-btn primary" href="' . home_url() . '?dl=' . get_the_ID() . '" target="_blank" rel="nofollow">' . $title . '</a>';
 }
-add_shortcode('download', 'gdk_download');
+add_shortcode('pdownload', 'gdk_download');
 
 //为WordPress添加展开收缩功能
 function gdk_xcollapse($atts, $content = null)

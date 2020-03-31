@@ -21,14 +21,14 @@ if (gdk_option('gdk_cdn_water')) {
 //文章首尾添加自定义内容
 function gdk_add_content($content)
 {
-    $before  = gdk_option('gdk_artical_top');
-    $after   = gdk_option('gdk_artical_bottom');
-    if(empty($before) && empty($after)){
+    
+    $before = gdk_option('gdk_artical_top');
+    $after  = gdk_option('gdk_artical_bottom');
+    if (empty($before) && empty($after) && !is_single()) {
         return $content;
-    }else{
+    } else {
         return $before . '<br>' . $content . '<br>' . $after;
     }
-
 
 }
 add_filter('the_content', 'gdk_add_content');
@@ -175,7 +175,7 @@ function gdk_smtp($phpmailer)
     $phpmailer->Password   = gdk_option('gdk_smtp_password'); //密码
     $phpmailer->From       = gdk_option('gdk_smtp_mail'); //邮箱地址
     $phpmailer->SMTPAuth   = true;
-	$phpmailer->SMTPSecure = 'ssl';
+    $phpmailer->SMTPSecure = 'ssl';
     $phpmailer->IsSMTP();
 }
 
@@ -331,4 +331,49 @@ if (gdk_option('gdk_article_list')) {
         return $content;
     }
     add_filter('the_content', 'article_index');
+}
+
+function weauth_page_activate()
+{
+    $awesome_page_id = get_option('weixin_page_id');
+    if (!$awesome_page_id) {
+        $post = array(
+            'post_title'   => '微信登录', //这里是自动生成页面的页面标题
+             'post_content' => '[gdk_login_btn]', //这里是页面的内容
+             'post_status'  => 'publish',
+            'post_type'    => 'page',
+            'post_name'    => 'weixin',
+        );
+        $postID = wp_insert_post($post);
+        update_post_meta($postID, '_wp_page_template', ''); //这里是生成页面的模板类型
+        update_option('weixin_page_id', $postID);
+    }
+
+}
+add_action('admin_init', 'weauth_page_activate');
+
+//强制微信登录
+function force_weauth_login_url($login_url, $redirect, $force_reauth)
+{
+    $login_url = get_permalink(get_option('weixin_page_id'));
+    if (!empty($redirect)) {
+        $login_url = add_query_arg('redirect_to', urlencode($redirect), $login_url);
+    }
+    if ($force_reauth) {
+        $login_url = add_query_arg('reauth', '1', $login_url);
+    }
+    return $login_url;
+}
+
+function change_my_register_url($url)
+{
+    if (is_admin()) {
+        return $url;
+    }
+    return wp_login_url();
+}
+
+if (gdk_option('gdk_weauth_oauth') && gdk_option('gdk_weauth_force')) {
+    add_filter('login_url', 'force_weauth_login_url', 10, 3);
+    add_filter('register_url', 'change_my_register_url');
 }

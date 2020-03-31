@@ -100,6 +100,8 @@ body{font-family:"Microsoft YaHei"}
 .wp-block[data-align=wide] {max-width:810pt}
 .wp-block[data-align=full] {max-width:none}
 #activity-widget #the-comment-list .avatar{width:50px}
+.form-field-download_name,.form-field-download_size{width:45%;float:left}
+.form-field-download_link{clear:both}
     </style>
     <?php
 }
