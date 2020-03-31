@@ -39,7 +39,7 @@ $message      = mail_temp($mail_title, $mail_cotent, home_url(), get_bloginfo('n
 GDK_Points::set_points($point_number, $userid, array('description' => $orderid, 'status' => 'accepted'));
 //增加金币金币
 wp_mail($user->user_email, 'Hi,' . $user->display_name . '，充值成功到账通知！', $message, $headers);
-$mail_admin_cotent = '<p>充值订单</p><p>用户ID：' . $userid . '</p><p>用户名：' . $user->display_name . '</p><p>金额' . $money . '元</p>';
+$mail_admin_cotent = '<p>充值订单</p><p>用户ID：' . $userid . '</p><p>用户名：' . $user->display_name . '</p><p>金额：' . $money . '元</p>';
 $admin_notice      = mail_temp('站长你好', $mail_admin_cotent, home_url(), get_bloginfo('name'));
 wp_mail(get_bloginfo('admin_email'), '【收款成功】网站充值订单已完成', $admin_notice, $headers);
 //more
