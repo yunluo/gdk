@@ -768,7 +768,7 @@ function mail_temp($mail_title, $mail_cotent, $link, $link_title)
     <div style="color:#cecece;font-size: 12px;">本邮件为系统自动发送，请勿回复。<br>
     如果不想被此类邮件打扰,请前往 <a style="color: #cecece;" href="' . home_url() . '" rel="noopener" target="_blank">' . get_option('blogname') . '</a> 留言说明,由我们来操作处理。
     </div></div>';
-    
+
     return $content;
 }
 
@@ -824,6 +824,30 @@ function gdk_term_meta($term, $meta, $id)
     return $result;
 }
 
+//CDN 缩略图处理样式
+function gdk_thumb_style($width, $height)
+{
+    switch (gdk_option('gdk_cdn_serves')) {
+        case '1':
+            return '?imageView2/1/w/' . $width . '/h/' . $height;
+            break;
+        case '2':
+            return '!/both/' . $width . 'x' . $height . '/force/true';
+            break;
+        case '3':
+            return '?imageMogr2/thumbnail/' . $width . 'x' . $height . '!';
+            break;
+        case '4':
+            return '?x-oss-process=image/resize,m_fixed,h_' . $height . ',w_' . $width . ',limit_0';
+            break;
+        case '5':
+            return '?x-image-process=image/resize,m_fixed,h_' . $height . ',w_' . $width . ',limit_0';
+            break;
+        default:
+            return false;
+    }
+}
+
 //输出缩略图地址
 function gdk_thumbnail_src()
 {
@@ -857,16 +881,14 @@ function gdk_thumbnail_src()
  * @param  [init] $way     缩略图方案代码，1=cdn，2=timthumb，3=aq_resize
  * @param  [init] $width   缩略图宽度
  * @param  [init] $height  缩略图高度
- * @param  [string] $style 图片样式，cdn方案时有效
  * @param  [string] $atrr  img标签的属性
  * @return [string]        img标签的图片代码
  */
-function gdk_thumb_img($way, $width, $height, $style = '', $atrr = 'class="thumb_img"')
+function gdk_thumb_img($way, $width, $height, $atrr = 'class="thumb_img"')
 {
     $url = gdk_thumbnail_src();
-    if ($way === 1) {
-        //cdn
-        $src = $url . '!' . $style;
+    if ($way === 1) {//cdn
+        $src = $url  . gdk_thumb_style($width, $height);
     } elseif ($way === 2) {
         $src = GDK_BASE_URL . 'public/timthumb.php?src=' . $url . '&h=' . $height . '&w=' . $width . '&q=90&zc=1&ct=1';
     } elseif ($way === 3) {

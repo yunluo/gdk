@@ -493,6 +493,20 @@ $gdk_options = [
             'std'     => '1',
         ],
         [
+            'name'    => 'CDN服务商',
+            'desc'    => '选择使用国内CDN服务商,此项主要影响CDN缩略图,请选择对应服务商',
+            'id'      => 'gdk_cdn_serves',
+            'type'    => 'radio',
+            'options' => [
+                '1' => '七牛云',
+                '2' => '又拍云',
+                '3' => '腾讯云',
+                '4' => '阿里云',
+                '5' => '华为云',
+            ],
+            'std'     => '4',
+        ],
+        [
             'name' => 'CDN水印',
             'desc' => '启用【如果启用，请在七牛，又拍，OSS等CDN中设置自定义样式，名字为：<span class="key_word">water.jpg</span>，分隔符为<span class="key_word">!</span> 】',
             'id'   => 'gdk_cdn_water',
