@@ -269,11 +269,11 @@ class GDK_Points_Admin
                         $username = $user->display_name;
                     }
                     GDK_Points::set_points($_POST['points'], $userid, $data);
-                    $mail_title = $username . '您好,金币调整通知';
+                    $mail_title = $username . '您好，金币增加通知';
                     $mail_cotent = '<p>您的金币金额被管理员调整，请查收！</p>
                     <ul>
 	                    <li>用户名：' . $username . '</li>
-                        <li>调整金币：' . $_POST['points'] . '</li>
+                        <li>增加金币：' . $_POST['points'] . '</li>
                         <li>金币总额：' . GDK_Points::get_user_total_points($userid, 'accepted') . '</li>
                     </ul>
                     <p>如果您的金币金额有异常，请您在第一时间和我们取得联系哦，联系邮箱：' . get_bloginfo('admin_email') . '</p>';
