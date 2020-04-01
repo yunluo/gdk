@@ -21,7 +21,7 @@ class GDK_Points_List_Table extends WP_List_Table
         $hidden   = $this->get_hidden_columns();
         $sortable = $this->get_sortable_columns();
         $data     = $this->table_data();
-        usort($data, [ & $this, 'sort_data']);
+        usort($data, array(&$this,'sort_data'));
         $perPage     = 30; //每页30个数据
         $currentPage = $this->get_pagenum();
         $totalItems  = count($data);
@@ -220,15 +220,18 @@ class GDK_Points_Admin
         $alert = "";
         if (isset($_POST['psearch'])) {
             $sdata = trim($_POST['psearch']);
-            if (preg_match('/E20/', $sdata)) { //order id
+            if (preg_match('/E20/', $sdata)) {
+                //order id
                 global $wpdb;
                 $point_id = $wpdb->get_row("SELECT point_id FROM " . GDK_Points_Database::points_get_table("users") . " WHERE description = '{$sdata}'", ARRAY_A)['point_id'];
                 $points   = GDK_Points::get_point($point_id);
-            } elseif (filter_var($sdata, FILTER_VALIDATE_EMAIL)) { //email
+            } elseif (filter_var($sdata, FILTER_VALIDATE_EMAIL)) {
+                //email
                 $user   = get_user_by('email', $sdata);
                 $points = GDK_Points::get_points_by_user($user->ID);
                 $k[]    = '<div style="margin-bottom:10px;">用户ID：' . $user->ID . '  &nbsp;&nbsp;总金币为：' . GDK_Points::get_user_total_points($user->ID) . '</div>';
-            } else { //userid
+            } else {
+                //userid
                 $points = GDK_Points::get_points_by_user($sdata);
                 $k[]    = '<div style="margin-bottom:10px;">用户ID：' . $sdata . '  &nbsp;&nbsp;总金币为：' . GDK_Points::get_user_total_points($sdata) . '</div>';
             }
@@ -266,16 +269,19 @@ class GDK_Points_Admin
                     $data['points'] = $_POST['points'];
                 }
 
-                if ($points) { // 编辑金币
+                if ($points) {
+                    // 编辑金币
                     GDK_Points::update_points($point_id, $data);
-                } else { // 增加金币
+                } else {
+                    // 增加金币
                     if (isset($_POST['user_mail'])) { //如果输入邮箱的话
                         $usermail = $data['user_mail'];
                         $user     = get_user_by('email', $usermail);
                         $userid   = $user->ID;
                         $username = $user->display_name;
                     }
-                    if (isset($_POST['user_id'])) { //如果输入用户ID的话
+                    if (isset($_POST['user_id'])) {
+                        //如果输入用户ID的话
                         $user     = get_user_by('id', $data['user_id']);
                         $usermail = $user->user_email;
                         $userid   = $data['user_id'];
