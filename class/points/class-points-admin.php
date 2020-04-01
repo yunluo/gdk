@@ -20,7 +20,10 @@ class GDK_Points_List_Table extends WP_List_Table
         $columns  = $this->get_columns();
         $sortable = $this->get_sortable_columns();
         $data     = GDK_Points::get_points(null, null, null, ARRAY_A);
-        usort($data, $this->sort_data());
+        usort( $data, array(
+            &$this,
+            'sort_data' 
+        ) );
         $perPage     = 30; //每页30个数据
         $currentPage = $this->get_pagenum();
         $totalItems  = count($data);
@@ -138,11 +141,11 @@ class GDK_Points_List_Table extends WP_List_Table
      *
      * @return Mixed
      */
-    private function __sort_data($a, $b)
+    private function sort_data($a, $b)
     {
         // Set defaults
         $orderby = 'point_id';
-        $order   = 'desc';
+        $order   = 'desc';//desc asc
 
         // If orderby is set, use this as the sort column
         if (!empty($_GET['orderby'])) {
@@ -266,9 +269,17 @@ class GDK_Points_Admin
                         $username = $user->display_name;
                     }
                     GDK_Points::set_points($_POST['points'], $userid, $data);
-                    $message = '<div class="emailcontent" style="width:100%;max-width:720px;text-align:left;margin:0 auto;padding-top:80px;padding-bottom:20px"><div class="emailtitle"><h1 style="color:#fff;background:#51a0e3;line-height:70px;font-size:24px;font-weight:400;padding-left:40px;margin:0">金币金额调整通知</h1><div class="emailtext" style="background:#fff;padding:20px 32px 40px"><div style="padding:0;font-weight:700;color:#6e6e6e;font-size:16px">尊敬的' . $username . ',您好！</div><p style="color:#6e6e6e;font-size:13px;line-height:24px">您的金币金额被管理员调整，请查收！</p><table cellpadding="0" cellspacing="0" border="0" style="width:100%;border-top:1px solid #eee;border-left:1px solid #eee;color:#6e6e6e;font-size:16px;font-weight:normal"><thead><tr><th colspan="2" style="padding:10px 0;border-right:1px solid #eee;border-bottom:1px solid #eee;text-align:center;background:#f8f8f8">您的金币详细情况</th></tr></thead><tbody><tr><td style="padding:10px 0;border-right:1px solid #eee;border-bottom:1px solid #eee;text-align:center;width:100px">用户名</td><td style="padding:10px 20px 10px 30px;border-right:1px solid #eee;border-bottom:1px solid #eee;line-height:30px">' . $username . '</td></tr><tr><td style="padding:10px 0;border-right:1px solid #eee;border-bottom:1px solid #eee;text-align:center">调整金币</td><td style="padding:10px 20px 10px 30px;border-right:1px solid #eee;border-bottom:1px solid #eee;line-height:30px">' . $_POST['points'] . '</td></tr><tr><td style="padding:10px 0;border-right:1px solid #eee;border-bottom:1px solid #eee;text-align:center">金币总额</td><td style="padding:10px 20px 10px 30px;border-right:1px solid #eee;border-bottom:1px solid #eee;line-height:30px">' . GDK_Points::get_user_total_points($userid, 'accepted') . '</td></tr></tbody></table><p style="color:#6e6e6e;font-size:13px;line-height:24px">如果您的金币金额有异常，请您在第一时间和我们取得联系哦，联系邮箱：' . get_bloginfo('admin_email') . '</p></div><div class="emailad" style="margin-top:4px"><a href="' . home_url() . '"><img src="http://reg.163.com/images/secmail/adv.png" alt="" style="margin:auto;width:100%;max-width:700px;height:auto"></a></div></div></div>';
+                    $mail_title = $username . '您好,金币调整通知';
+                    $mail_cotent = '<p>您的金币金额被管理员调整，请查收！</p>
+                    <ul>
+	                    <li>用户名：' . $username . '</li>
+                        <li>调整金币：' . $_POST['points'] . '</li>
+                        <li>金币总额：' . GDK_Points::get_user_total_points($userid, 'accepted') . '</li>
+                    </ul>
+                    <p>如果您的金币金额有异常，请您在第一时间和我们取得联系哦，联系邮箱：' . get_bloginfo('admin_email') . '</p>';
+                    $message = mail_temp($mail_title, $mail_cotent, home_url(), get_bloginfo('name'));
                     $headers = "Content-Type:text/html;charset=UTF-8\n";
-                    wp_mail($usermail, 'Hi,' . $username . '，金币账户金额增加通知！', $message, $headers);
+                    wp_mail($usermail, 'Hi,' . $username . '，金币账户金额变动通知！', $message, $headers);
                 }
             }
             $alert = "金币已更新";

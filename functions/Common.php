@@ -761,9 +761,9 @@ function mail_temp($mail_title, $mail_cotent, $link, $link_title)
 {
 
     $content = '<div style="width:500px;margin:auto">
-    <div style="background:#2695f3;font-weight:bold;color:#FFF;padding:20px 10px;">' . $mail_title . '</div>
-    <div style="padding:10px;margin:5px;border-bottom:dashed 1px #ddd;">' . $mail_cotent . '</div>
-    <a href="' . $link . '" style="display:block;margin:auto;margin-top:40px;padding:10px;width:120px;outline:0;border:1px solid #2695f3;border-radius:25px;color:#2695f3;text-align:center;font-weight:700;font-size:14px;text-decoration:none;" rel="noopener" target="_blank">' . $link_title . '</a>
+    <h1 style="background:#2695f3;color:#fff;padding:20px 10px;">' . $mail_title . '</h1>
+    <div style="padding:15px;border-bottom:dashed 1px #ddd;">' . $mail_cotent . '</div>
+    <a href="' . $link . '" style="display:block;margin:auto;margin-top:40px;padding:10px;width:150px;outline:0;border:1px solid #2695f3;border-radius:25px;color:#2695f3;text-align:center;font-weight:700;font-size:14px;text-decoration:none;" rel="noopener" target="_blank">' . $link_title . '</a>
     <br><br>
     <div style="color:#cecece;font-size: 12px;">本邮件为系统自动发送，请勿回复。<br>
     如果不想被此类邮件打扰,请前往 <a style="color: #cecece;" href="' . home_url() . '" rel="noopener" target="_blank">' . get_option('blogname') . '</a> 留言说明,由我们来操作处理。
