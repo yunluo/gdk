@@ -18,10 +18,9 @@ class GDK_Points_List_Table extends WP_List_Table
     public function prepare_items()
     {
         $columns  = $this->get_columns();
-        $hidden   = $this->get_hidden_columns();
         $sortable = $this->get_sortable_columns();
-        $data     = $this->table_data();
-        usort($data, array(&$this,'sort_data'));
+        $data     = GDK_Points::get_points(null, null, null, ARRAY_A);
+        usort($data, $this->sort_data());
         $perPage     = 30; //每页30个数据
         $currentPage = $this->get_pagenum();
         $totalItems  = count($data);
@@ -34,7 +33,6 @@ class GDK_Points_List_Table extends WP_List_Table
 
         $this->_column_headers = [
             $columns,
-            $hidden,
             $sortable,
         ];
         $this->items = $data;
@@ -59,16 +57,6 @@ class GDK_Points_List_Table extends WP_List_Table
         ];
 
         return $columns;
-    }
-
-    /**
-     * Define which columns are hidden
-     *
-     * @return Array
-     */
-    public function get_hidden_columns()
-    {
-        return [];
     }
 
     /**
@@ -106,17 +94,7 @@ class GDK_Points_List_Table extends WP_List_Table
         ];
     }
 
-    /**
-     * Get the table data
-     *
-     * @return Array
-     */
-    private function __table_data()
-    {
-        $data = [];
-        $data = GDK_Points::get_points(null, null, null, ARRAY_A);
-        return $data;
-    }
+
 
     /**
      * Define what data to show on each column of the table
