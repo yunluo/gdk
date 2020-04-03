@@ -38,7 +38,7 @@ function nc_comment_add_at($comment_text, $comment = '')
     return $comment_text;
 }
 
-function nc_record_visitors()
+function gdk_record_visitors()
 {
     if (is_singular()) {
         global $post;
@@ -391,12 +391,12 @@ function gdk_die($ErrMsg)
 //面包屑导航
 function gdk_breadcrumbs($delimiter = '»', $hometitle = 'Home')
 {
-    $before = '<span class="current">';
+    $before = '<span class="current active">';
     // 在当前链接前插入
     $after = '</span>';
     // 在当前链接后插入
     if (!is_home() && !is_front_page() || is_paged()) {
-        echo '<div itemscope itemtype="http://schema.org/WebPage" id="crumbs">' . __('You are here:', 'cmp');
+        echo '<div itemscope itemtype="http://schema.org/WebPage" id="crumbs" class="cm-breadcrumb">';
         global $post;
         $homeLink = home_url();
         echo ' <a itemprop="breadcrumb" href="' . $homeLink . '">' . $hometitle . '</a> ' . $delimiter . ' ';
@@ -825,6 +825,28 @@ function gdk_term_meta($term, $meta, $id)
 }
 
 //CDN 缩略图处理样式
+function gdk_thumb_color()
+{
+    switch (gdk_option('gdk_cdn_serves')) {
+        case '1':
+		case '3':
+            return '?imageAve';
+            break;
+        case '2':
+            return '!/exformat/hex';
+            break;
+        case '4':
+            return '?x-oss-process=image/average-hue';
+            break;
+        case '5':
+            return '?x-image-process=image/average-hue';
+            break;
+        default:
+            return false;
+    }
+}
+
+//CDN 缩略图处理样式
 function gdk_thumb_style($width, $height)
 {
     switch (gdk_option('gdk_cdn_serves')) {
@@ -838,10 +860,10 @@ function gdk_thumb_style($width, $height)
             return '?imageMogr2/thumbnail/' . $width . 'x' . $height . '!';
             break;
         case '4':
-            return '?x-oss-process=image/resize,m_fixed,h_' . $height . ',w_' . $width . ',limit_0';
+            return '?x-oss-process=image/resize,m_fill,h_' . $height . ',w_' . $width . ',limit_0';
             break;
         case '5':
-            return '?x-image-process=image/resize,m_fixed,h_' . $height . ',w_' . $width . ',limit_0';
+            return '?x-image-process=image/resize,m_fill,h_' . $height . ',w_' . $width . ',limit_0';
             break;
         default:
             return false;

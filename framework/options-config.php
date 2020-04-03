@@ -318,6 +318,12 @@ $gdk_options = [
             'std'  => 60,
         ],
         [
+            'name' => '登录失败邮件通知',
+            'desc' => '启用 【开启后，将所有登陆失败信息发邮件通知管理员】',
+            'id'   => 'gdk_login_email',
+            'type' => 'checkbox',
+        ],
+        [
             'name' => '登陆数学验证',
             'desc' => '启用 【开启后，将会登陆页面增加数学验证码】',
             'id'   => 'gdk_login_verify',
@@ -335,17 +341,6 @@ $gdk_options = [
             'options' => [
                 '1' => '开启',
                 '0' => '禁用',
-            ],
-            'std'     => '1',
-        ],
-        [
-            'name'    => '我的网站评论方式',
-            'desc'    => '拦截垃圾评论需要区分是否是Ajax评论,Ajax评论就是<span class="key_word">无刷新直接显示评论内容的</span>,传统有刷新评论是需要浏览器刷新之后才能看到评论内容的,目前国内很多基本都是Ajax评论,所以默认为Ajax评论',
-            'id'      => 'gdk_ajax',
-            'type'    => 'radio',
-            'options' => [
-                '1' => '我的是Ajax无刷新评论',
-                '0' => '我的是传统有刷新评论',
             ],
             'std'     => '1',
         ],
@@ -547,20 +542,6 @@ $gdk_options = [
             'id'   => 'gdk_mp_qr',
             'type' => 'text',
             'std'  => '',
-        ],
-        [
-            'name' => '微信验证码',
-            'desc' => '请输入您的微信验证码，这里的必须要要和微信里面回复的保持一致。',
-            'id'   => 'gdk_mp_code',
-            'type' => 'text',
-            'std'  => '2233',
-        ],
-        [
-            'name' => '微信可见提示信息，可用html代码',
-            'desc' => '在本输入框内输入您的微信公众号描述信息，支持html代码，字数合适就行，不能太多',
-            'id'   => 'gdk_mp_tips',
-            'type' => 'textarea',
-            'std'  => '请关注极客公园官方微信公众号，关注并订阅<span class="key_word">云落极客公园</span>获取验证码。在微信里搜索<span class="key_word">云落极客公园</span>或者微信扫描二维码都可以关注极客公园官方微信公众号。',
         ],
         [
             'title' => 'HTML5 桌面推送',

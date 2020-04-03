@@ -11,6 +11,8 @@ add_action('do_feed_rss', 'gdk_feed_disabled', 1);
 add_action('do_feed_rss2', 'gdk_feed_disabled', 1);
 add_action('do_feed_atom', 'gdk_feed_disabled', 1);
 
+add_action('wp_head', 'gdk_record_visitors');
+
 //禁用新版编辑器
 if (gdk_option('gdk_diasble_gutenberg')) {
     add_filter('use_block_editor_for_post', '__return_false');

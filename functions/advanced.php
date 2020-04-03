@@ -21,7 +21,7 @@ if (gdk_option('gdk_cdn_water')) {
 //文章首尾添加自定义内容
 function gdk_add_content($content)
 {
-
+    
     $before = gdk_option('gdk_artical_top');
     $after  = gdk_option('gdk_artical_bottom');
     if (empty($before) && empty($after) && !is_single()) {

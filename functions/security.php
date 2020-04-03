@@ -311,7 +311,9 @@ if (gdk_option('gdk_hide_user_name')) {
 }
 
 //记录登陆失败发邮件
+if (gdk_option('gdk_login_email')) {
 add_action('wp_authenticate', 'log_login', 10, 2);
+}
 function log_login($username, $password)
 {
 
