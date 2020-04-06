@@ -38,6 +38,7 @@ function gdk_enqueue_script_frontend()
             'gdk_weauth_check'  => wp_create_nonce('gdk_weauth_check'),
             'gdk_payjs_alipay'  => gdk_option('gdk_payjs_alipay'),
             'user_id'           => get_current_user_id(),
+			'msg_nonce'         => wp_create_nonce('msg_nonce'),
         ]);
     }
 }

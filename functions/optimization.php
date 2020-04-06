@@ -513,7 +513,7 @@ if (gdk_option('gdk_no_category')) {
 function gdk_notify_admin($notify_message, $comment_ID)
 {
     $notify = $notify_message;
-    $notify .= '<br/> 快速回复此评论: ' . admin_url("edit-comments.php") . '#comment-' . $comment_ID;
+    $notify .= '快速回复此评论: ' . admin_url("edit-comments.php") . '#comment-' . $comment_ID;
     return $notify;
 }
 add_filter('comment_notification_text', 'gdk_notify_admin', 10, 2);

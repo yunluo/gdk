@@ -124,7 +124,7 @@ if (!class_exists('GDK_Limit_Login_Attempts')) {
             }
         }
 
-        private function __when($time)
+        private function when($time)
         {
             if (!$time) {
                 return;
@@ -176,7 +176,7 @@ function gdk_disable_login_errors($error)
     }
     return $error;
 }
-add_filter('login_errors', 'gdk_disable_login_errors');
+//add_filter('login_errors', 'gdk_disable_login_errors');
 
 //网站维护代码
 function gdk_maintenance_mode()

@@ -759,7 +759,6 @@ function gdk_panlinks($links)
 //一个简单可重复使用的邮件模板
 function mail_temp($mail_title, $mail_cotent, $link, $link_title)
 {
-
     $content = '<div style="width:500px;margin:auto">
     <h1 style="background:#2695f3;color:#fff;padding:20px 10px;">' . $mail_title . '</h1>
     <div style="padding:15px;border-bottom:dashed 1px #ddd;">' . $mail_cotent . '</div>
@@ -768,7 +767,6 @@ function mail_temp($mail_title, $mail_cotent, $link, $link_title)
     <div style="color:#cecece;font-size: 12px;">本邮件为系统自动发送，请勿回复。<br>
     如果不想被此类邮件打扰,请前往 <a style="color: #cecece;" href="' . home_url() . '" rel="noopener" target="_blank">' . get_option('blogname') . '</a> 留言说明,由我们来操作处理。
     </div></div>';
-
     return $content;
 }
 
@@ -829,7 +827,7 @@ function gdk_thumb_color()
 {
     switch (gdk_option('gdk_cdn_serves')) {
         case '1':
-		case '3':
+        case '3':
             return '?imageAve';
             break;
         case '2':
@@ -909,8 +907,9 @@ function gdk_thumbnail_src()
 function gdk_thumb_img($way, $width, $height, $atrr = 'class="thumb_img"')
 {
     $url = gdk_thumbnail_src();
-    if ($way === 1) {//cdn
-        $src = $url  . gdk_thumb_style($width, $height);
+    if ($way === 1) {
+//cdn
+        $src = $url . gdk_thumb_style($width, $height);
     } elseif ($way === 2) {
         $src = GDK_BASE_URL . 'public/timthumb.php?src=' . $url . '&h=' . $height . '&w=' . $width . '&q=90&zc=1&ct=1';
     } elseif ($way === 3) {
@@ -1372,4 +1371,12 @@ function blank_open()
         echo 'target="_blank"';
     }
 
+}
+
+function gdk_guest_form()
+{
+    ?>
+<p><textarea id="msg_content" placeholder="请输入留言内容" name="" rows="5" cols="" required></textarea></p>
+<p><input type="email" id="msg_mail" placeholder="请输入邮箱" style="margin-right:30px;" required/><input id="msg_submit" data-action="msg_submit" type="button" value="提交"></p>
+<?php
 }

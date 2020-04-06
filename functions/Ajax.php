@@ -364,3 +364,28 @@ function point_buy()
 }
 add_action('wp_ajax_gdk_pay_buy', 'point_buy');
 add_action('wp_ajax_nopriv_gdk_pay_buy', 'point_buy');
+
+//ajax 表单
+function msg_form()
+{
+    if (empty($_POST['mail']) || empty($_POST['msg_content']) || $_POST['action'] !== 'msg_submit' || !wp_verify_nonce($_POST['msg_nonce'], 'msg_nonce')) {
+        exit('400');
+    }
+    if (!is_email($_POST['mail'])) {
+        exit('403');
+    }
+
+    $msg = array(
+        'post_title'   => '【来自' . $_POST['mail'] . '留言】',
+        'post_author'  => 1,
+        'post_content' => $_POST['msg_content'],
+    );
+    // 将文章插入数据库
+    $status = wp_insert_post($msg);
+    if ($status != 0) {
+        wp_mail(get_bloginfo('admin_email'), $msg['post_title'], $msg['post_content']);
+        exit('200');
+    }
+}
+add_action('wp_ajax_msg_submit', 'msg_form');
+add_action('wp_ajax_nopriv_msg_submit', 'msg_form');

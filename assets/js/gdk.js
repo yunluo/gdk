@@ -577,5 +577,32 @@ jQuery(function ($) { /**声明加载jQuery */
 
 
 
+	/**
+	 * 在线留言
+	 */
+	$("#msg_submit").click(function () {
+		var ajax_data = {
+			action: $("#msg_submit").data("action"),
+			mail: $("#msg_mail").val(),
+			msg_content: $("#msg_content").val(),
+			msg_nonce: gdk.msg_nonce
+		};
+		$.post(gdk.ajaxurl, ajax_data, function (b) {
+			b = $.trim(b);
+			if (b == '200') {
+				$(".Anther_Guestbook").append('<div class="msg-message cm-alert success mt-2">您的留言已提交</div>');
+			}
+			if (b == '403') {
+				$(".Anther_Guestbook").append('<div class="msg-message cm-alert error mt-2">请输入正确的邮箱</div>');
+			}
+			if (b == '400') {
+				$(".Anther_Guestbook").append('<div class="msg-message cm-alert error mt-2">发送错误,请重试</div>');
+			}
+			setTimeout("$('.msg-message').remove()", 3000);
+		});
+	});
+
+
+
 	/**jQuery结尾,不要超过此行 */
 });

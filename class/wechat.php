@@ -57,8 +57,8 @@ class Wechat_Captcha
             //解析POST数据(XML格式)
             $object         = simplexml_load_string($postData, 'SimpleXMLElement', LIBXML_NOCDATA);
             $messgeType     = trim($object->MsgType); //取得消息类型
-            $this->fromUser = "" . $object->FromUserName;
-            $this->toUser   = "" . $object->ToUserName;
+            $this->fromUser = $object->FromUserName;
+            $this->toUser   = $object->ToUserName;
             $keyword        = trim($object->Content);
             if ($messgeType == 'text' && $keyword == '验证码') {
                 $response_content = '您的验证码为：【' . $this->captcha . '】，验证码有效期为2分钟，请抓紧使用，过期需重新申请';
