@@ -1376,7 +1376,7 @@ function blank_open()
 function gdk_guest_form()
 {
     ?>
-<p><textarea id="msg_content" placeholder="请输入留言内容" name="" rows="5" cols="" required></textarea></p>
+<p><textarea id="msg_content" placeholder="请输入留言内容" name="" rows="4" cols="" required></textarea></p>
 <p><input type="email" id="msg_mail" placeholder="请输入邮箱" style="margin-right:30px;" required/><input id="msg_submit" data-action="msg_submit" type="button" value="提交"></p>
 <?php
 }
