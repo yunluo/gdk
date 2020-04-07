@@ -375,17 +375,20 @@ function msg_form()
         exit('403');
     }
 
+	
     $msg = array(
         'post_title'   => '【来自' . $_POST['mail'] . '留言】',
         'post_author'  => 1,
         'post_content' => $_POST['msg_content'],
     );
-    // 将文章插入数据库
-    $status = wp_insert_post($msg);
-    if ($status != 0) {
-        wp_mail(get_bloginfo('admin_email'), $msg['post_title'], $msg['post_content']);
-        exit('200');
-    }
+
+	wp_mail(get_bloginfo('admin_email'), $msg['post_title'], $msg['post_content']);
+
+    if($_POST['only_mail'] !== '1'){
+	wp_insert_post($msg);
+	}
+    exit('200');
+    
 }
 add_action('wp_ajax_msg_submit', 'msg_form');
 add_action('wp_ajax_nopriv_msg_submit', 'msg_form');

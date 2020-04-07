@@ -584,6 +584,7 @@ jQuery(function ($) { /**声明加载jQuery */
 		var ajax_data = {
 			action: $("#msg_submit").data("action"),
 			mail: $("#msg_mail").val(),
+			only_mail: $(".only_mail").length,
 			msg_content: $("#msg_content").val(),
 			msg_nonce: gdk.msg_nonce
 		};

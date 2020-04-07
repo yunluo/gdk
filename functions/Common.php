@@ -1,5 +1,11 @@
 <?php
 
+
+function gdk_rand_color() {
+	$arr=array("red","green","blue","yellow");
+	$rndKey = array_rand($arr);
+	echo $arr[$rndKey];
+}
 /**
  * 获取摘要
  */
@@ -1273,7 +1279,6 @@ function gdk_post_dropdown()
     /* Option list of all post */
     $gdk_options_posts     = [];
     $gdk_options_posts_obj = get_posts('posts_per_page=-1');
-    $gdk_options_posts[''] = '选择文章';
     foreach ($gdk_options_posts_obj as $gdk_posts) {
         $gdk_options_posts[$gdk_posts->ID] = $gdk_posts->post_title;
     }
@@ -1293,7 +1298,6 @@ function gdk_categories_dropdown()
     );
     $gdk_option_categories     = [];
     $gdk_category_lists        = get_categories($gdk_args);
-    $gdk_option_categories[''] = '选择分类';
     foreach ($gdk_category_lists as $gdk_category) {
         $gdk_option_categories[$gdk_category->term_id] = $gdk_category->name;
     }
