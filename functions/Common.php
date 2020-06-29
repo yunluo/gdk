@@ -1162,7 +1162,7 @@ function gdk_weauth_qr()
  */
 function weixin_login_btn()
 {
-    $result = '<a id="weixin_login_btn" href="javascript:;" data-action="gdk_weauth_qr_gen" class="cm-btn primary weixin_login_btn">微信登陆</a><span id="weauth_key" style="display:none"></span>';
+    $result = '<a id="weixin_login_btn" href="javascript:;" data-action="gdk_weauth_qr_gen" class="cm-btn primary weixin_login_btn">微信登陆</a>';
     if (is_user_logged_in()) {
         $user_id = get_current_user_id();
         $user    = get_user_by('id', $user_id);
