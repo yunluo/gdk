@@ -16,7 +16,7 @@ if (!defined('ABSPATH')) {exit;}
 function deactivate_myself()
 {
     deactivate_plugins(plugin_basename(__FILE__));
-    wp_die('启动失败，GDK插件不兼容Git主题且需要运行在 PHP 7.2 版本及更高的环境下。');
+    wp_die('启动失败，GDK插件不兼容Git主题且需要运行在 PHP 7.3 版本及更高的环境下。');
 }
 
 if (defined('GIT_URL')) {
