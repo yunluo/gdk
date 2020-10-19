@@ -19,17 +19,23 @@ if (gdk_option('gdk_cdn_water')) {
 //CDN水印
 
 //文章首尾添加自定义内容
-function gdk_add_content($content)
-{
-    
-    $before = gdk_option('gdk_artical_top');
-    $after  = gdk_option('gdk_artical_bottom');
-    if (empty($before) && empty($after) && !is_single()) {
-        return $content;
-    } else {
-        return $before . '<br>' . $content . '<br>' . $after;
-    }
+function gdk_add_content($content) {
+	if(is_single()) {
+		$before = gdk_option('gdk_artical_top');
+		$after  = gdk_option('gdk_artical_bottom');
+		if(!empty($before) && !empty($after)) {
+			return $before . '<br>' . $content . '<br>' . $after;
+		}elseif(!empty($before)) {
+			return $before . '<br>' . $content;
+		}elseif(!empty($after)) {
+			return $content . '<br>' . $after;
+		}else{
+			return $content;
+		}
 
+	}else{
+		return $content;
+	}
 }
 add_filter('the_content', 'gdk_add_content');
 
@@ -157,7 +163,7 @@ function gdk_link_go($content)
     preg_match_all('/<a(.*?)href="(.*?)"(.*?)>/', $content, $matches);
     if ($matches) {
         foreach ($matches[2] as $val) {
-            if (in_string($val, '://') && !in_string($val, home_url()) && !preg_match('/\.(jpg|jepg|png|ico|bmp|gif|tiff)/i', $val) && !preg_match('/(ed2k|thunder|Flashget|flashget|qqdl):\/\//i', $val)) {
+            if (in_string($val, '://') && !in_string($val, home_url()) && !preg_match('/\.(jpg|jepg|png|ico|bmp|gif|zip|rar|tiff)/i', $val) && !preg_match('/(ed2k|thunder|Flashget|flashget|qqdl):\/\//i', $val)) {
                 $content = str_replace("href=\"$val\"", "href=\"" . home_url() . "?go=$val\" ", $content);
             }
         }

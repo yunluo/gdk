@@ -80,12 +80,15 @@ class Wechat_Captcha
     }
 }
 
-function wx_process()
-{
-    global $object;
-    $wx_token = trim(gdk_option('gdk_wxmp_token'));
-    $object   = new Wechat_Captcha($wx_token, wx_captcha());
-    $object->responseMsg();
-    return;
+function wx_process() {
+	if(isset($_GET["signature"])) {
+		global $wx_captchas;
+		if(!isset($wx_captchas)) {
+			$wx_token = trim(gdk_option('gdk_wxmp_token'));
+			$wx_captchas   = new Wechat_Captcha($wx_token, wx_captcha());
+			$wx_captchas->responseMsg();
+			exit;
+		}
+	}
 }
-add_action('pre_get_posts', 'wx_process', 4);
+add_action('parse_request', 'wx_process', 4);

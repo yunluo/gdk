@@ -66,6 +66,7 @@ class GDK_Points_Shortcodes
 
     public static function pay($atts, $content = null)
     {
+		$content = do_shortcode($content);
         global $wpdb;
         $user_id = get_current_user_id();
         $pid     = get_the_ID();

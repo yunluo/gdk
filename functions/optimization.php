@@ -28,6 +28,8 @@ function gdk_disable_srcset_img()
 }
 add_filter('max_srcset_image_width', 'gdk_disable_srcset_img');
 
+add_filter( 'big_image_size_threshold', '__return_false' );
+
 //移除默认的图片宽度以及高度
 function gdk_remove_img_width($html)
 {

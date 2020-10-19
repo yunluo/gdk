@@ -379,7 +379,9 @@ function msg_form()
     $msg = array(
         'post_title'   => '【来自' . $_POST['mail'] . '留言】',
         'post_author'  => 1,
-        'post_content' => $_POST['msg_content'],
+        'post_content' => $_POST['msg_content'].'
+	
+	回复邮件：' . $_POST['mail'],
     );
 
 	wp_mail(get_bloginfo('admin_email'), $msg['post_title'], $msg['post_content']);

@@ -71,7 +71,6 @@ $activePanelIdx = empty($_GET['panel']) ? 0 : $_GET['panel'];
         echo '<li><a href="#panel_' . $i . '" data-panel="' . $i . '" ' . ($i == $activePanelIdx ? 'class="current"' : '') . '>' . $name . '</a></li>';
     }
     ?>
-			<li><a href="#panel_data" data-panel="data" class="data">数据清理</a></li>
 			<li><a href="#panel_about" data-panel="about" class="about">关于插件</a></li>
 		</ul>
 <div class="search-form"><label class="screen-reader-text" for="wp-filter-search-input">筛选插件选项…</label><input placeholder="筛选插件选项…" type="search" id="wp-filter-search-input" class="wp-filter-search"></div>
@@ -181,11 +180,6 @@ break;
         $index++;
     }
     ?>
-	<div class="panel" id="panel_data">
-	<table class="form-table">
-	<?php echo gdk_clean_up_page(); ?>
-	</table>
-	</div>
 	<div class="panel" id="panel_about">
 		<table class="form-table">
 			<tr>

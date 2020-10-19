@@ -1,6 +1,6 @@
 <?php
 
-include 'clean-up.php'; //数据库清理
+
 include 'local_avatars.php'; //本地头像
 
 include 'updates.php'; //在线更新
@@ -11,3 +11,5 @@ include 'points/points.php'; //积分功能
 
 include 'aq_resizer.php'; //缩略图功能
 include 'wechat.php'; //微信功能
+
+

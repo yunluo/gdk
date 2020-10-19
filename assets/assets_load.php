@@ -15,7 +15,7 @@ add_action('admin_enqueue_scripts', 'gdk_admin_enqueue_script');
 function gdk_enqueue_script_frontend()
 {
     if (!is_admin()) {
-        wp_enqueue_style('pure_css', 'https://cdn.jsdelivr.net/npm/css-mint@2.0.7/build/css-mint.min.css', false, GDK_PLUGIN_VER, 'all');
+        wp_enqueue_style('pure_css', GDK_BASE_URL . 'assets/css/css-mint.min.css', false, GDK_PLUGIN_VER, 'all');
         wp_enqueue_style('font-awesome', GDK_BASE_URL . 'assets/css/font-awesome.min.css', false, GDK_PLUGIN_VER, 'all');
         //wp_enqueue_style( 'milligram_css', GDK_BASE_URL.'assets/css/milligram.min.css', false, GDK_PLUGIN_VER, 'all' );
         wp_enqueue_style('gdk_css', GDK_BASE_URL . 'assets/css/gdk.css', false, GDK_PLUGIN_VER, 'all');
@@ -53,6 +53,7 @@ jQuery(function($) {
     /* bengin */
     if ($("#ed_toolbar").length > 0) {
     /***文章编辑器 */
+	QTags.addButton('h2', 'H2标题', '<h2>', '</h2>');
     QTags.addButton('ipre', '代码高亮', '<pre class="prettyprint linenums" >\n\n</pre>', "");
     $("#content").pasteUploadImage(ajaxurl); //ajax img upload
     $(".insert-shortcodes").click(function() { //shortcode botton

@@ -201,27 +201,35 @@ class GDK_Points_Admin
         $alert = "";
         if (isset($_POST['psearch'])) {
             $sdata = trim($_POST['psearch']);
-            if (preg_match('/E20/', $sdata)) {
+            if (preg_match('/E20/', $sdata) ) {
                 //order id
                 global $wpdb;
                 $point_id = $wpdb->get_row("SELECT point_id FROM " . GDK_Points_Database::points_get_table("users") . " WHERE description = '{$sdata}'", ARRAY_A)['point_id'];
                 $points   = GDK_Points::get_point($point_id);
-            } elseif (filter_var($sdata, FILTER_VALIDATE_EMAIL)) {
+            }elseif (preg_match('/(D|d)/', $sdata)){// description
+				$data = substr($sdata,1);
+				global $wpdb;
+                $points = $wpdb->get_results("SELECT * FROM " . GDK_Points_Database::points_get_table("users") . " WHERE description = '{$data}'");
+				//var_dump($points);
+				$k[]    = '<div style="margin-bottom:10px;">文章ID：' . $data . '  &nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp;文章名为：' . get_post($data)->post_title . '</div><hr />';
+			} elseif (filter_var($sdata, FILTER_VALIDATE_EMAIL)) {
                 //email
                 $user   = get_user_by('email', $sdata);
                 $points = GDK_Points::get_points_by_user($user->ID);
-                $k[]    = '<div style="margin-bottom:10px;">用户ID：' . $user->ID . '  &nbsp;&nbsp;总金币为：' . GDK_Points::get_user_total_points($user->ID) . '</div>';
+                $k[]    = '<div style="margin-bottom:10px;">用户ID：' . $user->ID . '  &nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp;总金币为：' . GDK_Points::get_user_total_points($user->ID) . '</div>';
             } else {
                 //userid
                 $points = GDK_Points::get_points_by_user($sdata);
-                $k[]    = '<div style="margin-bottom:10px;">用户ID：' . $sdata . '  &nbsp;&nbsp;总金币为：' . GDK_Points::get_user_total_points($sdata) . '</div>';
+                $k[]    = '<div style="margin-bottom:10px;">用户ID：' . $sdata . '  &nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp;总金币为：' . GDK_Points::get_user_total_points($sdata) . '</div>';
             }
             if (is_array($points)) {
                 foreach ($points as $point) {
-                    $k[] = '<div style="margin-bottom:5px;">金币：' . $point->points . ' &nbsp;&nbsp;描述：' . $point->description . ' &nbsp;&nbsp;日期：' . $point->datetime . '</div>';
+					$userid = $point->user_id;
+					$user_name = get_user_by('id', $userid)->display_name;
+                    $k[] = '<div style="margin-bottom:5px;">用户ID：' . $userid . '&nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp;金币：' . $point->points . ' &nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp;描述：' . $point->description . ' &nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp;日期：' . $point->datetime . '&nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp;用户名：' . $user_name . '</div>';
                 }
             } else {
-                $k[] = '<div style="margin-bottom:5px;">金币：' . $points->points . ' &nbsp;&nbsp;描述：' . $points->description . ' &nbsp;&nbsp;日期：' . $points->datetime . '</div>';
+                $k[] = '<div style="margin-bottom:5px;">用户ID：' . $point->user_id . '&nbsp;&nbsp;金币：' . $points->points . ' &nbsp;&nbsp;描述：' . $points->description . ' &nbsp;&nbsp;日期：' . $points->datetime . '</div>';
             }
             $alert = implode(" ", $k);
         }
@@ -327,7 +335,7 @@ class GDK_Points_Admin
 				<a class="add button" href="<?php echo esc_url(add_query_arg('action', 'edit', $current_url)); ?>" title="点击手动添加金币">添加金币</a>
 			</span>
 			<form method="POST" style="float:right;">
-				<input size="40" placeholder="搜索用户ID/用户邮箱/订单号" type="search" name="psearch" value="" />
+				<input size="40" placeholder="搜索用户ID/用户邮箱/订单号/D文章ID" type="search" name="psearch" value="" />
 				</form>
 			<?php echo '<style type="text/css">tbody#the-list tr:hover{background:rgba(132,219,162,.61)}</style>';
         $exampleListTable->display(); ?>

@@ -50,6 +50,7 @@ add_shortcode('dm', 'gdk_DemoUrl');
 //使用短代码添加回复后可见内容开始
 function gdk_reply_to_read($atts, $content = null)
 {
+    $content = do_shortcode($content);
     extract(shortcode_atts(array(
         'notice' => '<div class="alert info pull-center"><p class="reply-to-read">注意：本段内容须成功“<a href="' . get_permalink() . '#respond" title="回复本文">回复本文</a>”后“<a href="javascript:window.location.reload();" title="刷新本页">刷新本页</a>”方可查看！</p></div>',
     ), $atts));
@@ -203,6 +204,7 @@ add_shortcode('netmusic', 'gdk_music163');
 //登录可见
 function gdk_login_to_read($atts, $content = null)
 {
+    $content = do_shortcode($content);
     $logina = '<a target="_blank" href="' . esc_url(wp_login_url(get_permalink())) . '">登录</a>';
     extract(shortcode_atts(array(
         'notice' => '<div class="alert info pull-center"><p class="reply-to-read" style="color: blue;">注意：本段内容须“' . $logina . '”后方可查看！</p></div>',
@@ -217,6 +219,7 @@ add_shortcode('vip', 'gdk_login_to_read');
 // 部分内容输入密码可见
 function gdk_secret_view($atts, $content = null)
 {
+    $content = do_shortcode($content);
     $pid = get_the_ID();
     add_post_meta($pid, '_pass_content', $content, true) or update_post_meta($pid, '_pass_content', $content);
     if (current_user_can('administrator')) {
@@ -407,6 +410,7 @@ add_shortcode('sohutv', function ($atts, $content = '') {
 //付费可见短代码
 function gdk_pay_nologin($atts, $content = '')
 {
+	$content = do_shortcode($content);
     extract(shortcode_atts(array('money' => '1'), $atts));
     $pid = get_the_ID(); //文章ID
     add_post_meta($pid, '_pay_content', $content, true) or update_post_meta($pid, '_pay_content', $content); //没有新建,有就更新
@@ -430,7 +434,6 @@ function gdk_shortcode_list()
 {
     $wpshortcodes = [
         '横线'      => '<hr />',
-        'H2标题'    => '<h2> </h2>',
         'H3标题'    => '<h3> </h3>',
         '记号笔'     => '<mark> </mark>',
         '链接按钮'    => '[dm href=] [/dm]',
@@ -471,7 +474,7 @@ function gdk_shortcode_list()
 [/pax]',
         '弹窗下载'    => '[fanctdl filename=\'这里填写文件名\' filepass=\'这里填写文件密码什么的\' href=\'这里填写的主下载链接\' filedown=\'这里填写的是文件的主下载名称\']这里填写的文件的辅助下载链接，可写多个,空格间隔[/fanctdl]',
         '面板下载'    => '[dltable file=\'在此处写下文件名称\' pass=\'在这里写下文件密码\']这里填写的文件的辅助下载链接，可写多个,空格间隔[/dltable]',
-        '单页下载'    => '[pdownload title=]',
+        '单页下载'    => '[pdownload title=点击下载]',
         '文章内链'    => '[neilian ids=]',
         '无序列表'    => '[list]
 
@@ -487,9 +490,9 @@ function gdk_shortcode_list()
     return $output;
 }
 
-function gdk_shortcode_button($context)
+function gdk_shortcode_button()
 {
     $context = '<a class="button insert-shortcodes" title="添加简码" data-editor="content" href="javascript:;"><span class="dashicons dashicons-twitter shortcodes-icon"></span>短代码</a><div class="shortcodes-wrap">' . gdk_shortcode_list() . '</div>';
-    return $context;
+    echo $context;
 }
-add_action('media_buttons_context', 'gdk_shortcode_button');
+add_action('media_buttons', 'gdk_shortcode_button');
