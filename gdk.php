@@ -6,7 +6,7 @@ Description: 为WordPress主题开发提供底层支持
 Version: 0.0.3
 Author: 云落
 Author URI: https://gitcafe.net/
-Compatible:5.3.2
+Compatible:5.5.1
  */
 
 //万能的开头
@@ -16,14 +16,14 @@ if (!defined('ABSPATH')) {exit;}
 function deactivate_myself()
 {
     deactivate_plugins(plugin_basename(__FILE__));
-    wp_die('启动失败，GDK插件不兼容Git主题且需要运行在 PHP 7.2 版本及更高的环境下。');
+    wp_die('启动失败，GDK插件不兼容Git主题且需要运行在 PHP 7.3 版本及更高的环境下。');
 }
 
 if (defined('GIT_URL')) {
     add_action('update_option_active_plugins', 'deactivate_myself');
 }
 
-if (!version_compare(PHP_VERSION, '7.2', '>=')) {
+if (!version_compare(PHP_VERSION, '7.3', '>=')) {
     add_action('update_option_active_plugins', 'deactivate_myself');
 }
 
@@ -38,5 +38,4 @@ include 'framework/frame_load.php'; //加载后台框架
 include 'class/class_load.php'; //加载各种类
 include 'functions/func_load.php'; //加载函数
 include 'assets/assets_load.php'; //加载静态资源
-
 
