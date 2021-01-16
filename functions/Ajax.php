@@ -348,18 +348,24 @@ function bind_email_check()
 add_action('wp_ajax_bind_email_check', 'bind_email_check');
 add_action('wp_ajax_nopriv_bind_email_check', 'bind_email_check');
 
+//积分支付
 function point_buy()
 {
     if (isset($_POST['point']) && isset($_POST['userid']) && isset($_POST['id']) && $_POST['action'] == 'gdk_pay_buy') {
-        GDK_Points::set_points(-$_POST['point'],
+        $all = GDK_Points::get_user_total_points($_POST['userid'], 'accepted');
+        if( $all < $_POST['point']){
+            exit;
+        }else{
+            GDK_Points::set_points(-$_POST['point'],
             $_POST['userid'],
             array(
                 'description' => $_POST['id'],
-                'status'      => get_option('points-points_status', 'accepted'),
+                'status'      => 'accepted',
             )
         ); //扣除金币
         $pay_content = get_post_meta($_POST['id'], '_point_content', true);
         exit($pay_content);
+        }
     }
 }
 add_action('wp_ajax_gdk_pay_buy', 'point_buy');
