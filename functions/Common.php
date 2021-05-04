@@ -1,5 +1,5 @@
 <?php
-
+if (!defined('ABSPATH')) exit;
 
 function gdk_rand_color() {
 	$arr=array("red","green","blue","yellow");
@@ -1155,6 +1155,11 @@ function gdk_weauth_qr()
     $qr64['qrcode'] = gdk_http_request('https://wa.isdot.net/qrcode?str=' . $qr64['key'])['qrcode'];
     //$qr64['qrcode'] = gdk_http_request('https://api.goauth.jysafe.cn/qrcode?str='.$qr64['key'])['qrcode'];//预备使用，备胎
     return $qr64;
+}
+
+//微信登陆页面按钮
+function weixin_login_button(){
+    echo '<p><a class="button button-large" href="' . get_permalink(gdk_page_id('weauth')) . '">微信登录</a></p><br>';
 }
 
 /**
