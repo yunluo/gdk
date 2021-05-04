@@ -1358,14 +1358,16 @@ function getQrcode($url)
 
 function unzip_url($url, $where)
 {
-    $zippath = $where . '/' . (basename($url)) . '.zip';
-    wp_remote_get($url,
-        [
-            'timeout'  => 300,
-            'stream'   => true,
-            'filename' => $zippath,
-        ]
-    );
+    $zippath = $where . '/' . (basename($url));
+    $curl = curl_init();
+    curl_setopt($curl, CURLOPT_URL,$url);
+    curl_setopt($curl, CURLOPT_HEADER,0);
+    curl_setopt($curl,CURLOPT_RETURNTRANSFER,1);
+    curl_setopt($curl,CURLOPT_TIMEOUT,300);
+    $downfile = fopen($zippath,'wb');
+    curl_setopt($curl,CURLOPT_FILE,$downfile);
+    curl_exec($curl);
+    curl_close($curl);
     require_once ABSPATH . 'wp-admin/includes/file.php';
     \WP_Filesystem();
     \unzip_file($zippath, $where);

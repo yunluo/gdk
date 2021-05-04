@@ -44,7 +44,7 @@ add_action('wp_ajax_get_new_version', 'gdk_ajax_get_update');
 //Ajax安装插件更新
 function gdk_ajax_install_update()
 {
-    $url = 'http://a.gitcafe.net/gdk.zip?v=' . date("His");
+    $url = 'http://dl.gitcafe.net/gdk.zip';
     unzip_url($url, GDK_ROOT_PATH);
     exit(1);
 
@@ -65,7 +65,7 @@ function gdk_pasteup_imag()
         $wp_upload_dir = wp_upload_dir();
         $file          = $_FILES['imageFile'];
         $result        = array('success' => false, 'message' => 'Null');
-        if (in_array($file['type'], array('image/gif', 'image/jpeg', 'image/pjpeg', 'image/png'))) {
+        if (in_array($file['type'], array('image/gif', 'image/jpeg', 'image/jpg', 'image/png'))) {
             if ($file['error'] > 0) {
                 $result['message'] = 'error';
             } else {
