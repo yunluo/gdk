@@ -3,10 +3,10 @@
 Plugin Name: GitCafe Development Kit 极客公园开发套件
 Plugin URI: https://gitcafe.net/
 Description: 为WordPress主题开发提供底层支持
-Version: 1.0
+Version: 1.1
 Author: 云落
 Author URI: https://gitcafe.net/
-Compatible:5.5.1
+Compatible:5.7.1
  */
 
 //万能的开头
@@ -38,4 +38,3 @@ include 'framework/frame_load.php'; //加载后台框架
 include 'class/class_load.php'; //加载各种类
 include 'functions/func_load.php'; //加载函数
 include 'assets/assets_load.php'; //加载静态资源
-

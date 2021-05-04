@@ -110,7 +110,7 @@ if (gdk_option('gdk_Server') && !is_admin()) {
             ),
         );
         $context       = stream_context_create($opts);
-        return $result = file_get_contents('http://sc.ftqq.com/' . $key . '.send', false, $context);
+        return $result = file_get_contents('https://sctapi.ftqq.com/' . $key . '.send', false, $context);
     }
     add_action('comment_post', 'sc_send', 19, 2);
 }
@@ -170,30 +170,6 @@ function weauth_oauth_redirect()
     exit;
 }
 
-function get_weauth_token()
-{
-    $sk = date("YmdHis") . mt_rand(10, 99);
-    set_transient($sk, 1, 60 * 6);
-    $key = $_SERVER['HTTP_HOST'] . '@' . $sk;
-    return $key;
-}
-
-function get_weauth_qr()
-{
-    $qr64           = [];
-    $qr64['key']    = get_weauth_token();
-    $qr64['qrcode'] = json_decode(file_get_contents('https://wa.isdot.net/qrcode?str=' . $qr64['key']), true)['qrcode'];
-    return $qr64;
-}
-
-function weauth_rewrite_rules($wp_rewrite)
-{
-    if ($ps = get_option('permalink_structure')) {
-        $new_rules['^weauth'] = 'index.php?user=$matches[1]&sk=$matches[2]';
-        $wp_rewrite->rules    = $new_rules + $wp_rewrite->rules;
-    }
-}
-add_action('generate_rewrite_rules', 'weauth_rewrite_rules');
 
 function weauth_oauth()
 {
@@ -245,16 +221,3 @@ function weauth_oauth_init()
     }
 }
 add_action('init', 'weauth_oauth_init');
-
-//GET自动登录
-function gdk_weauth_oauth_login()
-{
-    $key = isset($_GET['spam']) ? $_GET['spam'] : false;
-    if ($key) {
-        $user_id = get_transient($key . 'ok');
-        if ($user_id != 0) {
-            wp_set_auth_cookie($user_id);
-        }
-    }
-}
-add_action('init', 'gdk_weauth_oauth_login');
