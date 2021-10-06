@@ -1,4 +1,7 @@
-desktop.ini
+cache/*.txt
+.coding-ide/*
 .ecloud/*
-.git/
-public/cache/*.txt
+*.ini
+.vscode/*
+.SynologyWorkingDirectory/*
+*/cache/*

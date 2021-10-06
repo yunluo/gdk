@@ -65,7 +65,7 @@ function gdk_pasteup_imag()
         $wp_upload_dir = wp_upload_dir();
         $file          = $_FILES['imageFile'];
         $result        = array('success' => false, 'message' => 'Null');
-        if (in_array($file['type'], array('image/gif', 'image/jpeg', 'image/jpg', 'image/png'))) {
+        if (in_array($file['type'], array('image/gif', 'image/jpeg', 'image/pjpeg', 'image/png'))) {
             if ($file['error'] > 0) {
                 $result['message'] = 'error';
             } else {
@@ -335,7 +335,7 @@ add_action('wp_ajax_gdk_auto_login', 'gdk_auto_login');
 add_action('wp_ajax_nopriv_gdk_auto_login', 'gdk_auto_login');
 
 //邮箱绑定
-function bind_email_check()
+function gdk_bind_email_check()
 {
     $mail = isset($_POST['email']) ? $_POST['email'] : false;
     if ($mail && $_POST['action'] == 'bind_email_check') {
@@ -345,8 +345,8 @@ function bind_email_check()
         }
     }
 }
-add_action('wp_ajax_bind_email_check', 'bind_email_check');
-add_action('wp_ajax_nopriv_bind_email_check', 'bind_email_check');
+add_action('wp_ajax_bind_email_check', 'gdk_bind_email_check');
+add_action('wp_ajax_nopriv_bind_email_check', 'gdk_bind_email_check');
 
 //积分支付
 function point_buy()

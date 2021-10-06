@@ -17,6 +17,17 @@ $gdk_options = [
             'std'     => '1',
         ],
         [
+            'name'    => '禁用新版小工具',
+            'desc'    => '新版小工具尚不成熟，很多主题不兼容，建议开启',
+            'id'      => 'gdk_diasble_widgets_block',
+            'type'    => 'radio',
+            'options' => [
+                '0' => '禁用',
+                '1' => '开启',
+            ],
+            'std'     => '1',
+        ],
+        [
             'name'    => '禁用头部冗余代码',
             'desc'    => 'WordPress头部自带很多无用代码，不安全且浪费，建议开启',
             'id'      => 'gdk_diasble_head_useless',
@@ -130,6 +141,7 @@ $gdk_options = [
                 '1' => '随机头像',
                 '2' => 'V2EX头像镜像',
                 '3' => '七牛头像镜像',
+                '4' => 'Cravatar',
             ],
             'std'     => '3',
         ],

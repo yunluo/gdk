@@ -1,5 +1,4 @@
 <?php
-if (!defined('ABSPATH')) exit;
 /**
  * 各页面重写规则
  */

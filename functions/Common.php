@@ -1,5 +1,5 @@
 <?php
-if (!defined('ABSPATH')) exit;
+
 
 function gdk_rand_color() {
 	$arr=array("red","green","blue","yellow");
@@ -980,35 +980,6 @@ function gdk_check($d, $u = null)
     return $result; //0=无订单结果，1=有订单结果，>1均为异常重复入库数据
 }
 
-//导航单页函数
-function gdk_get_the_link_items($id = null)
-{
-    $bookmarks = get_bookmarks('orderby=date&category=' . $id);
-    $output    = '';
-    if (!empty($bookmarks)) {
-        foreach ($bookmarks as $bookmark) {
-            $output .= '<div class="sm-6 md-4 lg-3">
-            <div class="card"><a class="card-heading link-tooltip bg-lvs' . $bookmark->link_rating . '" href="' . $bookmark->link_url . '" target="_blank"><span class="card-icon"><img src="' . $bookmark->link_image . '"></span><span class="card-title">' . $bookmark->link_name . '</span></a><div class="card-body">' . $bookmark->link_description . ' : ' . $bookmark->link_notes . '</div></div></div>';
-        }
-    }
-    return $output;
-}
-
-function gdk_get_link_items()
-{
-    $linkcats = get_terms('link_category', 'orderby=count&hide_empty=1&exclude=' . gdk_option('gdk_link_id'));
-    $result   = '';
-    foreach ($linkcats as $linkcat) {
-        $result .= '<a id="' . $linkcat->term_id . '"></a><div class="panel">
-            <div class="panel-title card"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzODQgNTEyIj4gPHBhdGggZD0iTTMzNiAwSDQ4QzIxLjQ5IDAgMCAyMS40OSAwIDQ4djQ2NGwxOTItMTEyIDE5MiAxMTJWNDhjMC0yNi41MS0yMS40OS00OC00OC00OHptMCA0MjguNDNsLTE0NC04NC0xNDQgODRWNTRhNiA2IDAgMCAxIDYtNmgyNzZjMy4zMTQgMCA2IDIuNjgzIDYgNS45OTZWNDI4LjQzeiI+PC9wYXRoPiA8L3N2Zz4=">' . $linkcat->name . '</div>
-            <div class="panel-body">
-                <div class="row">';
-        $result .= gdk_get_the_link_items($linkcat->term_id);
-        $result .= '</div></div></div>';
-    }
-    return $result;
-}
-
 function gdk_get_Version()
 {
     echo '<input type="button" class="button button-secondary get_new_version" value="点击检测更新">';
@@ -1155,11 +1126,6 @@ function gdk_weauth_qr()
     $qr64['qrcode'] = gdk_http_request('https://wa.isdot.net/qrcode?str=' . $qr64['key'])['qrcode'];
     //$qr64['qrcode'] = gdk_http_request('https://api.goauth.jysafe.cn/qrcode?str='.$qr64['key'])['qrcode'];//预备使用，备胎
     return $qr64;
-}
-
-//微信登陆页面按钮
-function weixin_login_button(){
-    echo '<p><a class="button button-large" href="' . get_permalink(gdk_page_id('weauth')) . '">微信登录</a></p><br>';
 }
 
 /**

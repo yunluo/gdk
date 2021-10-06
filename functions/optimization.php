@@ -119,6 +119,9 @@ function gdk_after_init_theme()
     if (get_option('permalink_structure') == '' || define('GDK_HTML_LINK', true)) { //如果是默认连接格式或者主题声明 define( 'GDK_HTML_LINK', true );
         update_option('permalink_structure', '/archives/%post_id%.html'); //固定链接格式
     }
+    if (gdk_option('gdk_diasble_widgets_block')){ //如果
+        remove_theme_support( 'widgets-block-editor' ); //禁用新版小工具
+    }
     update_option('posts_per_page', '30'); //每页文章数目
 }
 add_action('after_setup_theme', 'gdk_after_init_theme');

@@ -1,5 +1,5 @@
 <?php
-if (!defined('ABSPATH')) exit;
+if (!defined('ABSPATH')) {exit;}
 
 if (gdk_option('gdk_cdn')) {
     add_action('wp_loaded', 'gdk_cdn_start');
@@ -18,10 +18,6 @@ if (gdk_option('gdk_cdn_water')) {
 }
 //CDN水印
 
-//在登录框添加额外的微信登录
-if (gdk_option('gdk_weauth_oauth')) {
-    add_action('login_form', 'weixin_login_button');
-}
 //文章首尾添加自定义内容
 function gdk_add_content($content) {
 	if(is_single()) {
@@ -42,6 +38,28 @@ function gdk_add_content($content) {
 	}
 }
 add_filter('the_content', 'gdk_add_content');
+
+//接受奶子微信的账号信息
+function get_weauth_oauth()
+{
+    if (in_string($_SERVER['REQUEST_URI'], 'weauth')) {
+        $weauth_user = isset($_GET['user']) ? sanitize_text_field($_GET['user']) : false; //weauth发来用户信息
+        $weauth_sk   = isset($_GET['sk']) ? sanitize_text_field($_GET['sk']) : false; //weauth返回的12位sk信息
+        $weauth_res  = get_transient($weauth_sk . '-OK');
+        if (empty($weauth_res) && $weauth_res !== 1) {
+            return;
+        }
+
+        $weauth_user  = stripslashes($weauth_user);
+        $weauth_user  = json_decode($weauth_user, true);
+        $oauth_result = implode('|', $weauth_user);
+        set_transient($weauth_sk . '-info', $oauth_result, 60); //1分钟缓存
+        header('goauth: ok');
+        echo 'success'; //给对方服务器打个招呼
+        exit;
+    }
+}
+add_action('parse_request', 'get_weauth_oauth');
 
 //社交头像
 function gdk_wx_avatar($avatar, $id_or_email, $size, $default, $alt)
@@ -79,8 +97,11 @@ function gdk_switch_get_avatar($avatar)
         case 2:
             $avatar = preg_replace("/http[s]{0,1}:\/\/(secure|www|\d).gravatar.com\/avatar\//", "//cdn.v2ex.com/gravatar/", $avatar);
             break;
-        default:
+        case 3:
             $avatar = preg_replace("/http[s]{0,1}:\/\/(secure|www|\d).gravatar.com\/avatar\//", "//dn-qiniu-avatar.qbox.me/avatar/", $avatar);
+            break;
+        default:
+            $avatar = preg_replace("/http[s]{0,1}:\/\/(secure|www|\d).gravatar.com\/avatar\//", "//cravatar.cn/avatar/", $avatar);
     }
     return $avatar;
 }
@@ -90,6 +111,9 @@ add_filter('get_avatar', 'gdk_switch_get_avatar');
 if (gdk_option('gdk_lazyload')) {
     function gdk_lazyload($content)
     {
+		if (get_post_type() != 'post') {
+			return $content;
+		}
         if (!is_feed() || !is_robots()) {
             $content = preg_replace('/<img(.+)src=[\'"]([^\'"]+)[\'"](.*)>/i', "<img\$1data-original=\"\$2\" \$3>\n<noscript>\$0</noscript>", $content);
         }
@@ -321,8 +345,7 @@ if (gdk_option('gdk_article_list')) {
     add_filter('the_content', 'article_index');
 }
 
-//插件安装自动激活页面
-function gdk_page_activate()
+function weauth_page_activate()
 {
     $awesome_page_id = get_option('weixin_page_id');
     if (!$awesome_page_id) {
@@ -339,7 +362,7 @@ function gdk_page_activate()
     }
 
 }
-add_action('admin_init', 'gdk_page_activate');
+add_action('admin_init', 'weauth_page_activate');
 
 //强制微信登录
 function force_weauth_login_url($login_url, $redirect, $force_reauth)
@@ -354,7 +377,6 @@ function force_weauth_login_url($login_url, $redirect, $force_reauth)
     return $login_url;
 }
 
-//修改注册页面
 function change_my_register_url($url)
 {
     if (is_admin()) {

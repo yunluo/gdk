@@ -7,15 +7,14 @@ if (!defined('WPINC')) {
     die;
 }
 
-$current_theme       = wp_get_theme();
-$gdk_default_options = [];
-$gdk_options         = array();
+$gdk_default = [];
+$gdk_options         = [];
 include 'options-config.php';
-$gdk_current_options = get_option('gdk_options_setup');
+$gdk_config = get_option('gdk_options_setup');
 
 function gdk_update_options()
 {
-    global $gdk_default_options, $gdk_options, $gdk_current_options;
+    global $gdk_default, $gdk_options, $gdk_config;
     foreach ($gdk_options as $panel) {
         foreach ($panel as $option) {
             $id   = $option['id'] ?? '';
@@ -25,22 +24,23 @@ function gdk_update_options()
                 continue;
             }
 
-            $gdk_default_options[$id] = $std;
-            if (isset($gdk_current_options[$id])) {
+            $gdk_default[$id] = $std;
+            if (isset($gdk_config[$id])) {
                 continue;
             }
 
-            $gdk_current_options[$id] = $std;
+            $gdk_config[$id] = $std;
+			
         }
     }
 }
-gdk_update_options();
+//gdk_update_options();
 
 //获取设置选项
-function gdk_option($id, $returnDefault = false)
+function gdk_option($id, $Default = false)
 {
-    global $gdk_default_options, $gdk_current_options;
-    return stripslashes($returnDefault ? $gdk_default_options[$id] : $gdk_current_options[$id]);
+    global $gdk_default, $gdk_config;
+    return stripslashes($Default ? $gdk_default[$id] : $gdk_config[$id]);
 }
 
 //设置页面模板
@@ -66,7 +66,7 @@ if (isset($_GET['update'])) {
 	<div class="wp-filter">
 		<ul class="filter-links">
 <?php
-$activePanelIdx = empty($_GET['panel']) ? 0 : $_GET['panel'];
+$activePanelIdx = $_GET['panel'] ?? 0;
     foreach (array_keys($gdk_options) as $i => $name) {
         echo '<li><a href="#panel_' . $i . '" data-panel="' . $i . '" ' . ($i == $activePanelIdx ? 'class="current"' : '') . '>' . $name . '</a></li>';
     }
@@ -151,10 +151,8 @@ break;
                     ?>
 		<fieldset>
 		<?php $checkboxValues = gdk_option($id);
-                    if (!is_array($checkboxValues)) {
-                        $checkboxValues = [];
-                    }
-
+                    if (!is_array($checkboxValues))  $checkboxValues = [];
+                    
                     foreach ($option['options'] as $id => $name): ?>
 		<label>
 			<input type="checkbox" name="<?php echo $id; ?>[]" id="<?php echo $id; ?>[]" value="<?php echo $id; ?>" <?php checked(in_array($id, $checkboxValues), true); ?>>
@@ -189,28 +187,6 @@ break;
 						<li>ＱＱ：865113728（推荐）</li>
 						<li>邮箱：<a href="mailto:sp91@qq.com">sp91@qq.com</a></li>
 						<li><p style="font-size:14px;color:#72777c">* 和主题无关的问题恕不回复</p></li>
-					</ul>
-				</td>
-			</tr>
-			<tr>
-				<th><h4>相关链接</h4></th>
-				<td>
-					<ul>
-						<li>主题发布页面：<a target="_blank" href="https://gitcafe.net/archives/3589.html">https://gitcafe.net/archives/3589.html</a></li>
-						<li>使用文档页面：<a target="_blank" href="https://gitcafe.net/archives/3275.html">https://gitcafe.net/archives/3275.html</a></li>
-						<li>代码托管页面：<a target="_blank" href="https://dev.tencent.com/u/googlo/p/Git/git">https://dev.tencent.com/u/googlo/p/Git/git</a></li>
-						<li>更新日志页面：<a target="_blank" href="https://gitcafe.net/tool/gitrss.php">https://gitcafe.net/tool/gitrss.php</a></li>
-						<li>主题反馈页面：<a target="_blank" href="https://support.qq.com/products/51158">https://support.qq.com/products/51158</a></li>
-					</ul>
-				</td>
-			</tr>
-			<tr>
-				<th><h4>第三方支持</h4></th>
-				<td>
-					<ul>
-						<li>感谢以下组织或个人：</li>
-						<li>PayJs 、Eapay、WeAuth小程序、Cloud9 、Cloud Studio、Coding 、Gitee 、Github、Server酱、jsDelivr、V2EX</li>
-						<li>露兜、畅萌、小影、大前端、知更鸟、yusi等等</li>
 					</ul>
 				</td>
 			</tr>
@@ -406,7 +382,7 @@ jQuery(function ($) {
     $.get(ajaxurl, ajax_data,
         function() {
 				$(".g-load").hide();
-				window.location.reload();
+				//window.location.reload();
         });
 	});
 

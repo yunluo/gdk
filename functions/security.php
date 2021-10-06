@@ -222,7 +222,7 @@ if (gdk_option('gdk_fuck_spam')) {
             gdk_die("评论禁止包含日文!");
         }
         //屏蔽评论里面黑名单内容
-        if (wp_blacklist_check($commentdata['comment_author'], $commentdata['comment_author_email'], $commentdata['comment_author_url'], $commentdata['comment_content'], $commentdata['comment_author_IP'], $commentdata['comment_agent'])) {
+        if (wp_check_comment_disallowed_list($commentdata['comment_author'], $commentdata['comment_author_email'], $commentdata['comment_author_url'], $commentdata['comment_content'], $commentdata['comment_author_IP'], $commentdata['comment_agent'])) {
             gdk_die('不好意思，您的评论违反本站评论规则');
         }
         return $commentdata;

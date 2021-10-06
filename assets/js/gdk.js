@@ -64,7 +64,7 @@ jQuery(function($) { /**声明加载jQuery */
      */
     function setCookie(e, t, o) {
         var i = new Date;
-        i.setDate(i.getDate() + o), document.cookie = e + "=" + escape(t) + (null == o ? "" : ";expires=" + i.toGMTString())
+        i.setDate(i.getDate() + o), document.cookie = e + "=" + escape(t) + (null == o ? "" : ";expires=" + i.toGMTString()) + ";Secure"
     };
     /**
      * 

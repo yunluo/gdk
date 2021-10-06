@@ -1,5 +1,4 @@
 <?php
-if (!defined('ABSPATH')) exit;
 
 //百度收录提示
 if (gdk_option('gdk_baidurecord_b') && function_exists('curl_init')) {
@@ -77,6 +76,14 @@ function force_weauth_login_url($login_url, $redirect, $force_reauth)
     add_filter('login_url', 'force_weauth_login_url', 10, 3);
 }
 
+//在登录框添加额外的微信登录
+function weixin_login_button()
+{
+    echo '<p><a class="button button-large" href="' . get_permalink(gdk_page_id('weauth')) . '">微信登录</a></p><br>';
+}if (gdk_option('gdk_weauth_oauth')) {
+    add_action('login_form', 'weixin_login_button');
+}
+
 //评论微信推送
 if (gdk_option('gdk_Server') && !is_admin()) {
     function sc_send($comment_id)
@@ -103,7 +110,7 @@ if (gdk_option('gdk_Server') && !is_admin()) {
             ),
         );
         $context       = stream_context_create($opts);
-        return $result = file_get_contents('https://sctapi.ftqq.com/' . $key . '.send', false, $context);
+        return $result = file_get_contents('http://sc.ftqq.com/' . $key . '.send', false, $context);
     }
     add_action('comment_post', 'sc_send', 19, 2);
 }
@@ -157,24 +164,100 @@ wp_embed_register_handler('youku_iframe', '#http://v.youku.com/v_show/id_(.*?).h
 wp_embed_unregister_handler('youku');
 
 ////////////////weauth//////////////
-//接受奶子微信的账号信息
-function get_weauth_oauth()
+/*
+function weauth_oauth_redirect()
 {
-    if (in_string($_SERVER['REQUEST_URI'], 'weauth')) {
-        $weauth_user = isset($_GET['user']) ? sanitize_text_field($_GET['user']) : false; //weauth发来用户信息
-        $weauth_sk   = isset($_GET['sk']) ? sanitize_text_field($_GET['sk']) : false; //weauth返回的12位sk信息
-        $weauth_res  = get_transient($weauth_sk . '-OK');
-        if (empty($weauth_res) && $weauth_res !== 1) {
-            return;
-        }
+    wp_redirect(home_url());
+    exit;
+}
 
-        $weauth_user  = stripslashes($weauth_user);
-        $weauth_user  = json_decode($weauth_user, true);
-        $oauth_result = implode('|', $weauth_user);
-        set_transient($weauth_sk . '-info', $oauth_result, 60); //1分钟缓存
-        header('goauth: ok');
-        echo 'success'; //给对方服务器打个招呼
-        exit;
+function get_weauth_token()
+{
+    $sk = date("YmdHis") . mt_rand(10, 99);
+    set_transient($sk, 1, 60 * 6);
+    $key = $_SERVER['HTTP_HOST'] . '@' . $sk;
+    return $key;
+}
+
+function get_weauth_qr()
+{
+    $qr64           = [];
+    $qr64['key']    = get_weauth_token();
+    $qr64['qrcode'] = json_decode(file_get_contents('https://wa.isdot.net/qrcode?str=' . $qr64['key']), true)['qrcode'];
+    return $qr64;
+}
+
+function weauth_rewrite_rules($wp_rewrite)
+{
+    if ($ps = get_option('permalink_structure')) {
+        $new_rules['^weauth'] = 'index.php?user=$matches[1]&sk=$matches[2]';
+        $wp_rewrite->rules    = $new_rules + $wp_rewrite->rules;
     }
 }
-add_action('parse_request', 'get_weauth_oauth');
+add_action('generate_rewrite_rules', 'weauth_rewrite_rules');
+
+function weauth_oauth()
+{
+    $weauth_user = $_GET['user'];
+    $weauth_sk   = esc_attr($_GET['sk']);
+    $weauth_res  = get_transient($weauth_sk);
+    if (empty($weauth_res)) {
+        return;
+    }
+    $weauth_user = stripslashes($weauth_user);
+    $weauth_user = json_decode($weauth_user, true);
+    $nickname    = $weauth_user['nickName'];
+    $wxavatar    = $weauth_user['avatarUrl'];
+    $openid      = $weauth_user['openid'];
+    $login_name  = 'wx_' . wp_create_nonce($openid);
+    if (is_user_logged_in()) {
+        $user_id = get_current_user_id();
+        update_user_meta($user_id, 'wx_openid', $openid);
+        update_user_meta($user_id, 'simple_local_avatar', $wxavatar);
+    } else {
+        $weauth_user = get_users(array(
+            'meta_key '  => 'wx_openid',
+            'meta_value' => $openid,
+        )
+        );
+        if (is_wp_error($weauth_user) || !count($weauth_user)) {
+            $random_password = wp_generate_password(12, false);
+            $userdata        = array(
+                'user_login'   => $login_name,
+                'display_name' => $nickname,
+                'user_pass'    => $random_password,
+                'nickname'     => $nickname,
+            );
+            $user_id = wp_insert_user($userdata);
+            update_user_meta($user_id, 'wx_openid', $openid);
+            update_user_meta($user_id, 'simple_local_avatar', $wxavatar);
+        } else {
+            $user_id = $weauth_user[0]->ID;
+        }
+    }
+    set_transient($weauth_sk . 'ok', $user_id, 60); //用于登录的随机数，有效期为一分钟
+    weauth_oauth_redirect();
+}
+//初始化
+/*
+function weauth_oauth_init()
+{
+    if (isset($_GET['user']) && isset($_GET['sk'])) {
+        weauth_oauth();
+    }
+}
+add_action('init', 'weauth_oauth_init');
+
+/*
+//GET自动登录
+function gdk_weauth_oauth_login()
+{
+    $key = isset($_GET['spam']) ? $_GET['spam'] : false;
+    if ($key) {
+        $user_id = get_transient($key . 'ok');
+        if ($user_id != 0) {
+            wp_set_auth_cookie($user_id);
+        }
+    }
+}
+add_action('init', 'gdk_weauth_oauth_login');
