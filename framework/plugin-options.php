@@ -34,7 +34,7 @@ function gdk_update_options()
         }
     }
 }
-//gdk_update_options();
+gdk_update_options();
 
 //获取设置选项
 function gdk_option($id, $Default = false)
