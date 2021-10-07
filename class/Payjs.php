@@ -6,6 +6,7 @@ class GDK_Payjs
     private $key;
     private $api_url_native;
     private $api_url_cashier;
+    private $api_url_mweb;
     private $api_url_check;
 
     public function __construct($config = null)
@@ -14,10 +15,11 @@ class GDK_Payjs
 
         $this->mchid = $config['mchid'];
         $this->key   = $config['key'];
-        $api_url     = isset($config['api_url']) ? $config['api_url'] : 'https://payjs.cn/api/';
+        $api_url     = $config['api_url'] ?? 'https://payjs.cn/api/';
 
         $this->api_url_native  = $api_url . 'native';
         $this->api_url_cashier = $api_url . 'cashier';
+        $this->api_url_mweb    = $api_url . 'mweb';
         $this->api_url_close   = $api_url . 'close';
         $this->api_url_check   = $api_url . 'check';
     }
@@ -28,7 +30,12 @@ class GDK_Payjs
         $this->url = $this->api_url_native;
         return $this->post($data);
     }
-
+    // MWEB(H5) 支付
+    public function mweb(array $data)
+    {
+        $this->url = $this->api_url_mweb;
+        return $this->post($data);
+    }
     // 收银台模式
     public function cashier(array $data)
     {
@@ -95,4 +102,3 @@ class GDK_Payjs
     }
 
 }
-?>

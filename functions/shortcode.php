@@ -448,49 +448,6 @@ function contentblock_shortcode( $atts, $content = null ) {
 add_shortcode( 'cb', 'contentblock_shortcode' );
 
 
-
-//
-function points_view($content){
-	$cookie_name = 'huoduan_wechat_fans';
-	
-	if (preg_match_all('/<!--pay points start-->([\s\S]*?)<!--pay points end-->/i', $content, $hide_words))
-	{
-		$re = '/<!--pay points start-->【(.*)】/i';
-$str = '我在这里，这里不是付费内容
-<!--pay points start-->【10】dssdssdfs我在这里，这里是付费内容
-第二行
-<!--pay points end-->';
-
-preg_match($re, $str, $matches, PREG_OFFSET_CAPTURE, 0);
-$points = $matches[1][0];
-	    $wechatfans = get_option('huoduan_wechatfans');
-		$cv = md5($wechatfans['wechat_key'].$cookie_name.'huoduan.com');
-		$vtips='';
-		if(isset($_POST['huoduan_verifycode'])){
-			if($_POST['huoduan_verifycode']==$wechatfans['wechat_code']){
-				setcookie($cookie_name, $cv ,time()+(int)$wechatfans['wechat_day']*86400, "/");
-				$_COOKIE[$cookie_name] = $cv;
-			}else{
-				$vtips='<script>alert("验证码错误！请输入正确的验证码！");</script>';
-			}
-		}
-		$cookievalue = isset($_COOKIE[$cookie_name])?$_COOKIE[$cookie_name]:'';
-
-		if($cookievalue==$cv){
-			$content = str_replace($hide_words[0], '<div style="border:1px dashed #F60; padding:10px; margin:10px 0; line-height:200%;  background-color:#FFF4FF; overflow:hidden; clear:both;">'.$hide_words[0][0].'</div>', $content);	
-		}else{
-			
-			$hide_notice = '<div class="huoduan_hide_box" style="border:1px dashed #F60; padding:10px; margin:10px 0; line-height:200%; color:#F00; background-color:#FFF4FF; overflow:hidden; clear:both;"><img class="wxpic" align="right" src="'.$wechatfans['wechat_qrimg'].'" style="width:150px;height:150px;margin-left:20px;display:inline;border:none" width="150" height="150"  alt="'.$wechatfans['wechat_name'].'" /><span style="font-size:18px;">此处内容已经被作者隐藏，请输入验证码查看内容</span><form method="post" style="margin:10px 0;"><span class="yzts" style="font-size:18px;float:left;">验证码：</span><input name="huo'.'duan_verifycode" id="verifycode" type="text" value="" style="border:none;float:left;width:80px; height:32px; line-height:30px; padding:0 5px; border:1px solid #FF6600;-moz-border-radius: 0px;  -webkit-border-radius: 0px;  border-radius:0px;" /><input id="verifybtn" style="border:none;float:left;width:80px; height:32px; line-height:32px; padding:0 5px; background-color:#F60; text-align:center; border:none; cursor:pointer; color:#FFF;-moz-border-radius: 0px; font-size:14px;  -webkit-border-radius: 0px;  border-radius:0px;" name="" type="submit" value="提交查看" /></form><div style="clear:left;"></div><span style="color:#00BF30">请关注本站微信公众号，回复“<span style="color:blue">'.$wechatfans['wechat_keyword'].'</span>”，获取验证码。在微信里搜索“<span style="color:blue">'.$wechatfans['wechat_name'].'</span>”或者“<span style="color:blue">'.$wechatfans['wechat_account'].'</span>”或者微信扫描右侧二维码都可以关注本站微信公众号。</span><div class="cl"></div></div>'.$vtips;
-
-			$content = str_replace($hide_words[0], $hide_notice, $content);
-		}
-		
-	}
-	return $content;
-}
-
-add_filter('the_content', 'points_view');
-
 //WordPress 段代码按钮集合
 function gdk_shortcode_list()
 {

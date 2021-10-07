@@ -1,5 +1,5 @@
 <?php
-error_reporting(E_ALL ^ E_NOTICE); //镇魔石，镇压一切魑魅魍魉！
+
 if (!class_exists('myCustomFields')) {
 
     class myCustomFields
@@ -21,7 +21,7 @@ if (!class_exists('myCustomFields')) {
                 "title"       => "自定义缩略图",
                 "description" => "这里可以输入您的自定义缩略图链接",
                 "type"        => "text",
-                "scope"       => array("post"),
+                "scope"       => ['post'],
                 "capability"  => "edit_posts",
             ),
             array(
@@ -29,7 +29,7 @@ if (!class_exists('myCustomFields')) {
                 "title"       => "单页下载文件名字",
                 "description" => "这里可以输入您的下载文件的名字",
                 "type"        => "text",
-                "scope"       => array("post"),
+                "scope"       => ['post'],
                 "capability"  => "edit_posts",
             ),
             array(
@@ -37,7 +37,7 @@ if (!class_exists('myCustomFields')) {
                 "title"       => "单页下载文件大小",
                 "description" => "这里可以输入您的下载文件的大小，可以加上单位，比如：233KB或者233MB",
                 "type"        => "text",
-                "scope"       => array("post"),
+                "scope"       => ['post'],
                 "capability"  => "edit_posts",
             ),
             array(
@@ -45,7 +45,7 @@ if (!class_exists('myCustomFields')) {
                 "title"       => "单页下载下载链接",
                 "description" => "按照链接,名字,备注的格式,注意中间是用英文逗号,换行可添加多个,举个栗子：<code>https://www.baidu.com,百度官网,中国最大的搜索引擎网站</code>",
                 "type"        => "textarea",
-                "scope"       => array("post"),
+                "scope"       => ['post'],
                 "capability"  => "edit_posts",
             ),
         );
@@ -56,8 +56,6 @@ if (!class_exists('myCustomFields')) {
         {
             add_action('admin_menu', array($this, 'createCustomFields'));
             add_action('save_post', array($this, 'saveCustomFields'), 1, 2);
-            // 下面这句可以关闭WordPress自带的自定义栏目，但是不推荐，需要的话可以开启
-            //add_action( 'do_meta_boxes', array( $this, 'removeDefaultCustomFields' ), 10, 3 );
         }
         /**
          * 创建一组你自己的自定义栏目

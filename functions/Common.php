@@ -6,6 +6,11 @@ function gdk_rand_color() {
 	$rndKey = array_rand($arr);
 	echo $arr[$rndKey];
 }
+//获取友情链接ID，默认是第一个创建的分类
+function gdk_link_id() {
+	$arr = get_terms( 'link_category', 'orderby=id&hide_empty=0' );
+	return $arr[0]->term_id;
+}
 /**
  * 获取摘要
  */

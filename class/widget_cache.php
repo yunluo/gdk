@@ -1,4 +1,3 @@
-
 <?php
 
 class Auto_Widget_cache
@@ -54,8 +53,7 @@ class Auto_Widget_cache
         <p>
             <input id="<?php
 echo $t->get_field_id('wc_cache'); ?>" name="<?php
-echo $t->get_field_name('wc_cache'); ?>" type="checkbox" <?php
-checked(isset($instance['wc_cache']) ? $instance['wc_cache'] : 0); ?> />
+echo $t->get_field_name('wc_cache'); ?>" type="checkbox" <?php checked($instance['wc_cache'] ?? 0); ?> />
             <label for="<?php
 echo $t->get_field_id('wc_cache'); ?>">禁止缓存本工具?</label>
         </p>
@@ -67,4 +65,6 @@ echo $t->get_field_id('wc_cache'); ?>">禁止缓存本工具?</label>
         return $instance;
     }
 }
-$GLOBALS['Auto_Widget_cache'] = new Auto_Widget_cache();
+if( gdk_option('gdk_sidebar_cache')){
+    $GLOBALS['Auto_Widget_cache'] = new Auto_Widget_cache();
+}

@@ -254,8 +254,11 @@ break;
 .filter-links li>a:hover{color:#666}
 .filter-links a:focus{color:#6b48ff;box-shadow:none}
 
-.gdk_option input[type=radio]:checked::before {
+.gdk_option input[type=checkbox]:checked::before，.gdk_option input[type=radio]:checked::before {
     background-color: #6b48ff;
+}
+.gdk_option input[type=checkbox] {
+    margin:4px;
 }
 .gdk_option input[type=radio]:focus, .gdk_option input[type=checkbox]:focus{
     box-shadow: 0 0 0 1px #6b48ff;
