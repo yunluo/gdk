@@ -65,7 +65,7 @@ function gdk_pasteup_imag()
         $wp_upload_dir = wp_upload_dir();
         $file          = $_FILES['imageFile'];
         $result        = array('success' => false, 'message' => 'Null');
-        if (in_array($file['type'], array('image/gif', 'image/jpeg', 'image/pjpeg', 'image/png'))) {
+        if (array_key_exists($file['type'], array('image/gif', 'image/jpeg', 'image/pjpeg', 'image/png'))) {
             if ($file['error'] > 0) {
                 $result['message'] = 'error';
             } else {
@@ -200,7 +200,7 @@ function add_code()
         add_post_meta($id, 'pay_log', $code, true) or update_post_meta($id, 'pay_log', $pay_log . ',' . $code); //没有新建,有就更新
         $pay_log = get_post_meta($id, 'pay_log', true); //获取新的购买记录数据
         $pay_arr = explode(",", $pay_log);
-        if (in_array($code, $pay_arr)) {
+        if (array_key_exists($code, $pay_arr)) {
             exit('200'); //OK
         } else {
             exit('400'); //NO
@@ -228,7 +228,7 @@ function check_code()
         $code    = trim($code); //清理一下
         $pay_log = get_post_meta($id, 'pay_log', true); //购买记录数据
         $pay_arr = explode(",", $pay_log);
-        if (in_array($code, $pay_arr)) {
+        if (array_key_exists($code, $pay_arr)) {
             exit('200');
         } else {
             exit('400');

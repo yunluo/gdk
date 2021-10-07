@@ -166,7 +166,7 @@ if (!class_exists('myCustomFields')) {
                 return;
             }
 
-            if (!in_array($post->post_type, $this->postTypes)) {
+            if (!array_key_exists($post->post_type, $this->postTypes)) {
                 return;
             }
 

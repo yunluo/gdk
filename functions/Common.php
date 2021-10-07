@@ -185,13 +185,13 @@ function nc_get_translated_role_name($user_id)
 {
     $data  = get_userdata($user_id);
     $roles = $data->roles;
-    if (in_array('administrator', $roles)) {
+    if (array_key_exists('administrator', $roles)) {
         return __('Administrator', 'jimu');
-    } elseif (in_array('editor', $roles)) {
+    } elseif (array_key_exists('editor', $roles)) {
         return __('Certified Editor', 'jimu');
-    } elseif (in_array('author', $roles)) {
+    } elseif (array_key_exists('author', $roles)) {
         return __('Special Author', 'jimu');
-    } elseif (in_array('subscriber', $roles)) {
+    } elseif (array_key_exists('subscriber', $roles)) {
         return __('Subscriber', 'jimu');
     }
 
@@ -226,7 +226,7 @@ function gdk_is_mobile()
 //判断是否是登陆页面
 function is_login()
 {
-    return in_array($GLOBALS['pagenow'], ['wp-login.php', 'wp-register.php']);
+    return array_key_exists($GLOBALS['pagenow'], ['wp-login.php', 'wp-register.php']);
 }
 
 //判断字符串内是否有指定字符串

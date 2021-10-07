@@ -155,7 +155,7 @@ break;
                     
                     foreach ($option['options'] as $id => $name): ?>
 		<label>
-			<input type="checkbox" name="<?php echo $id; ?>[]" id="<?php echo $id; ?>[]" value="<?php echo $id; ?>" <?php checked(in_array($id, $checkboxValues), true); ?>>
+			<input type="checkbox" name="<?php echo $id; ?>[]" id="<?php echo $id; ?>[]" value="<?php echo $id; ?>" <?php checked(array_key_exists($id, $checkboxValues), 1); ?>>
 			<?php echo $name; ?>
 		</label>
 		<?php endforeach; ?>

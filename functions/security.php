@@ -170,7 +170,7 @@ function gdk_disable_login_errors($error)
 {
     global $errors;
     $err_codes = $errors->get_error_codes();
-    if (!in_array('too_many_tried', $err_codes)) {
+    if (!array_key_exists('too_many_tried', $err_codes)) {
         // For security reason
         return esc_attr('Access Denied!');
     }

@@ -10,7 +10,7 @@ Compatible:5.8.1
  */
 
 //万能的开头
-if (!defined('ABSPATH')) {exit;}
+if (!defined('ABSPATH')) exit;
 
 //版本和兼容检查
 function deactivate_myself()

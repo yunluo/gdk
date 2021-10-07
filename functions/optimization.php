@@ -349,7 +349,7 @@ if (gdk_option('gdk_upload_rename')) {
         $ext         = $info['extension'];
         $ignore_exts = ['zip', 'rar', '7z'];
         //被忽略的文件格式
-        if (!in_array($ext, $ignore_exts)) {
+        if (!array_key_exists($ext, $ignore_exts)) {
             $filedate     = date('YmdHis') . mt_rand(100, 999);
             $file['name'] = $filedate . '.' . $ext;
         }
