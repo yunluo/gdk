@@ -51,7 +51,7 @@ function gdk_admin_script()
     <script>
 jQuery(function($) {
     /* bengin */
-    if ($("#ed_toolbar").length > 0) {
+    if ($("#wp-content-editor-tools").length > 0) {
     /***文章编辑器 */
 	QTags.addButton('h2', 'H2标题', '<h2>', '</h2>');
     QTags.addButton('ipre', '代码高亮', '<pre class="prettyprint linenums" >\n\n</pre>', "");
