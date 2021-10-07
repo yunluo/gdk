@@ -71,7 +71,7 @@ $activePanelIdx = $_GET['panel'] ?? 0;
         echo '<li><a href="#panel_' . $i . '" data-panel="' . $i . '" ' . ($i == $activePanelIdx ? 'class="current"' : '') . '>' . $name . '</a></li>';
     }
     ?>
-			<li><a href="#panel_about" data-panel="about" class="about">关于插件</a></li>
+			<li><a href="#panel_about" data-panel="about" class="about">关于</a></li>
 		</ul>
 <div class="search-form"><label class="screen-reader-text" for="wp-filter-search-input">筛选插件选项…</label><input placeholder="筛选插件选项…" type="search" id="wp-filter-search-input" class="wp-filter-search"></div>
 </div>

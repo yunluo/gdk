@@ -64,7 +64,7 @@ jQuery(function($) {
         }
     });
     $(".add-shortcode").click(function() {
-        send_to_editor("" + $(this).data("shortcodes") + "");
+        send_to_editor( $(this).data("shortcodes") );
         $(".shortcodes-wrap").removeClass("is-active");
         return false
     });
