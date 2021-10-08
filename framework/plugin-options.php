@@ -124,26 +124,29 @@ break;
                     ?>
 		<p><label for="<?php echo $id; ?>"><?php echo $option['desc']; ?></label></p>
 		<p><textarea name="<?php echo $id; ?>" id="<?php echo $id; ?>" rows="10" cols="50" class="large-text code"><?php echo esc_textarea(gdk_option($id)) ?></textarea></p>
-<?php
+		<?php
 break;
 case 'select':
 ?>
-
     <label for="<?php echo $id; ?>"></label>
 		<label>
             <select name="<?php echo $id; ?>" id="<?php echo $id; ?>">
                 <?php foreach ($option['options'] as $val => $name) : ?>
-                <option value="<?php echo $val; ?>" <?php selected(gdk_option($id), $val); ?>>
-                    <?php echo $name; ?>
+                <option value="<?php echo $val; ?>" <?php selected(gdk_option($id), $val);
+?>>
+                    <?php echo $name;
+?>
                 </option>
-                <?php endforeach; ?>
+                <?php endforeach;
+?>
             </select>
 		</label>
-            <p class="description"><?php echo $option['desc']; ?></p>
+            <p class="description"><?php echo $option['desc'];
+?></p>
 <?php
     break;
-                case 'radio':
-                    ?>
+case 'radio':
+                ?>
 		<fieldset>
 		<?php foreach ($option['options'] as $val => $name): ?>
 		<label>
