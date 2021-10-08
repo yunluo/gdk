@@ -15,19 +15,22 @@ add_action('admin_enqueue_scripts', 'gdk_admin_enqueue_script');
 function gdk_enqueue_script_frontend()
 {
     if (!is_admin()) {
-        wp_enqueue_style('pure_css', GDK_BASE_URL . 'assets/css/css-mint.min.css', false, GDK_PLUGIN_VER, 'all');
-        wp_enqueue_style('font-awesome', GDK_BASE_URL . 'assets/css/font-awesome.min.css', false, GDK_PLUGIN_VER, 'all');
-        //wp_enqueue_style( 'milligram_css', GDK_BASE_URL.'assets/css/milligram.min.css', false, GDK_PLUGIN_VER, 'all' );
-        wp_enqueue_style('gdk_css', GDK_BASE_URL . 'assets/css/gdk.css', false, GDK_PLUGIN_VER, 'all');
+        wp_enqueue_style( 'uikit', 'https://cdn.jsdelivr.net/npm/uikit@3.7.4/dist/css/uikit.min.css', false, GDK_PLUGIN_VER, 'all' );
+
+        wp_enqueue_style('gdk', GDK_BASE_URL . 'assets/css/gdk.css', false, GDK_PLUGIN_VER, 'all');
+
         wp_deregister_script('jquery');
-        wp_enqueue_script('jquery', 'https://cdn.jsdelivr.net/npm/jquery@2.1.0/dist/jquery.min.js', false, GDK_PLUGIN_VER, true); //加载自定义jQuery2.0.3
-        
-        //wp_enqueue_script('code_prettify_js', GDK_BASE_URL . 'assets/js/prettify.min.js', array('jquery'), GDK_PLUGIN_VER, true);
-        //wp_enqueue_script('fancybox_js', GDK_BASE_URL . 'assets/js/fancybox.min.js', array('jquery'), GDK_PLUGIN_VER, true);
-        wp_enqueue_script('libs_js', GDK_BASE_URL . 'assets/js/libs.min.js', array('jquery'), GDK_PLUGIN_VER, true);
-        //wp_enqueue_script('sweetalert_js', 'https://cdn.jsdelivr.net/combine/npm/sweetalert@2.0.0,npm/qrious@4.0.2', [], GDK_PLUGIN_VER, true);
-        wp_enqueue_script('gdk_js', GDK_BASE_URL . 'assets/js/gdk.js', array('jquery'), GDK_PLUGIN_VER, true);
-        wp_localize_script('gdk_js', 'gdk', [
+        wp_enqueue_script('jquery', 'https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js', false, GDK_PLUGIN_VER, true); //加载自定义jQuery2.0.3
+            // Comment Reply
+    if (is_singular() && comments_open() && get_option('thread_comments')) {
+        wp_enqueue_script('comment-reply');
+    }
+  
+        wp_enqueue_script('libs', GDK_BASE_URL . 'assets/js/libs.min.js', ['jquery'], GDK_PLUGIN_VER, true);
+        wp_enqueue_script('uikit', 'https://cdn.jsdelivr.net/npm/uikit@3.7.4/dist/js/uikit.min.js', [], GDK_PLUGIN_VER, true);
+        wp_enqueue_script('uikit-icon', 'https://cdn.jsdelivr.net/npm/uikit@3.7.4/dist/js/uikit-icons.min.js', [], GDK_PLUGIN_VER, true);
+        wp_enqueue_script('gdk', GDK_BASE_URL . 'assets/js/gdk.js', ['jquery'], GDK_PLUGIN_VER, true);
+        wp_localize_script('gdk', 'gdk', [
             'ajaxurl'           => admin_url('admin-ajax.php'),
             'pass_nonce'        => wp_create_nonce('pass_nonce'),
             'pay_points'        => wp_create_nonce('pay_points'),

@@ -322,29 +322,6 @@ function gdk_comment_author_link($link, $author_id, $author_nicename)
 }
 add_filter('author_link', 'gdk_comment_author_link', 10, 3);
 
-//文章目录,来自露兜,云落修改
-if (gdk_option('gdk_article_list')) {
-    function article_index($content)
-    {
-        $matches = array();
-        $ul_li   = '';
-        $r       = "/<h2>([^<]+)<\/h2>/im";
-        if (is_single() && preg_match_all($r, $content, $matches)) {
-            foreach ($matches[1] as $num => $title) {
-                $title   = trim(strip_tags($title));
-                $content = str_replace($matches[0][$num], '<h2 id="title-' . $num . '">' . $title . '</h2>', $content);
-                $ul_li .= '<li><a href="#title-' . $num . '">' . $title . "</a></li>\n";
-            }
-            $content = '<div id="article-index">
-                            <strong>文章目录<a class="hidetoc">[隐藏]</a></strong>
-                            <ul id="index-ul">' . $ul_li . '</ul>
-                        </div>' . $content;
-        }
-        return $content;
-    }
-    add_filter('the_content', 'article_index');
-}
-
 function weauth_page_activate()
 {
     $awesome_page_id = get_option('weixin_page_id');
