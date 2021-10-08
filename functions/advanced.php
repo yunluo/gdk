@@ -389,3 +389,30 @@ if (gdk_option('gdk_weauth_oauth') && gdk_option('gdk_weauth_force')) {
     add_filter('login_url', 'force_weauth_login_url', 10, 3);
     add_filter('register_url', 'change_my_register_url');
 }
+
+
+
+/**
+ * 清除文章相关的缓存
+ */
+function gdk_clear_post_cache()
+{
+    delete_transient('gdk-sitemap');
+    delete_transient('gdk-sitemap-html');
+}
+add_action('save_post', 'gdk_clear_post_cache' );
+add_action('deleted_post', 'gdk_clear_post_cache' );
+add_action('publish_post', 'gdk_clear_post_cache');
+add_action('publish_page', 'gdk_clear_post_cache');
+add_action('save_post', 'gdk_clear_post_cache');
+
+/**
+ * 清除链接缓存
+ */
+function gdk_clear_link_cache()
+{
+    delete_transient('gdk-daohang-html');
+}
+add_action('edit_link', 'gdk_clear_link_cache' );
+add_action('add_link', 'gdk_clear_link_cache' );
+add_action('set_object_terms', 'gdk_clear_link_cache');

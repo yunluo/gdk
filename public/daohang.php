@@ -135,7 +135,7 @@ $linkcats1 = get_terms('link_category', 'orderby=count&hide_empty=1&exclude='. g
             </footer>
         </div>
     </div>
-    <script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/zepto@1.2.0/dist/zepto.min.js"></script>
     <script type="text/javascript">
         $(function () {
             /*

@@ -24,9 +24,8 @@ function gdk_sitemap_html_api_handlers($template)
             $sitemap = gdk_create_html_sitemap();
             set_transient('gdk-sitemap-html', $sitemap);
         }
-
-        $sitemap;
-        return;
+        
+        return $sitemap;
     }
 
     return $template;
@@ -89,12 +88,7 @@ $myposts = get_posts('numberposts=-1&orderby=post_date&order=DESC');
         <br />
         <div style="text-align: center; font-size: 11px">
             Latest Update:
-            <?php
-global $wpdb;
-    $last = $wpdb->get_results("SELECT MAX(post_modified) AS MAX_m FROM $wpdb->posts WHERE (post_type = 'post' OR post_type = 'page') AND (post_status = 'publish' OR post_status = 'private')");
-    $last = date('Y-m-d G:i:s', strtotime($last[0]->MAX_m));
-    echo $last;
-    ?>
+            <?php echo date( 'Y年n月j日 H:i:s', strtotime( get_lastpostmodified('blog'))); ?>
                 <br />
                 <br />
         </div>
@@ -102,11 +96,3 @@ global $wpdb;
 </html>
 <?php
 }
-
-function gdk_clear_sitemap_html_cache()
-{
-    delete_transient('gdk-sitemap-html');
-}
-add_action('publish_post', 'gdk_clear_sitemap_html_cache');
-add_action('publish_page', 'gdk_clear_sitemap_html_cache');
-add_action('save_post', 'gdk_clear_sitemap_html_cache');

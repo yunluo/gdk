@@ -68,11 +68,3 @@ function gdk_create_sitemap()
     $sitemap .= '</urlset>';
     return $sitemap;
 }
-
-function gdk_clear_sitemap_cache()
-{
-    delete_transient('gdk-sitemap');
-}
-add_action('publish_post', 'gdk_clear_sitemap_cache');
-add_action('publish_page', 'gdk_clear_sitemap_cache');
-add_action('save_post', 'gdk_clear_sitemap_cache');
