@@ -4,8 +4,8 @@ add_action('template_redirect', 'gdk_edl_redirect');
 
 function gdk_edl_redirect()
 {
-    global $wp, $wp_query;
-    $b = $wp_query->query_vars['dl'] ?? '';
+    global $wp_query;
+    $b = $wp_query->query_vars['dl'] ?? null;
     if ($b) {
         gdk_edl();
         exit;
@@ -16,7 +16,7 @@ function gdk_edl_redirect()
 function gdk_edl()
 {
     header('Content-type: text/html; charset=utf-8');
-    $pid = isset($_GET['dl']) ? trim(htmlspecialchars($_GET['dl'], ENT_QUOTES)) : '';
+    $pid = isset($_GET['dl']) ? trim(htmlspecialchars($_GET['dl'], ENT_QUOTES)) : null;
     if (!$pid) {
         wp_die('<h1>下载页面不是直接打开的哦</h1>');
     }
@@ -63,7 +63,7 @@ function gdk_edl()
             </div>
         </nav>
 
-		<div class="page-header header-filter" filter-color="purple" style="background-image: url(<?php echo get_bing_img(); ?>); background-size: cover; background-position: top center;">
+		<div class="page-header header-filter" filter-color="purple" style="background-image: url(<?php echo gdk_get_bing_img(); ?>); background-size: cover; background-position: top center;">
 			<div class="container" >
 				<div class="row" id="important">
 					<div class="col-md-12 ml-auto mr-auto ml-up">

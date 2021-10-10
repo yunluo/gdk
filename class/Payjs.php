@@ -11,45 +11,51 @@ class GDK_Payjs
 
     public function __construct($config = null)
     {
-        if (!$config) exit('config needed');
+        if (!$config) {
+            exit('config needed');
+        }
 
         $this->mchid = $config['mchid'];
-        $this->key   = $config['key'];
-        $api_url     = $config['api_url'] ?? 'https://payjs.cn/api/';
-
-        $this->api_url_native  = $api_url . 'native';
-        $this->api_url_cashier = $api_url . 'cashier';
-        $this->api_url_mweb    = $api_url . 'mweb';
-        $this->api_url_close   = $api_url . 'close';
-        $this->api_url_check   = $api_url . 'check';
+        $this->key = $config['key'];
+        $api_url = $config['api_url'] ?? 'https://payjs.cn/api/';
+        $this->api_url_native = $api_url.'native';
+        $this->api_url_cashier = $api_url.'cashier';
+        $this->api_url_mweb = $api_url.'mweb';
+        $this->api_url_close = $api_url.'close';
+        $this->api_url_check = $api_url.'check';
     }
 
     // 扫码支付
     public function native(array $data)
     {
         $this->url = $this->api_url_native;
+
         return $this->post($data);
     }
+
     // MWEB(H5) 支付
     public function mweb(array $data)
     {
         $this->url = $this->api_url_mweb;
+
         return $this->post($data);
     }
+
     // 收银台模式
     public function cashier(array $data)
     {
         $this->url = $this->api_url_cashier;
-        $data      = $this->sign($data);
-        $url       = $this->url . '?' . http_build_query($data);
-        return $url;
+        $data = $this->sign($data);
+
+        return $this->url.'?'.http_build_query($data);
     }
 
     // 检查订单
     public function check($payjs_order_id)
     {
         $this->url = $this->api_url_check;
-        $data      = ['payjs_order_id' => $payjs_order_id];
+        $data = ['payjs_order_id' => $payjs_order_id];
+
         return $this->post($data);
     }
 
@@ -57,11 +63,11 @@ class GDK_Payjs
     public function notify()
     {
         $data = $_POST;
-        if ($this->checkSign($data) === true) {
+        if (true === $this->checkSign($data)) {
             return $data;
-        } else {
-            exit("验签失败");
         }
+
+        exit('验签失败');
     }
 
     // 数据签名
@@ -70,7 +76,8 @@ class GDK_Payjs
         $data['mchid'] = $this->mchid;
         array_filter($data);
         ksort($data);
-        $data['sign'] = strtoupper(md5(urldecode(http_build_query($data) . '&key=' . $this->key)));
+        $data['sign'] = strtoupper(md5(urldecode(http_build_query($data).'&key='.$this->key)));
+
         return $data;
     }
 
@@ -81,15 +88,17 @@ class GDK_Payjs
         unset($data['sign']);
         array_filter($data);
         ksort($data);
-        $sign = strtoupper(md5(urldecode(http_build_query($data) . '&key=' . $this->key)));
+        $sign = strtoupper(md5(urldecode(http_build_query($data).'&key='.$this->key)));
+
         return $in_sign == $sign ? true : false;
     }
 
     // 数据发送
-	public function post($data) {
-		$data   = $this->sign($data);
+    public function post($data)
+    {
+        $data = $this->sign($data);
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_PROTOCOLS, CURLPROTO_HTTP | CURLPROTO_HTTPS );
+        curl_setopt($ch, CURLOPT_PROTOCOLS, CURLPROTO_HTTP | CURLPROTO_HTTPS);
         curl_setopt($ch, CURLOPT_URL, $this->url);
         curl_setopt($ch, CURLOPT_USERAGENT, 'HTTP CLIENT');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -99,7 +108,7 @@ class GDK_Payjs
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
         $rst = curl_exec($ch);
         curl_close($ch);
+
         return json_decode($rst, true);
     }
-
 }

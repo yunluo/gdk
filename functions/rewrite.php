@@ -1,6 +1,6 @@
 <?php
 /**
- * 各页面重写规则
+ * 各页面重写规则.
  */
 
 //页面伪静态规则
@@ -8,7 +8,7 @@ function gdk_page_permalink()
 {
     global $wp_rewrite;
     if (!strpos($wp_rewrite->get_page_permastruct(), '.html')) {
-        $wp_rewrite->page_structure = $wp_rewrite->page_structure . '.html';
+        $wp_rewrite->page_structure = $wp_rewrite->page_structure.'.html';
     }
 }
 add_action('init', 'gdk_page_permalink', -1);
@@ -42,9 +42,9 @@ function gdk_custom_cancel_redirect($redirect_url)
     $api_daohang = get_query_var('daohang');
     if (!empty($api_sitemap) || !empty($api_daohang)) {
         return false;
-    } else {
-        return $redirect_url;
     }
+
+    return $redirect_url;
 }
 add_filter('redirect_canonical', 'gdk_custom_cancel_redirect');
 
@@ -55,6 +55,7 @@ function gdk_public_query_vars($public_query_vars)
     $public_query_vars[] = 'dl';
     $public_query_vars[] = 'sitemap';
     $public_query_vars[] = 'daohang';
+
     return $public_query_vars;
 }
 add_action('query_vars', 'gdk_public_query_vars');

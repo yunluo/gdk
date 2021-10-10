@@ -4,70 +4,76 @@
 class gdk_local_avatars
 {
     private $__user_id_being_edited;
+
     public function __construct()
     {
-        add_action('admin_init', array(
+        add_action('admin_init', [
             $this,
             'admin_init',
-        ));
-        add_action('show_user_profile', array(
+        ]);
+        add_action('show_user_profile', [
             $this,
             'edit_user_profile',
-        ));
-        add_action('edit_user_profile', array(
+        ]);
+        add_action('edit_user_profile', [
             $this,
             'edit_user_profile',
-        ));
-        add_action('personal_options_update', array(
+        ]);
+        add_action('personal_options_update', [
             $this,
             'edit_user_profile_update',
-        ));
-        add_action('edit_user_profile_update', array(
+        ]);
+        add_action('edit_user_profile_update', [
             $this,
             'edit_user_profile_update',
-        ));
-        add_filter('get_avatar', array(
+        ]);
+        add_filter('get_avatar', [
             $this,
             'get_avatar',
-        ), 10, 5);
-        add_filter('avatar_defaults', array(
+        ], 10, 5);
+        add_filter('avatar_defaults', [
             $this,
             'avatar_defaults',
-        ));
+        ]);
     }
+
     public function admin_init()
     {
-        register_setting('discussion', 'gdk_local_avatars_caps', array(
+        register_setting('discussion', 'gdk_local_avatars_caps', [
             $this,
             'sanitize_options',
-        ));
-        add_settings_field('basic-user-avatars-caps', '本地上传头像权限管理', array(
+        ]);
+        add_settings_field('basic-user-avatars-caps', '本地上传头像权限管理', [
             $this,
             'avatar_settings_field',
-        ), 'discussion', 'avatars');
+        ], 'discussion', 'avatars');
     }
+
     public function avatar_settings_field($args)
     {
-        $options = get_option('gdk_local_avatars_caps');
-        ?>
-		<label for="gdk_local_avatars_caps">
-			<input type="checkbox" name="gdk_local_avatars_caps" id="gdk_local_avatars_caps" value="1" <?php
-checked($options['gdk_local_avatars_caps'], 1); ?>/>仅具有头像上传权限的用户具有设置本地头像权限（作者及更高等级角色）</label>
-		<?php
-}
+        $options = get_option('gdk_local_avatars_caps'); ?>
+<label for="gdk_local_avatars_caps">
+    <input type="checkbox" name="gdk_local_avatars_caps" id="gdk_local_avatars_caps" value="1" <?php
+checked($options['gdk_local_avatars_caps'], 1); ?>/>仅具有头像上传权限的用户具有设置本地头像权限（作者及更高等级角色）
+</label>
+<?php
+    }
+
     public function sanitize_options($input)
     {
         $new_input['gdk_local_avatars_caps'] = empty($input['gdk_local_avatars_caps']) ? 0 : 1;
+
         return $new_input;
     }
+
     public function get_avatar($avatar, $id_or_email, $size = 96, $default, $alt)
     {
         if (is_numeric($id_or_email)) {
-            $user_id = (int)$id_or_email;
+            $user_id = (int) $id_or_email;
         } elseif (is_string($id_or_email) && ($user = get_user_by('email', $id_or_email))) {
             $user_id = $user->ID;
         } elseif (is_object($id_or_email) && !empty($id_or_email->user_id)) {
-            $user_id = (int)$id_or_email->user_id;
+            $user_id = (int) $id_or_email->user_id;
         }
 
         if (empty($user_id)) {
@@ -79,41 +85,43 @@ checked($options['gdk_local_avatars_caps'], 1); ?>/>仅具有头像上传权限�
             return $avatar;
         }
 
-        $size = (int)$size;
+        $size = (int) $size;
         if (empty($alt)) {
             $alt = get_the_author_meta('display_name', $user_id);
         }
 
         if (empty($local_avatars[$size])) {
-            $upload_path      = wp_upload_dir();
+            $upload_path = wp_upload_dir();
             $avatar_full_path = str_replace($upload_path['baseurl'], $upload_path['basedir'], $local_avatars['full']);
-            $image            = wp_get_image_editor($avatar_full_path);
+            $image = wp_get_image_editor($avatar_full_path);
             if (!is_wp_error($image)) {
                 $image->resize($size, $size, true);
                 $image_sized = $image->save();
             }
             $local_avatars[$size] = is_wp_error($image_sized) ? $local_avatars[$size] = $local_avatars['full'] : str_replace($upload_path['basedir'], $upload_path['baseurl'], $image_sized['path']);
             update_user_meta($user_id, 'simple_local_avatar', $local_avatars);
-        } elseif (substr($local_avatars[$size], 0, 4) != 'http') {
+        } elseif ('http' != substr($local_avatars[$size], 0, 4)) {
             $local_avatars[$size] = home_url($local_avatars[$size]);
         }
         $author_class = is_author($user_id) ? ' current-author' : '';
-        $avatar       = "<img alt='" . esc_attr($alt) . "' src='" . $local_avatars[$size] . "' class='avatar avatar-{$size}{$author_class} photo' height='{$size}' width='{$size}' />";
+        $avatar = "<img alt='".esc_attr($alt)."' src='".$local_avatars[$size]."' class='avatar avatar-{$size}{$author_class} photo' height='{$size}' width='{$size}' />";
+
         return apply_filters('simple_local_avatar', $avatar);
     }
+
     public function edit_user_profile($profileuser)
     {
         ?>
-		<h3>头像</h3>
-		<table class="form-table">
-			<tr>
-				<th><label for="basic-user-avatar">上传头像</label></th>
-				<td style="width: 50px;" valign="top">
-					<?php
+<h3>头像</h3>
+<table class="form-table">
+    <tr>
+        <th><label for="basic-user-avatar">上传头像</label></th>
+        <td style="width: 50px;" valign="top">
+            <?php
 echo get_avatar($profileuser->ID); ?>
-				</td>
-				<td>
-				<?php
+        </td>
+        <td>
+            <?php
 $options = get_option('gdk_local_avatars_caps');
         if (empty($options['gdk_local_avatars_caps']) || current_user_can('upload_files')) {
             // Nonce security ftw
@@ -131,14 +139,18 @@ $options = get_option('gdk_local_avatars_caps');
             } else {
                 echo '<span class="description">你没有头像上传权限，如需要修改本地头像，请联系站点管理员</span>';
             }
-        }
-        ?>
-				</td>
-			</tr>
-		</table>
-		<script type="text/javascript">var form = document.getElementById('your-profile');form.encoding = 'multipart/form-data';form.setAttribute('enctype', 'multipart/form-data');</script>
-		<?php
-}
+        } ?>
+        </td>
+    </tr>
+</table>
+<script type="text/javascript">
+    var form = document.getElementById('your-profile');
+    form.encoding = 'multipart/form-data';
+    form.setAttribute('enctype', 'multipart/form-data');
+</script>
+<?php
+    }
+
     public function edit_user_profile_update($user_id)
     {
         if (!isset($_POST['_simple_local_avatar_nonce']) || !wp_verify_nonce($_POST['_simple_local_avatar_nonce'], 'simple_local_avatar_nonce')) {
@@ -146,13 +158,13 @@ $options = get_option('gdk_local_avatars_caps');
         }
 
         if (!empty($_FILES['basic-user-avatar']['name'])) {
-            $mimes = array(
+            $mimes = [
                 'jpg|jpeg|jpe' => 'image/jpeg',
-                'gif'          => 'image/gif',
-                'png'          => 'image/png',
-            );
+                'gif' => 'image/gif',
+                'png' => 'image/png',
+            ];
             if (!function_exists('wp_handle_upload')) {
-                require_once ABSPATH . 'wp-admin/includes/file.php';
+                require_once ABSPATH.'wp-admin/includes/file.php';
             }
 
             $this->avatar_delete($user_id);
@@ -161,29 +173,32 @@ $options = get_option('gdk_local_avatars_caps');
             }
 
             $this->user_id_being_edited = $user_id;
-            $avatar                     = wp_handle_upload($_FILES['basic-user-avatar'], array(
-                'mimes'                    => $mimes,
-                'test_form'                => false,
-                'unique_filename_callback' => array(
+            $avatar = wp_handle_upload($_FILES['basic-user-avatar'], [
+                'mimes' => $mimes,
+                'test_form' => false,
+                'unique_filename_callback' => [
                     $this,
                     'unique_filename_callback',
-                ),
-            ));
-            update_user_meta($user_id, 'simple_local_avatar', array(
+                ],
+            ]);
+            update_user_meta($user_id, 'simple_local_avatar', [
                 'full' => $avatar['url'],
-            ));
+            ]);
         } elseif (!empty($_POST['basic-user-avatar-erase'])) {
             $this->avatar_delete($user_id);
         }
     }
+
     public function avatar_defaults($avatar_defaults)
     {
-        remove_action('get_avatar', array(
+        remove_action('get_avatar', [
             $this,
             'get_avatar',
-        ));
+        ]);
+
         return $avatar_defaults;
     }
+
     public function avatar_delete($user_id)
     {
         $old_avatars = get_user_meta($user_id, 'simple_local_avatar', true);
@@ -191,21 +206,23 @@ $options = get_option('gdk_local_avatars_caps');
         if (is_array($old_avatars)) {
             foreach ($old_avatars as $old_avatar) {
                 $old_avatar_path = str_replace($upload_path['baseurl'], $upload_path['basedir'], $old_avatar);
-                @unlink($old_avatar_path);
+                unlink($old_avatar_path);
             }
         }
         delete_user_meta($user_id, 'simple_local_avatar');
     }
+
     public function unique_filename_callback($dir, $name, $ext)
     {
-        $user   = get_user_by('id', (int)$this->user_id_being_edited);
-        $name   = $base_name   = sanitize_file_name($user->ID . '_avatar');
+        $user = get_user_by('id', (int) $this->user_id_being_edited);
+        $name = $base_name = sanitize_file_name($user->ID.'_avatar');
         $number = 1;
-        while (file_exists($dir . "/$name$ext")) {
-            $name = $base_name . '_' . $number;
-            $number++;
+        while (file_exists($dir."/{$name}{$ext}")) {
+            $name = $base_name.'_'.$number;
+            ++$number;
         }
-        return $name . $ext;
+
+        return $name.$ext;
     }
 }
-$gdk_local_avatars = new gdk_local_avatars;
+$gdk_local_avatars = new gdk_local_avatars();

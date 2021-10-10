@@ -1,7 +1,7 @@
 <?php
 /**
  * Theme Update Checker Library 1.2
- * http://w-shadow.com/
+ * http://w-shadow.com/.
  */
 /*
 json数据格式:
@@ -12,52 +12,50 @@ json数据格式:
 }
  */
 
-if (!class_exists('ThemeUpdateChecker')):
-
+if (!class_exists('ThemeUpdateChecker')) {
     class ThemeUpdateChecker
-{
-        public $theme                   = ''; //待检查更新的主题名
-        public $metadataUrl             = ''; //元数据文件的路径
+    {
+        public $theme = ''; //待检查更新的主题名
+        public $metadataUrl = ''; //元数据文件的路径
         public $enableAutomaticChecking = true; //是否启用自动更新
-        protected $_optionName          = ''; //更新信息的参数信息
-        protected $_automaticCheckDone  = false;
+        protected $_optionName = ''; //更新信息的参数信息
+        protected $_automaticCheckDone = false;
         protected static $_filterPrefix = 'tuc_request_update_';
 
         public function __construct($theme, $metadataUrl, $enableAutomaticChecking = true)
-    {
-            $this->metadataUrl             = $metadataUrl;
+        {
+            $this->metadataUrl = $metadataUrl;
             $this->enableAutomaticChecking = $enableAutomaticChecking;
-            $this->theme                   = $theme;
-            $this->optionName              = 'external_theme_updates-' . $this->theme;
+            $this->theme = $theme;
+            $this->optionName = 'external_theme_updates-'.$this->theme;
             $this->installHooks();
         }
 
         public function installHooks()
-    {
-
+        {
             if ($this->enableAutomaticChecking) {
-                add_filter('pre_set_site_transient_update_themes', array($this, 'onTransientUpdate'));
+                add_filter('pre_set_site_transient_update_themes', [$this, 'onTransientUpdate']);
             }
 
             //Insert our update info into the update list maintained by WP.
-            add_filter('site_transient_update_themes', array($this, 'injectUpdate'));
+            add_filter('site_transient_update_themes', [$this, 'injectUpdate']);
 
             //Delete our update info when WP deletes its own.
             //This usually happens when a theme is installed, removed or upgraded.
-            add_action('delete_site_transient_update_themes', array($this, 'deleteStoredData'));
+            add_action('delete_site_transient_update_themes', [$this, 'deleteStoredData']);
         }
 
-        public function requestUpdate($queryArgs = array())
-    {
+        public function requestUpdate($queryArgs = [])
+        {
             //Query args to append to the URL. Themes can add their own by using a filter callback (see addQueryArgFilter()).
             $queryArgs['installed_version'] = $this->getInstalledVersion();
-            $queryArgs                      = apply_filters(self::$filterPrefix . 'query_args-' . $this->theme, $queryArgs);
+            $queryArgs = apply_filters(self::$filterPrefix.'query_args-'.$this->theme, $queryArgs);
 
             //Various options for the wp_remote_get() call. Themes can filter these, too.
-            $options = array(
+            $options = [
                 'timeout' => 20, //seconds
-            );
-            $options = apply_filters(self::$filterPrefix . 'options-' . $this->theme, $options);
+            ];
+            $options = apply_filters(self::$filterPrefix.'options-'.$this->theme, $options);
 
             $url = $this->metadataUrl;
             if (!empty($queryArgs)) {
@@ -69,24 +67,24 @@ if (!class_exists('ThemeUpdateChecker')):
 
             //Try to parse the response
             $themeUpdate = null;
-            $code        = wp_remote_retrieve_response_code($result);
-            $body        = wp_remote_retrieve_body($result);
-            if (($code == 200) && !empty($body)) {
+            $code = wp_remote_retrieve_response_code($result);
+            $body = wp_remote_retrieve_body($result);
+            if ((200 == $code) && !empty($body)) {
                 $themeUpdate = ThemeUpdate::fromJson($body);
                 //The update should be newer than the currently installed version.
-                if (($themeUpdate != null) && version_compare($themeUpdate->version, $this->getInstalledVersion(), '<=')) {
+                if ((null != $themeUpdate) && version_compare($themeUpdate->version, $this->getInstalledVersion(), '<=')) {
                     $themeUpdate = null;
                 }
             }
 
-            $themeUpdate = apply_filters(self::$filterPrefix . 'result-' . $this->theme, $themeUpdate, $result);
-            return $themeUpdate;
+            return apply_filters(self::$filterPrefix.'result-'.$this->theme, $themeUpdate, $result);
         }
 
         public function getInstalledVersion()
-    {
+        {
             if (function_exists('wp_get_theme')) {
                 $theme = wp_get_theme($this->theme);
+
                 return $theme->get('Version');
             }
 
@@ -95,20 +93,21 @@ if (!class_exists('ThemeUpdateChecker')):
                     return $theme['Version'];
                 }
             }
+
             return '';
         }
 
         public function checkForUpdates()
-    {
+        {
             $state = get_option($this->optionName);
             if (empty($state)) {
-                $state                 = new StdClass;
-                $state->lastCheck      = 0;
+                $state = new StdClass();
+                $state->lastCheck = 0;
                 $state->checkedVersion = '';
-                $state->update         = null;
+                $state->update = null;
             }
 
-            $state->lastCheck      = time();
+            $state->lastCheck = time();
             $state->checkedVersion = $this->getInstalledVersion();
             update_option($this->optionName, $state); //Save before checking in case something goes wrong
 
@@ -117,16 +116,17 @@ if (!class_exists('ThemeUpdateChecker')):
         }
 
         public function onTransientUpdate($value)
-    {
+        {
             if (!$this->automaticCheckDone) {
                 $this->checkForUpdates();
                 $this->automaticCheckDone = true;
             }
+
             return $value;
         }
 
         public function injectUpdate($updates)
-    {
+        {
             $state = get_option($this->optionName);
 
             //Is there an update to insert?
@@ -138,38 +138,36 @@ if (!class_exists('ThemeUpdateChecker')):
         }
 
         public function deleteStoredData()
-    {
+        {
             delete_option($this->optionName);
         }
 
         public function addQueryArgFilter($callback)
-    {
-            add_filter(self::$filterPrefix . 'query_args-' . $this->theme, $callback);
+        {
+            add_filter(self::$filterPrefix.'query_args-'.$this->theme, $callback);
         }
 
         public function addHttpRequestArgFilter($callback)
-    {
-            add_filter(self::$filterPrefix . 'options-' . $this->theme, $callback);
+        {
+            add_filter(self::$filterPrefix.'options-'.$this->theme, $callback);
         }
 
         public function addResultFilter($callback)
-    {
-            add_filter(self::$filterPrefix . 'result-' . $this->theme, $callback, 10, 2);
+        {
+            add_filter(self::$filterPrefix.'result-'.$this->theme, $callback, 10, 2);
         }
     }
+}
 
-endif;
-
-if (!class_exists('ThemeUpdate')):
-
+if (!class_exists('ThemeUpdate')) {
     class ThemeUpdate
-{
+    {
         public $version; //Version number.
         public $details_url; //The URL where the user can learn more about this version.
         public $download_url; //The download URL for this version of the theme. Optional.
 
         public static function fromJson($json)
-    {
+        {
             $apiResponse = json_decode($json);
             if (empty($apiResponse) || !is_object($apiResponse)) {
                 return null;
@@ -183,18 +181,18 @@ if (!class_exists('ThemeUpdate')):
 
             $update = new self();
             foreach (get_object_vars($apiResponse) as $key => $value) {
-                $update->$key = $value;
+                $update->{$key} = $value;
             }
 
             return $update;
         }
 
         public function toWpFormat()
-    {
-            $update = array(
+        {
+            $update = [
                 'new_version' => $this->version,
-                'url'         => $this->details_url,
-            );
+                'url' => $this->details_url,
+            ];
 
             if (!empty($this->download_url)) {
                 $update['package'] = $this->download_url;
@@ -203,5 +201,4 @@ if (!class_exists('ThemeUpdate')):
             return $update;
         }
     }
-
-endif;
+}

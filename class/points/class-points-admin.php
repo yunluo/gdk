@@ -1,35 +1,33 @@
 <?php
 /**
- * GDK_Points Table class
+ * GDK_Points Table class.
  */
 
 // WP_List_Table is not loaded automatically so we need to load it in our application
 if (!class_exists('WP_List_Table')) {
-    require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
+    require_once ABSPATH.'wp-admin/includes/class-wp-list-table.php';
 }
 
 class GDK_Points_List_Table extends WP_List_Table
 {
     /**
-     * Prepare the items for the table to process
-     *
-     * @return Void
+     * Prepare the items for the table to process.
      */
     public function prepare_items()
     {
-        $columns  = $this->get_columns();
+        $columns = $this->get_columns();
         $sortable = $this->get_sortable_columns();
-        $data     = GDK_Points::get_points(null, null, null, ARRAY_A);
-        usort( $data, array(
+        $data = GDK_Points::get_points(null, null, null, ARRAY_A);
+        usort($data, [
             &$this,
-            'sort_data' 
-        ) );
-        $perPage     = 30; //每页30个数据
+            'sort_data',
+        ]);
+        $perPage = 30; //每页30个数据
         $currentPage = $this->get_pagenum();
-        $totalItems  = count($data);
+        $totalItems = count($data);
         $this->set_pagination_args([
             'total_items' => $totalItems,
-            'per_page'    => $perPage,
+            'per_page' => $perPage,
         ]);
 
         $data = array_slice($data, (($currentPage - 1) * $perPage), $perPage);
@@ -43,42 +41,40 @@ class GDK_Points_List_Table extends WP_List_Table
 
     /**
      * Override the parent columns method.
-     * Defines the columns to use in your listing table
+     * Defines the columns to use in your listing table.
      *
-     * @return Array
+     * @return array
      */
     public function get_columns()
     {
-        $columns = [
-            'point_id'    => 'ID',
-            'user_id'     => '用户ID',
-            'points'      => '金币',
+        return [
+            'point_id' => 'ID',
+            'user_id' => '用户ID',
+            'points' => '金币',
             'description' => '描述',
-            'datetime'    => '日期&时间',
-            'status'      => '状态',
-            'actions'     => '操作',
+            'datetime' => '日期&时间',
+            'status' => '状态',
+            'actions' => '操作',
         ];
-
-        return $columns;
     }
 
     /**
-     * Define the sortable columns
+     * Define the sortable columns.
      *
-     * @return Array
+     * @return array
      */
     public function get_sortable_columns()
     {
         return [
-            'point_id'    => [
+            'point_id' => [
                 'point_id',
                 false,
             ],
-            'user_id'     => [
+            'user_id' => [
                 'user_id',
                 false,
             ],
-            'points'      => [
+            'points' => [
                 'points',
                 false,
             ],
@@ -86,28 +82,26 @@ class GDK_Points_List_Table extends WP_List_Table
                 'description',
                 false,
             ],
-            'datetime'    => [
+            'datetime' => [
                 'datetime',
                 false,
             ],
-            'status'      => [
+            'status' => [
                 'status',
                 false,
             ],
         ];
     }
 
-
-
     /**
-     * Define what data to show on each column of the table
+     * Define what data to show on each column of the table.
      *
-     * @param Array $item
-     *            Data
-     * @param String $column_name
-     *            - Current column name
+     * @param array  $item
+     *                            Data
+     * @param string $column_name
+     *                            - Current column name
      *
-     * @return Mixed
+     * @return mixed
      */
     public function column_default($item, $column_name)
     {
@@ -119,33 +113,42 @@ class GDK_Points_List_Table extends WP_List_Table
             case 'datetime':
             case 'status':
                 return $item[$column_name];
+
                 break;
+
             case 'actions':
                 $actions = [
-                    'edit'   => sprintf('<a href="?page=%s&action=%s&point_id=%s">编辑</a>', $_REQUEST['page'], 'edit', $item['point_id']),
+                    'edit' => sprintf('<a href="?page=%s&action=%s&point_id=%s">编辑</a>', $_REQUEST['page'], 'edit', $item['point_id']),
                     'delete' => sprintf('<a href="?page=%s&action=%s&point_id=%s">删除</a>', $_REQUEST['page'], 'delete', $item['point_id']),
                 ];
 
                 //Return the title contents
-                return sprintf('%1$s%2$s', $item[$column_name] ?? "",
+                return sprintf(
+                    '%1$s%2$s',
+                    $item[$column_name] ?? '',
                     $this->row_actions($actions, true)
                 );
+
                 break;
+
             default:
                 return print_r($item, true);
         }
     }
 
     /**
-     * Allows you to sort the data by the variables set in the $_GET
+     * Allows you to sort the data by the variables set in the $_GET.
      *
-     * @return Mixed
+     * @param mixed $a
+     * @param mixed $b
+     *
+     * @return mixed
      */
     private function sort_data($a, $b)
     {
         // Set defaults
         $orderby = 'point_id';
-        $order   = 'desc';//desc asc
+        $order = 'desc'; //desc asc
 
         // If orderby is set, use this as the sort column
         if (!empty($_GET['orderby'])) {
@@ -159,7 +162,7 @@ class GDK_Points_List_Table extends WP_List_Table
 
         $result = strnatcmp($a[$orderby], $b[$orderby]);
 
-        if ($order === 'asc') {
+        if ('asc' === $order) {
             return $result;
         }
 
@@ -168,11 +171,10 @@ class GDK_Points_List_Table extends WP_List_Table
 }
 
 /**
- * GDK_Points Admin class
+ * GDK_Points Admin class.
  */
 class GDK_Points_Admin
 {
-
     public static function init()
     {
         add_action('admin_notices', [__CLASS__, 'admin_notices']);
@@ -198,47 +200,47 @@ class GDK_Points_Admin
 
     public static function points_menu()
     {
-        $alert = "";
+        $alert = '';
         if (isset($_POST['psearch'])) {
             $sdata = trim($_POST['psearch']);
-            if (preg_match('/E20/', $sdata) ) {
+            if (preg_match('/E20/', $sdata)) {
                 //order id
                 global $wpdb;
-                $point_id = $wpdb->get_row("SELECT point_id FROM " . GDK_Points_Database::points_get_table("users") . " WHERE description = '{$sdata}'", ARRAY_A)['point_id'];
-                $points   = GDK_Points::get_point($point_id);
-            }elseif (preg_match('/(D|d)/', $sdata)){// description
-				$data = substr($sdata,1);
-				global $wpdb;
-                $points = $wpdb->get_results("SELECT * FROM " . GDK_Points_Database::points_get_table("users") . " WHERE description = '{$data}'");
-				//var_dump($points);
-				$k[]    = '<div style="margin-bottom:10px;">文章ID：' . $data . '  &nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp;文章名为：' . get_post($data)->post_title . '</div><hr />';
-			} elseif (filter_var($sdata, FILTER_VALIDATE_EMAIL)) {
+                $point_id = $wpdb->get_row('SELECT point_id FROM '.GDK_Points_Database::points_get_table('users')." WHERE description = '{$sdata}'", ARRAY_A)['point_id'];
+                $points = GDK_Points::get_point($point_id);
+            } elseif (preg_match('/(D|d)/', $sdata)) {// description
+                $data = substr($sdata, 1);
+                global $wpdb;
+                $points = $wpdb->get_results('SELECT * FROM '.GDK_Points_Database::points_get_table('users')." WHERE description = '{$data}'");
+                //var_dump($points);
+                $k[] = '<div style="margin-bottom:10px;">文章ID：'.$data.'  &nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp;文章名为：'.get_post($data)->post_title.'</div><hr />';
+            } elseif (filter_var($sdata, FILTER_VALIDATE_EMAIL)) {
                 //email
-                $user   = get_user_by('email', $sdata);
+                $user = get_user_by('email', $sdata);
                 $points = GDK_Points::get_points_by_user($user->ID);
-                $k[]    = '<div style="margin-bottom:10px;">用户ID：' . $user->ID . '  &nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp;总金币为：' . GDK_Points::get_user_total_points($user->ID) . '</div>';
+                $k[] = '<div style="margin-bottom:10px;">用户ID：'.$user->ID.'  &nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp;总金币为：'.GDK_Points::get_user_total_points($user->ID).'</div>';
             } else {
                 //userid
                 $points = GDK_Points::get_points_by_user($sdata);
-                $k[]    = '<div style="margin-bottom:10px;">用户ID：' . $sdata . '  &nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp;总金币为：' . GDK_Points::get_user_total_points($sdata) . '</div>';
+                $k[] = '<div style="margin-bottom:10px;">用户ID：'.$sdata.'  &nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp;总金币为：'.GDK_Points::get_user_total_points($sdata).'</div>';
             }
             if (is_array($points)) {
                 foreach ($points as $point) {
-					$userid = $point->user_id;
-					$user_name = get_user_by('id', $userid)->display_name;
-                    $k[] = '<div style="margin-bottom:5px;">用户ID：' . $userid . '&nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp;金币：' . $point->points . ' &nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp;描述：' . $point->description . ' &nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp;日期：' . $point->datetime . '&nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp;用户名：' . $user_name . '</div>';
+                    $userid = $point->user_id;
+                    $user_name = get_user_by('id', $userid)->display_name;
+                    $k[] = '<div style="margin-bottom:5px;">用户ID：'.$userid.'&nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp;金币：'.$point->points.' &nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp;描述：'.$point->description.' &nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp;日期：'.$point->datetime.'&nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp;用户名：'.$user_name.'</div>';
                 }
             } else {
-                $k[] = '<div style="margin-bottom:5px;">用户ID：' . $point->user_id . '&nbsp;&nbsp;金币：' . $points->points . ' &nbsp;&nbsp;描述：' . $points->description . ' &nbsp;&nbsp;日期：' . $points->datetime . '</div>';
+                $k[] = '<div style="margin-bottom:5px;">用户ID：'.$point->user_id.'&nbsp;&nbsp;金币：'.$points->points.' &nbsp;&nbsp;描述：'.$points->description.' &nbsp;&nbsp;日期：'.$points->datetime.'</div>';
             }
-            $alert = implode(" ", $k);
+            $alert = implode(' ', $k);
         }
 
-        if (isset($_POST['save']) && isset($_POST['action'])) {
-            if ($_POST['action'] == "edit") {
+        if (isset($_POST['save'], $_POST['action'])) {
+            if ('edit' == $_POST['action']) {
                 $point_id = isset($_POST['point_id']) ? intval($_POST['point_id']) : null;
-                $points   = GDK_Points::get_point($point_id);
-                $data     = array();
+                $points = GDK_Points::get_point($point_id);
+                $data = [];
                 if (isset($_POST['user_mail'])) {
                     $data['user_mail'] = $_POST['user_mail'];
                 }
@@ -265,83 +267,87 @@ class GDK_Points_Admin
                     // 增加金币
                     if (isset($_POST['user_mail'])) { //如果输入邮箱的话
                         $usermail = $data['user_mail'];
-                        $user     = get_user_by('email', $usermail);
-                        $userid   = $user->ID;
+                        $user = get_user_by('email', $usermail);
+                        $userid = $user->ID;
                         $username = $user->display_name;
                     }
                     if (isset($_POST['user_id'])) {
                         //如果输入用户ID的话
-                        $user     = get_user_by('id', $data['user_id']);
+                        $user = get_user_by('id', $data['user_id']);
                         $usermail = $user->user_email;
-                        $userid   = $data['user_id'];
+                        $userid = $data['user_id'];
                         $username = $user->display_name;
                     }
                     GDK_Points::set_points($_POST['points'], $userid, $data);
-                    $mail_title = $username . '您好，金币增加通知';
+                    $mail_title = $username.'您好，金币增加通知';
                     $mail_cotent = '<p>您的金币金额被管理员调整，请查收！</p>
                     <ul>
-	                    <li>用户名：' . $username . '</li>
-                        <li>增加金币：' . $_POST['points'] . '</li>
-                        <li>金币总额：' . GDK_Points::get_user_total_points($userid, 'accepted') . '</li>
+	                    <li>用户名：'.$username.'</li>
+                        <li>增加金币：'.$_POST['points'].'</li>
+                        <li>金币总额：'.GDK_Points::get_user_total_points($userid, 'accepted').'</li>
                     </ul>
-                    <p>如果您的金币金额有异常，请您在第一时间和我们取得联系哦，联系邮箱：' . get_bloginfo('admin_email') . '</p>';
-                    $message = mail_temp($mail_title, $mail_cotent, home_url(), get_bloginfo('name'));
+                    <p>如果您的金币金额有异常，请您在第一时间和我们取得联系哦，联系邮箱：'.get_bloginfo('admin_email').'</p>';
+                    $message = gdk_mail_temp($mail_title, $mail_cotent, home_url(), get_bloginfo('name'));
                     $headers = "Content-Type:text/html;charset=UTF-8\n";
-                    wp_mail($usermail, 'Hi,' . $username . '，金币账户金额变动通知！', $message, $headers);
+                    wp_mail($usermail, 'Hi,'.$username.'，金币账户金额变动通知！', $message, $headers);
                 }
             }
-            $alert = "金币已更新";
+            $alert = '金币已更新';
         }
-        if (isset($_GET["action"])) {
-            $action = $_GET["action"];
-            if ($action !== null) {
+        if (isset($_GET['action'])) {
+            $action = $_GET['action'];
+            if (null !== $action) {
                 switch ($action) {
                     case 'edit':
-                        if (isset($_GET['point_id']) && ($_GET['point_id'] !== null)) {
+                        if (isset($_GET['point_id']) && (null !== $_GET['point_id'])) {
                             return self::points_admin_points_edit(intval($_GET['point_id']));
-                        } else {
-                            return self::points_admin_points_edit();
                         }
+
+                            return self::points_admin_points_edit();
+
                         break;
+
                     case 'delete':
-                        if ($_GET['point_id'] !== null) {
+                        if (null !== $_GET['point_id']) {
                             if (current_user_can('administrator')) {
                                 GDK_Points::remove_points($_GET['point_id']);
                                 global $wpdb;
-                                $wcu_sql = "DELETE FROM " . GDK_Points_Database::points_get_table("users") . " WHERE status = 'removed'";
+                                $wcu_sql = 'DELETE FROM '.GDK_Points_Database::points_get_table('users')." WHERE status = 'removed'";
                                 $wpdb->query($wcu_sql);
-                                $alert = "金币已删除";
+                                $alert = '金币已删除';
                             }
                         }
+
                         break;
                 }
             }
         }
 
-        if ($alert != "") {
-            echo '<div style="background-color: #ffffe0;border: 1px solid #993;padding: 1em;margin-right: 1em;">' . $alert . '</div>';
+        if ('' != $alert) {
+            echo '<div style="background-color: #ffffe0;border: 1px solid #993;padding: 1em;margin-right: 1em;">'.$alert.'</div>';
         }
 
-        $current_url      = (is_ssl() ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
-        $cancel_url       = remove_query_arg('point_id', remove_query_arg('action', $current_url));
-        $current_url      = remove_query_arg('point_id', $current_url);
-        $current_url      = remove_query_arg('action', $current_url);
+        $current_url = (is_ssl() ? 'https://' : 'http://').$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+        $cancel_url = remove_query_arg('point_id', remove_query_arg('action', $current_url));
+        $current_url = remove_query_arg('point_id', $current_url);
+        $current_url = remove_query_arg('action', $current_url);
         $exampleListTable = new GDK_Points_List_Table();
-        $exampleListTable->prepare_items();
-        ?>
-		<div class="wrap">
-			<h2>金币管理</h2>
-			<span class="manage add">
-				<a class="add button" href="<?php echo esc_url(add_query_arg('action', 'edit', $current_url)); ?>" title="点击手动添加金币">添加金币</a>
-			</span>
-			<form method="POST" style="float:right;">
-				<input size="40" placeholder="搜索用户ID/用户邮箱/订单号/D文章ID" type="search" name="psearch" value="" />
-				</form>
-			<?php echo '<style type="text/css">tbody#the-list tr:hover{background:rgba(132,219,162,.61)}</style>';
+        $exampleListTable->prepare_items(); ?>
+<div class="wrap">
+    <h2>金币管理</h2>
+    <span class="manage add">
+        <a class="add button"
+            href="<?php echo esc_url(add_query_arg('action', 'edit', $current_url)); ?>"
+            title="点击手动添加金币">添加金币</a>
+    </span>
+    <form method="POST" style="float:right;">
+        <input size="40" placeholder="搜索用户ID/用户邮箱/订单号/D文章ID" type="search" name="psearch" value="" />
+    </form>
+    <?php echo '<style type="text/css">tbody#the-list tr:hover{background:rgba(132,219,162,.61)}</style>';
         $exampleListTable->display(); ?>
-		</div>
-		<?php
-}
+</div>
+<?php
+    }
 
     public static function points_admin_points_edit($point_id = null)
     {
@@ -352,29 +358,29 @@ class GDK_Points_Admin
             wp_die('Access denied.');
         }
 
-        $current_url = (is_ssl() ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
-        $cancel_url  = remove_query_arg('point_id', remove_query_arg('action', $current_url));
+        $current_url = (is_ssl() ? 'https://' : 'http://').$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+        $cancel_url = remove_query_arg('point_id', remove_query_arg('action', $current_url));
         $current_url = remove_query_arg('point_id', $current_url);
         $current_url = remove_query_arg('action', $current_url);
 
         $saved = false; // temporal
 
-        if ($point_id !== null) {
+        if (null !== $point_id) {
             $points = GDK_Points::get_point($point_id);
 
-            if ($points !== null) {
-                $user_id     = $points->user_id;
-                $num_points  = $points->points;
+            if (null !== $points) {
+                $user_id = $points->user_id;
+                $num_points = $points->points;
                 $description = $points->description;
-                $datetime    = $points->datetime;
-                $status      = $points->status;
+                $datetime = $points->datetime;
+                $status = $points->status;
             }
         } else {
-            $user_id     = "";
-            $num_points  = 0;
-            $description = "ADD";
-            $datetime    = "";
-            $status      = 'accepted';
+            $user_id = '';
+            $num_points = 0;
+            $description = 'ADD';
+            $datetime = '';
+            $status = 'accepted';
         }
 
         if (empty($point_id)) {
@@ -382,7 +388,7 @@ class GDK_Points_Admin
         } else {
             $pointsclass = 'editpoint';
         }
-        $output .= '<div class="points ' . $pointsclass . '">';
+        $output .= '<div class="points '.$pointsclass.'">';
         $output .= '<h2>';
         if (empty($point_id)) {
             $output .= '新金币';
@@ -390,7 +396,7 @@ class GDK_Points_Admin
             $output .= '编辑金币';
         }
         $output .= '</h2>';
-        $output .= '<form id="points" action="' . $current_url . '" method="post">';
+        $output .= '<form id="points" action="'.$current_url.'" method="post">';
         $output .= '<div>';
 
         if ($point_id) {
@@ -441,11 +447,11 @@ class GDK_Points_Admin
         $output .= sprintf('<input type="text" name="points" value="%s" />', esc_attr($num_points));
         $output .= '</label>';
         $output .= '</p>';
-        $status_descriptions = array(
+        $status_descriptions = [
             'accepted' => '正常',
-            'pending'  => '待审',
+            'pending' => '待审',
             'rejected' => '驳回',
-        );
+        ];
         $output .= '<p>';
         $output .= '<label>';
         $output .= '<span class="title">状态</span>';
@@ -453,7 +459,7 @@ class GDK_Points_Admin
         $output .= '<select name="status">';
         foreach ($status_descriptions as $key => $label) {
             $selected = $key == $status ? ' selected="selected" ' : '';
-            $output .= '<option ' . $selected . ' value="' . esc_attr($key) . '">' . $label . '</option>';
+            $output .= '<option '.$selected.' value="'.esc_attr($key).'">'.$label.'</option>';
         }
         $output .= '</select>';
         $output .= '</label>';

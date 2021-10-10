@@ -2,7 +2,7 @@
 
 function gdk_feed_disabled()
 {
-    wp_die('Feed已经关闭, 请访问网站<a href="' . get_bloginfo('url') . '">首页</a>！');
+    wp_die('Feed已经关闭, 请访问网站<a href="'.get_bloginfo('url').'">首页</a>！');
 }
 
 add_action('do_feed', 'gdk_feed_disabled', 1);
@@ -28,13 +28,12 @@ function gdk_disable_srcset_img()
 }
 add_filter('max_srcset_image_width', 'gdk_disable_srcset_img');
 
-add_filter( 'big_image_size_threshold', '__return_false' );
+add_filter('big_image_size_threshold', '__return_false');
 
 //移除默认的图片宽度以及高度
 function gdk_remove_img_width($html)
 {
-    $html = preg_replace('/(width|height)=\"\d*\"\s/', "", $html);
-    return $html;
+    return preg_replace('/(width|height)=\"\d*\"\s/', '', $html);
 }
 add_filter('post_thumbnail_html', 'gdk_remove_img_width', 10);
 add_filter('image_send_to_editor', 'gdk_remove_img_width', 10);
@@ -60,11 +59,12 @@ function gdk_disable_attachment_pages()
     if (is_attachment()) {
         if (!empty($post->post_parent)) {
             wp_redirect(get_permalink($post->post_parent), 301);
-            exit;
-        } else {
-            wp_redirect(home_url());
+
             exit;
         }
+        wp_redirect(home_url());
+
+        exit;
     }
 }
 add_action('template_redirect', 'gdk_disable_attachment_pages', 1);
@@ -95,8 +95,8 @@ if (gdk_option('gdk_auto_space')) {
     function gdk_auto_space($data)
     {
         $data = preg_replace('/([\\x{4e00}-\\x{9fa5}]+)([A-Za-z0-9_]+)/u', '${1} ${2}', $data);
-        $data = preg_replace('/([A-Za-z0-9_]+)([\\x{4e00}-\\x{9fa5}]+)/u', '${1} ${2}', $data);
-        return $data;
+
+        return preg_replace('/([A-Za-z0-9_]+)([\\x{4e00}-\\x{9fa5}]+)/u', '${1} ${2}', $data);
     }
     add_filter('the_content', 'gdk_auto_space');
 }
@@ -116,11 +116,11 @@ function gdk_after_init_theme()
     update_option('thumbnail_size_h', '0'); //关闭默认缩略图
     update_option('default_ping_status', 'closed'); //关闭默认ping状态
     update_option('comment_order', 'desc'); //关闭默认评论显示顺序
-    if (get_option('permalink_structure') == '' || define('GDK_HTML_LINK', true)) { //如果是默认连接格式或者主题声明 define( 'GDK_HTML_LINK', true );
+    if ('' == get_option('permalink_structure') || define('GDK_HTML_LINK', true)) { //如果是默认连接格式或者主题声明 define( 'GDK_HTML_LINK', true );
         update_option('permalink_structure', '/archives/%post_id%.html'); //固定链接格式
     }
-    if (gdk_option('gdk_diasble_widgets_block')){ //如果
-        remove_theme_support( 'widgets-block-editor' ); //禁用新版小工具
+    if (gdk_option('gdk_diasble_widgets_block')) { //如果
+        remove_theme_support('widgets-block-editor'); //禁用新版小工具
     }
     update_option('posts_per_page', '30'); //每页文章数目
 }
@@ -129,7 +129,7 @@ add_action('after_setup_theme', 'gdk_after_init_theme');
 //新标签打开顶部网站链接
 function gdk_blank_site_bar($wp_admin_bar)
 {
-    $node                 = $wp_admin_bar->get_node('view-site');
+    $node = $wp_admin_bar->get_node('view-site');
     $node->meta['target'] = '_blank';
     $wp_admin_bar->add_node($node);
 }
@@ -138,7 +138,7 @@ add_action('admin_bar_menu', 'gdk_blank_site_bar', 80);
 //移除 WP_Head 无关紧要的代码
 if (gdk_option('gdk_diasble_head_useless')) {
     remove_action('wp_head', 'wp_generator'); //删除 head 中的 WP 版本号
-    foreach (array('rss2_head', 'commentsrss2_head', 'rss_head', 'rdf_header', 'atom_head', 'comments_atom_head', 'opml_head', 'app_head') as $action) {
+    foreach (['rss2_head', 'commentsrss2_head', 'rss_head', 'rdf_header', 'atom_head', 'comments_atom_head', 'opml_head', 'app_head'] as $action) {
         remove_action($action, 'the_generator');
     }
 
@@ -167,8 +167,7 @@ add_action('in_admin_header', function () {
 //清理菜单类
 add_filter('nav_menu_css_class', function ($var) {
     return is_array($var) ? array_intersect($var, ['current-menu-item', 'menu-item', 'menu-item-has-children']) : '';
-}
-    , 100, 1);
+}, 100, 1);
 
 //移除前台加载jquery-migrate
 function gdk_disable_migrate($scripts)
@@ -183,12 +182,12 @@ function gdk_disable_migrate($scripts)
 add_action('wp_default_scripts', 'gdk_disable_migrate');
 
 //移除 WordPress 标记
-add_filter('the_generator', function () {return '';});
+add_filter('the_generator', function () {return ''; });
 
 //移除标题中的空字符
-add_filter('wp_title', function ($title) {return trim($title);});
+add_filter('wp_title', function ($title) {return trim($title); });
 
-/**  开始关闭WordPress更新  **/
+// 开始关闭WordPress更新
 if (gdk_option('gdk_diasble_wp_update')) {
     add_filter('automatic_updater_disabled', '__return_true'); // 彻底关闭自动更新
     remove_action('init', 'wp_schedule_update_checks'); // 关闭更新检查定时作业
@@ -205,9 +204,9 @@ if (gdk_option('gdk_diasble_wp_update')) {
     remove_action('load-update.php', 'wp_update_themes');
     remove_action('load-update-core.php', 'wp_update_themes');
     remove_action('admin_init', '_maybe_update_themes');
-    add_filter('pre_site_transient_update_core', function () {return null;});
-    add_filter('pre_site_transient_update_plugins', function () {return null;});
-    add_filter('pre_site_transient_update_themes', function () {return null;});
+    add_filter('pre_site_transient_update_core', function () {return null; });
+    add_filter('pre_site_transient_update_plugins', function () {return null; });
+    add_filter('pre_site_transient_update_themes', function () {return null; });
 }
 
 add_action('wp_before_admin_bar_render', function () {
@@ -244,8 +243,10 @@ function ds_disable_core_privacy_tools($caps, $cap)
         case 'erase_others_personal_data':
         case 'manage_privacy_options':
             $caps[] = 'do_not_allow';
+
             break;
     }
+
     return $caps;
 }
 
@@ -255,6 +256,7 @@ function gdk_remove_dns($hints, $relation_type)
     if ('dns-prefetch' === $relation_type) {
         return array_diff(wp_dependencies_unique_hosts(), $hints);
     }
+
     return $hints;
 }
 add_filter('wp_resource_hints', 'gdk_remove_dns', 10, 2);
@@ -277,10 +279,10 @@ if (gdk_option('gdk_disable_emojis')) {
     function gdk_disable_emojis_tinymce($plugins)
     {
         if (is_array($plugins)) {
-            return array_diff($plugins, array('wpemoji'));
+            return array_diff($plugins, ['wpemoji']);
         }
 
-        return array();
+        return [];
     }
 }
 
@@ -305,16 +307,18 @@ if (!defined('WP_POST_REVISIONS')) {
 
 //前台禁用dashicon和editor
 if (gdk_option('gdk_disable_dashicons')) {
-    add_action('init', function () {
-        if (!is_user_logged_in()) {
-            wp_deregister_style('dashicons');
-            wp_register_style('dashicons', false);
-            wp_enqueue_style('dashicons', '');
-            wp_deregister_style('editor-buttons');
-            wp_register_style('editor-buttons', false);
-            wp_enqueue_style('editor-buttons', '');
+    add_action(
+        'init',
+        function () {
+            if (!is_user_logged_in()) {
+                wp_deregister_style('dashicons');
+                wp_register_style('dashicons', false);
+                wp_enqueue_style('dashicons', '');
+                wp_deregister_style('editor-buttons');
+                wp_register_style('editor-buttons', false);
+                wp_enqueue_style('editor-buttons', '');
+            }
         }
-    }
     );
 }
 
@@ -329,15 +333,18 @@ add_action('wp_dashboard_setup', 'gdk_dweandw_remove', 20);
 
 //国内更新WordPress加速
 if (gdk_option('gdk_porxy_update') && !gdk_option('gdk_diasble_wp_update')) {
-    add_filter('site_transient_update_core', function ($value) {
-        foreach ($value->updates as &$update) {
-            if ($update->locale == 'zh_CN') {
-                $update->download       = 'http://cn.wp101.net/latest-zh_CN.zip';
-                $update->packages->full = 'http://cn.wp101.net/latest-zh_CN.zip';
+    add_filter(
+        'site_transient_update_core',
+        function ($value) {
+            foreach ($value->updates as &$update) {
+                if ('zh_CN' == $update->locale) {
+                    $update->download = 'http://cn.wp101.net/latest-zh_CN.zip';
+                    $update->packages->full = 'http://cn.wp101.net/latest-zh_CN.zip';
+                }
             }
+
+            return $value;
         }
-        return $value;
-    }
     );
 }
 
@@ -345,14 +352,15 @@ if (gdk_option('gdk_porxy_update') && !gdk_option('gdk_diasble_wp_update')) {
 if (gdk_option('gdk_upload_rename')) {
     function gdk_upload_rename($file)
     {
-        $info        = pathinfo($file['name']);
-        $ext         = $info['extension'];
+        $info = pathinfo($file['name']);
+        $ext = $info['extension'];
         $ignore_exts = ['zip', 'rar', '7z'];
         //被忽略的文件格式
         if (!array_key_exists($ext, $ignore_exts)) {
-            $filedate     = date('YmdHis') . mt_rand(100, 999);
-            $file['name'] = $filedate . '.' . $ext;
+            $filedate = date('YmdHis').mt_rand(100, 999);
+            $file['name'] = $filedate.'.'.$ext;
         }
+
         return $file;
     }
     add_filter('wp_handle_upload_prefilter', 'gdk_upload_rename');
@@ -361,12 +369,12 @@ if (gdk_option('gdk_upload_rename')) {
 // 禁用自动生成的图片尺寸
 function gdk_disable_image_sizes($sizes)
 {
-    unset($sizes['thumbnail']); // disable thumbnail size
-    unset($sizes['medium']); // disable medium size
-    unset($sizes['large']); // disable large size
-    unset($sizes['medium_large']); // disable medium-large size
-    unset($sizes['1536x1536']); // disable 2x medium-large size
-    unset($sizes['2048x2048']); // disable 2x large size
+    unset($sizes['thumbnail'], $sizes['medium'], $sizes['large'], $sizes['medium_large'], $sizes['1536x1536'], $sizes['2048x2048']); // disable thumbnail size
+    // disable medium size
+    // disable large size
+    // disable medium-large size
+    // disable 2x medium-large size
+    // disable 2x large size
     return $sizes;
 }
 add_action('intermediate_image_sizes_advanced', 'gdk_disable_image_sizes');
@@ -385,8 +393,9 @@ function gdk_redirect_single_search_result()
 {
     if (is_search()) {
         global $wp_query;
-        if ($wp_query->post_count == 1) {
+        if (1 == $wp_query->post_count) {
             wp_redirect(get_permalink($wp_query->posts['0']->ID));
+
             exit();
         }
     }
@@ -397,7 +406,8 @@ add_action('template_redirect', 'gdk_redirect_single_search_result');
 function gdk_redirect_search()
 {
     if (is_search() && !empty($_GET['s'])) {
-        wp_redirect(home_url("/search/") . urlencode(get_query_var('s')));
+        wp_redirect(home_url('/search/').urlencode(get_query_var('s')));
+
         exit();
     }
 }
@@ -420,7 +430,7 @@ if (gdk_option('gdk_disable_restapi')) {
         status_header(405);
         wp_die('{"code":"rest_api_disabled","message":"REST API services are disabled on this site.","data":{"status":405}}');
     }
-// Remove the REST API endpoint.
+    // Remove the REST API endpoint.
     remove_action('rest_api_init', 'wp_oembed_register_route');
 }
 
@@ -449,76 +459,80 @@ function gdk_custom_footer_code()
 add_action('wp_footer', 'gdk_custom_footer_code', 400);
 
 if (gdk_option('gdk_no_category')) {
-    if (!function_exists('gdk_no_category_base_refresh_rules')):
+    if (!function_exists('gdk_no_category_base_refresh_rules')) {
         add_action('load-themes.php', 'gdk_no_category_base_refresh_rules');
         add_action('created_category', 'gdk_no_category_base_refresh_rules');
         add_action('edited_category', 'gdk_no_category_base_refresh_rules');
         add_action('delete_category', 'gdk_no_category_base_refresh_rules');
         function gdk_no_category_base_refresh_rules()
-    {
+        {
             global $wp_rewrite;
             $wp_rewrite->flush_rules();
         }
         add_action('init', 'gdk_no_category_base_permastruct');
         function gdk_no_category_base_permastruct()
-    {
+        {
             global $wp_rewrite;
             $wp_rewrite->extra_permastructs['category']['struct'] = '%category%';
         }
         // Add our custom category rewrite rules
         add_filter('category_rewrite_rules', 'gdk_no_category_base_rewrite_rules');
         function gdk_no_category_base_rewrite_rules($category_rewrite)
-    {
+        {
             //var_dump($category_rewrite); // For Debugging
-            $category_rewrite = array();
-            $categories       = get_categories(array('hide_empty' => false));
+            $category_rewrite = [];
+            $categories = get_categories(['hide_empty' => false]);
             foreach ($categories as $category) {
                 $gdk_category = $category->slug;
-                if ($category->parent == $category->cat_ID) // recursive recursion
-            {
+                if ($category->parent == $category->cat_ID) { // recursive recursion
                     $category->parent = 0;
-                } elseif ($category->parent != 0) {
-                $gdk_category = get_category_parents($category->parent, false, '/', true) . $gdk_category;
+                } elseif (0 != $category->parent) {
+                    $gdk_category = get_category_parents($category->parent, false, '/', true).$gdk_category;
+                }
+
+                $category_rewrite['('.$gdk_category.')/(?:feed/)?(feed|rdf|rss|rss2|atom)/?$'] = 'index.php?category_name=$matches[1]&feed=$matches[2]';
+                $category_rewrite['('.$gdk_category.')/page/?([0-9]{1,})/?$'] = 'index.php?category_name=$matches[1]&paged=$matches[2]';
+                $category_rewrite['('.$gdk_category.')/?$'] = 'index.php?category_name=$matches[1]';
+            }
+            // Redirect support from Old Category Base
+            global $wp_rewrite;
+            $old_category_base = get_option('category_base') ? get_option('category_base') : 'category';
+            $old_category_base = trim($old_category_base, '/');
+            $category_rewrite[$old_category_base.'/(.*)$'] = 'index.php?category_redirect=$matches[1]';
+
+            return $category_rewrite;
+        }
+        // Add 'category_redirect' query variable
+        add_filter('query_vars', 'gdk_no_category_base_query_vars');
+        function gdk_no_category_base_query_vars($public_query_vars)
+        {
+            $public_query_vars[] = 'category_redirect';
+
+            return $public_query_vars;
+        }
+
+        add_filter('request', 'gdk_no_category_base_request');
+        function gdk_no_category_base_request($query_vars)
+        {
+            if (isset($query_vars['category_redirect'])) {
+                $catlink = trailingslashit(get_option('home')).user_trailingslashit($query_vars['category_redirect'], 'category');
+                status_header(301);
+                header("Location: {$catlink}");
+
+                exit();
             }
 
-            $category_rewrite['(' . $gdk_category . ')/(?:feed/)?(feed|rdf|rss|rss2|atom)/?$'] = 'index.php?category_name=$matches[1]&feed=$matches[2]';
-            $category_rewrite['(' . $gdk_category . ')/page/?([0-9]{1,})/?$']                  = 'index.php?category_name=$matches[1]&paged=$matches[2]';
-            $category_rewrite['(' . $gdk_category . ')/?$']                                    = 'index.php?category_name=$matches[1]';
+            return $query_vars;
         }
-        // Redirect support from Old Category Base
-        global $wp_rewrite;
-        $old_category_base                               = get_option('category_base') ? get_option('category_base') : 'category';
-        $old_category_base                               = trim($old_category_base, '/');
-        $category_rewrite[$old_category_base . '/(.*)$'] = 'index.php?category_redirect=$matches[1]';
-        return $category_rewrite;
     }
-    // Add 'category_redirect' query variable
-    add_filter('query_vars', 'gdk_no_category_base_query_vars');
-    function gdk_no_category_base_query_vars($public_query_vars)
-    {
-        $public_query_vars[] = 'category_redirect';
-        return $public_query_vars;
-    }
-
-    add_filter('request', 'gdk_no_category_base_request');
-    function gdk_no_category_base_request($query_vars)
-    {
-        if (isset($query_vars['category_redirect'])) {
-            $catlink = trailingslashit(get_option('home')) . user_trailingslashit($query_vars['category_redirect'], 'category');
-            status_header(301);
-            header("Location: $catlink");
-            exit();
-        }
-        return $query_vars;
-    }
-    endif;
 }
 
 //站长评论邮件添加评论链接
 function gdk_notify_admin($notify_message, $comment_ID)
 {
     $notify = $notify_message;
-    $notify .= '快速回复此评论: ' . admin_url("edit-comments.php") . '#comment-' . $comment_ID;
+    $notify .= '快速回复此评论: '.admin_url('edit-comments.php').'#comment-'.$comment_ID;
+
     return $notify;
 }
 add_filter('comment_notification_text', 'gdk_notify_admin', 10, 2);
@@ -527,8 +541,9 @@ add_filter('comment_notification_text', 'gdk_notify_admin', 10, 2);
 function gdk_comment_add_at($comment_text, $comment = '')
 {
     if ($comment->comment_parent > 0) {
-        $comment_text = '@<a href="#comment-' . $comment->comment_parent . '">' . get_comment_author($comment->comment_parent) . '</a> ' . $comment_text;
+        $comment_text = '@<a href="#comment-'.$comment->comment_parent.'">'.get_comment_author($comment->comment_parent).'</a> '.$comment_text;
     }
+
     return $comment_text;
 }
 add_filter('comment_text', 'gdk_comment_add_at', 20, 2);
@@ -539,6 +554,7 @@ function gdk_search_filter_page($query)
     if ($query->is_search && !$query->is_admin) {
         $query->set('post_type', 'post');
     }
+
     return $query;
 }
 add_filter('pre_get_posts', 'gdk_search_filter_page');
