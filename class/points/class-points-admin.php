@@ -184,7 +184,7 @@ class GDK_Points_Admin
     public static function admin_notices()
     {
         if (!empty(self::$notices)) {
-            foreach (self::$notices as $notice) {
+            foreach ((array) self::$notices as $notice) {
                 echo $notice;
             }
         }
@@ -225,7 +225,7 @@ class GDK_Points_Admin
                 $k[] = '<div style="margin-bottom:10px;">用户ID：'.$sdata.'  &nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp;总金币为：'.GDK_Points::get_user_total_points($sdata).'</div>';
             }
             if (is_array($points)) {
-                foreach ($points as $point) {
+                foreach ((array) $points as $point) {
                     $userid = $point->user_id;
                     $user_name = get_user_by('id', $userid)->display_name;
                     $k[] = '<div style="margin-bottom:5px;">用户ID：'.$userid.'&nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp;金币：'.$point->points.' &nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp;描述：'.$point->description.' &nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp;日期：'.$point->datetime.'&nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp;用户名：'.$user_name.'</div>';
@@ -457,7 +457,7 @@ class GDK_Points_Admin
         $output .= '<span class="title">状态</span>';
         $output .= ' ';
         $output .= '<select name="status">';
-        foreach ($status_descriptions as $key => $label) {
+        foreach ((array) $status_descriptions as $key => $label) {
             $selected = $key == $status ? ' selected="selected" ' : '';
             $output .= '<option '.$selected.' value="'.esc_attr($key).'">'.$label.'</option>';
         }

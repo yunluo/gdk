@@ -88,7 +88,7 @@ if (!class_exists('ThemeUpdateChecker')) {
                 return $theme->get('Version');
             }
 
-            foreach (get_themes() as $theme) {
+            foreach ((array) get_themes() as $theme) {
                 if ($theme['Stylesheet'] === $this->theme) {
                     return $theme['Version'];
                 }
@@ -180,7 +180,7 @@ if (!class_exists('ThemeUpdate')) {
             }
 
             $update = new self();
-            foreach (get_object_vars($apiResponse) as $key => $value) {
+            foreach ((array) get_object_vars($apiResponse) as $key => $value) {
                 $update->{$key} = $value;
             }
 

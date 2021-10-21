@@ -66,7 +66,7 @@ checked($options['gdk_local_avatars_caps'], 1); ?>/>仅具有头像上传权限�
         return $new_input;
     }
 
-    public function get_avatar($avatar, $id_or_email, $size = 96, $default, $alt)
+    public function get_avatar($avatar, $id_or_email, $size, $default, $alt)
     {
         if (is_numeric($id_or_email)) {
             $user_id = (int) $id_or_email;
